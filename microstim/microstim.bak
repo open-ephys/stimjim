@@ -690,6 +690,8 @@ Connection ~ 10600 3850
 Wire Wire Line
 	10600 3850 10850 3850
 Wire Wire Line
+	12300 4700 12600 4700
+Wire Wire Line
 	12600 4700 12600 4800
 Connection ~ 12600 4800
 $Comp
@@ -2770,6 +2772,4 @@ Text GLabel 6800 1150 1    50   Input ~ 0
 VIN_TEENSY
 Wire Wire Line
 	6800 1250 6800 1150
-Wire Wire Line
-	12250 4700 12600 4700
 $EndSCHEMATC

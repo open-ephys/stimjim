@@ -1,0 +1,25 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP DG509ACWE
+D Precision 8-Channel / Dual 4-Channel CMOS Analog Multiplexers
+$ENDCMP
+#
+$CMP ISO7340FC
+D Low Power Quad-Channel 4/0 Digital Isolator, 25Mbps 31ns, Fail-Safe Low, SO16
+K 4Ch Quad Digital Isolator 25Mbps
+F http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340fc&fileType=pdf
+$ENDCMP
+#
+$CMP ISO7760
+D High-Speed, Robust EMC, Reinforced Six-Channel Digital Isolators
+K 4Ch Quad Digital Isolator 25Mbps
+F http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340c&fileType=pdf
+$ENDCMP
+#
+$CMP LTC2057
+D Rail-to-Rail Input, Rail-to-Rail Output, Zero-Drift Op Amp, DIP-8, SOIC-8
+K single opamp
+F http://www.linear.com/docs/2857
+$ENDCMP
+#
+#End Doc Library
