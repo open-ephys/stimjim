@@ -1,7 +1,11 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP AD7321
+D 500 kSPS, 2-Channel, Software-Selectable, True Bipolar Input, 12 - Bit Plus Sign ADC
+$ENDCMP
+#
 $CMP CC3-0512DF-E
-D  DC DC CNVRTR +/-12V TO +/-15V 3W 
+D  DC DC CNVRTR +/-12V TO +/-15V 3W
 $ENDCMP
 #
 $CMP DG509ACWE
