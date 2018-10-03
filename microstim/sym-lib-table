@@ -1,2 +1,6 @@
 (sym_lib_table
+  (lib (name microstim-eagle-import)(type Legacy)(uri ${KIPRJMOD}/microstim-eagle-import.lib)(options "")(descr ""))
+  (lib (name natecermak)(type Legacy)(uri ${KIPRJMOD}/natecermak.lib)(options "")(descr ""))
+  (lib (name microstim-cache)(type Legacy)(uri ${KIPRJMOD}/microstim-cache.lib)(options "")(descr ""))
+  (lib (name teensy)(type Legacy)(uri ${KIPRJMOD}/teensy.lib)(options "")(descr ""))
 )
