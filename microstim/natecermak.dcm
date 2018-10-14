@@ -1,5 +1,10 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP AD1582
+D IC Voltage reference 2.5V SOT23-3
+F http://www.analog.com/media/en/technical-documentation/data-sheets/AD1582_1583_1584_1585.pdf
+$ENDCMP
+#
 $CMP AD7321
 D 500 kSPS, 2-Channel, Software-Selectable, True Bipolar Input, 12 - Bit Plus Sign ADC
 $ENDCMP
