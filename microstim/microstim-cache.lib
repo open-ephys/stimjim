@@ -1,11 +1,11 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
-# Amplifier_Difference:AD8276
+# Amplifier_Difference_AD8276
 #
-DEF Amplifier_Difference:AD8276 U 0 5 Y Y 1 F N
+DEF Amplifier_Difference_AD8276 U 0 5 Y Y 1 F N
 F0 "U" 300 200 50 H V C CNN
-F1 "Amplifier_Difference:AD8276" 300 100 50 H V C CNN
+F1 "Amplifier_Difference_AD8276" 300 100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -25,11 +25,11 @@ X ~ 8 -200 0 100 R 50 50 1 1 N N
 ENDDRAW
 ENDDEF
 #
-# Analog_DAC:MCP4922
+# Analog_DAC_MCP4922
 #
-DEF Analog_DAC:MCP4922 U 0 40 Y Y 1 F N
+DEF Analog_DAC_MCP4922 U 0 40 Y Y 1 F N
 F0 "U" -75 425 50 H V R CNN
-F1 "Analog_DAC:MCP4922" -75 350 50 H V R CNN
+F1 "Analog_DAC_MCP4922" -75 350 50 H V R CNN
 F2 "" 800 -300 50 H I C CNN
 F3 "" 800 -300 50 H I C CNN
 ALIAS MCP4912 MCP4922
@@ -75,11 +75,11 @@ X ~SHDN 9 -500 200 100 R 50 50 1 1 O
 ENDDRAW
 ENDDEF
 #
-# Connector:Conn_Coaxial
+# Connector_Conn_Coaxial
 #
-DEF Connector:Conn_Coaxial J 0 40 Y N 1 F N
+DEF Connector_Conn_Coaxial J 0 40 Y N 1 F N
 F0 "J" 10 120 50 H V C CNN
-F1 "Connector:Conn_Coaxial" 115 0 50 V V C CNN
+F1 "Connector_Conn_Coaxial" 115 0 50 V V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -100,11 +100,11 @@ X Ext 2 0 -200 100 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Connector:Screw_Terminal_01x02
+# Connector_Screw_Terminal_01x02
 #
-DEF Connector:Screw_Terminal_01x02 J 0 40 Y N 1 F N
+DEF Connector_Screw_Terminal_01x02 J 0 40 Y N 1 F N
 F0 "J" 0 100 50 H V C CNN
-F1 "Connector:Screw_Terminal_01x02" 0 -200 50 H V C CNN
+F1 "Connector_Screw_Terminal_01x02" 0 -200 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -123,11 +123,11 @@ X Pin_2 2 -200 -100 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:C_Small
+# Device_C_Small
 #
-DEF Device:C_Small C 0 10 N N 1 F N
+DEF Device_C_Small C 0 10 N N 1 F N
 F0 "C" 10 70 50 H V L CNN
-F1 "Device:C_Small" 10 -80 50 H V L CNN
+F1 "Device_C_Small" 10 -80 50 H V L CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -141,11 +141,11 @@ X ~ 2 0 -100 80 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:R_POT
+# Device_R_POT
 #
-DEF Device:R_POT RV 0 40 Y N 1 F N
+DEF Device_R_POT RV 0 40 Y N 1 F N
 F0 "RV" -175 0 50 V V C CNN
-F1 "Device:R_POT" -100 0 50 V V C CNN
+F1 "Device_R_POT" -100 0 50 V V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -154,18 +154,18 @@ $ENDFPLIST
 DRAW
 S 40 100 -40 -100 0 1 10 N
 P 2 0 1 0 100 0 60 0 N
-P 3 0 1 0 45 0 90 20 90 -20 F
+P 4 0 1 0 45 0 90 20 90 -20 45 0 F
 X 1 1 0 150 50 D 50 50 1 1 P
 X 2 2 150 0 50 L 50 50 1 1 P
 X 3 3 0 -150 50 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:R_US
+# Device_R_US
 #
-DEF Device:R_US R 0 0 N Y 1 F N
+DEF Device_R_US R 0 0 N Y 1 F N
 F0 "R" 100 0 50 V V C CNN
-F1 "Device:R_US" -100 0 50 V V C CNN
+F1 "Device_R_US" -100 0 50 V V C CNN
 F2 "" 40 -10 50 V I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -182,11 +182,11 @@ X ~ 2 0 -150 50 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Isolator:ISO7341C
+# Isolator_ISO7341C
 #
-DEF Isolator:ISO7341C U 0 40 Y Y 1 F N
+DEF Isolator_ISO7341C U 0 40 Y Y 1 F N
 F0 "U" 0 625 50 H V C CNN
-F1 "Isolator:ISO7341C" 0 550 50 H V C CNN
+F1 "Isolator_ISO7341C" 0 550 50 H V C CNN
 F2 "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" 0 -550 50 H I C CIN
 F3 "" 0 400 50 H I C CNN
 ALIAS ISO7341FC
@@ -238,11 +238,26 @@ X GND2 9 400 300 100 L 50 50 1 1 P N
 ENDDRAW
 ENDDEF
 #
-# Regulator_Linear:L78L05_SO8
+# Mechanical_MountingHole
 #
-DEF Regulator_Linear:L78L05_SO8 U 0 10 Y Y 1 F N
+DEF Mechanical_MountingHole H 0 40 Y Y 1 F N
+F0 "H" 0 200 50 H V C CNN
+F1 "Mechanical_MountingHole" 0 125 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ MountingHole*
+$ENDFPLIST
+DRAW
+C 0 0 50 0 1 50 N
+ENDDRAW
+ENDDEF
+#
+# Regulator_Linear_L78L05_SO8
+#
+DEF Regulator_Linear_L78L05_SO8 U 0 10 Y Y 1 F N
 F0 "U" -150 125 50 H V C CNN
-F1 "Regulator_Linear:L78L05_SO8" 0 125 50 H V L CNN
+F1 "Regulator_Linear_L78L05_SO8" 0 125 50 H V L CNN
 F2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" 100 200 50 H I C CIN
 F3 "" 200 0 50 H I C CNN
 ALIAS MC78L08_SO8 MC78L06_SO8 MC78L12_SO8 MC78L15_SO8 MC78L18_SO8 MC78L24_SO8 LM78L05_SO8 LM78L12_SO8 LM2931-5.0_SO8 L78L33_SO8 L78L05_SO8 L78L06_SO8 L78L08_SO8 L78L09_SO8 L78L10_SO8 L78L12_SO8 L78L15_SO8 L78L18_SO8 L78L24_SO8
@@ -262,11 +277,11 @@ X IN 8 -300 0 100 R 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# Regulator_Linear:L78L12_SO8
+# Regulator_Linear_L78L12_SO8
 #
-DEF Regulator_Linear:L78L12_SO8 U 0 10 Y Y 1 F N
+DEF Regulator_Linear_L78L12_SO8 U 0 10 Y Y 1 F N
 F0 "U" -150 125 50 H V C CNN
-F1 "Regulator_Linear:L78L12_SO8" 0 125 50 H V L CNN
+F1 "Regulator_Linear_L78L12_SO8" 0 125 50 H V L CNN
 F2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" 100 200 50 H I C CIN
 F3 "" 200 0 50 H I C CNN
 $FPLIST
@@ -285,11 +300,11 @@ X IN 8 -300 0 100 R 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# Regulator_Linear:L79L12_SO8
+# Regulator_Linear_L79L12_SO8
 #
-DEF Regulator_Linear:L79L12_SO8 U 0 10 Y Y 1 F N
+DEF Regulator_Linear_L79L12_SO8 U 0 10 Y Y 1 F N
 F0 "U" -150 -125 50 H V C CNN
-F1 "Regulator_Linear:L79L12_SO8" 0 -125 50 H V L CNN
+F1 "Regulator_Linear_L79L12_SO8" 0 -125 50 H V L CNN
 F2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" 0 -200 50 H I C CIN
 F3 "" 0 50 50 H I C CNN
 ALIAS MC79L12_SO8 MC79L15_SO8 L79L05_SO8 L79L08_SO8 L79L12_SO8 L79L15_SO8
@@ -309,11 +324,11 @@ X NC 8 -300 100 100 R 50 50 1 1 N N
 ENDDRAW
 ENDDEF
 #
-# Switch:SW_Push
+# Switch_SW_Push
 #
-DEF Switch:SW_Push SW 0 40 N N 1 F N
+DEF Switch_SW_Push SW 0 40 N N 1 F N
 F0 "SW" 50 100 50 H V L CNN
-F1 "Switch:SW_Push" 0 -60 50 H V C CNN
+F1 "Switch_SW_Push" 0 -60 50 H V C CNN
 F2 "" 0 200 50 H I C CNN
 F3 "" 0 200 50 H I C CNN
 DRAW
@@ -326,11 +341,11 @@ X 2 2 200 0 100 L 50 50 0 1 P
 ENDDRAW
 ENDDEF
 #
-# natecermak:AD1582
+# natecermak_AD1582
 #
-DEF natecermak:AD1582 U 0 40 Y Y 1 F N
+DEF natecermak_AD1582 U 0 40 Y Y 1 F N
 F0 "U" -150 -150 50 H V C CNN
-F1 "natecermak:AD1582" -50 150 50 H V C CNN
+F1 "natecermak_AD1582" -50 150 50 H V C CNN
 F2 "" -150 -150 50 H I C CNN
 F3 "" -150 -150 50 H I C CNN
 DRAW
@@ -341,11 +356,11 @@ X IN 3 -300 50 100 R 50 39 1 1 W
 ENDDRAW
 ENDDEF
 #
-# natecermak:AD7321
+# natecermak_AD7321
 #
-DEF natecermak:AD7321 U 0 40 Y Y 1 F N
+DEF natecermak_AD7321 U 0 40 Y Y 1 F N
 F0 "U" -250 -400 50 H V C CNN
-F1 "natecermak:AD7321" -50 400 50 H V C CNN
+F1 "natecermak_AD7321" -50 400 50 H V C CNN
 F2 "" -250 -400 50 H I C CNN
 F3 "" -250 -400 50 H I C CNN
 DRAW
@@ -367,11 +382,11 @@ X VDD 9 450 -200 100 L 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# natecermak:CC3-0512DF-E
+# natecermak_CC3-0512DF-E
 #
-DEF natecermak:CC3-0512DF-E U 0 40 Y Y 1 F N
+DEF natecermak_CC3-0512DF-E U 0 40 Y Y 1 F N
 F0 "U" -200 -300 50 H V C CNN
-F1 "natecermak:CC3-0512DF-E" -50 500 31 H V C CNN
+F1 "natecermak_CC3-0512DF-E" -50 500 31 H V C CNN
 F2 "" -200 -300 50 H I C CNN
 F3 "" -200 -300 50 H I C CNN
 DRAW
@@ -386,11 +401,11 @@ X +Vout 7 350 350 100 L 50 50 1 1 w
 ENDDRAW
 ENDDEF
 #
-# natecermak:DG509ACWE
+# natecermak_DG509ACWE
 #
-DEF natecermak:DG509ACWE U 0 40 Y Y 1 F N
+DEF natecermak_DG509ACWE U 0 40 Y Y 1 F N
 F0 "U" 316 60 50 H V L BNN
-F1 "natecermak:DG509ACWE" 541 -559 39 V V L BNN
+F1 "natecermak_DG509ACWE" 541 -559 39 V V L BNN
 F2 "21-0042B_16" 250 250 50 H I L BNN
 F3 "Maxim Integrated" 250 350 50 H I L BNN
 DRAW
@@ -414,11 +429,11 @@ X DB 9 1050 -700 300 L 40 40 0 0 P
 ENDDRAW
 ENDDEF
 #
-# natecermak:INA826
+# natecermak_INA826
 #
-DEF natecermak:INA826 U 0 40 Y Y 1 F N
+DEF natecermak_INA826 U 0 40 Y Y 1 F N
 F0 "U" -200 -350 50 H V C CNN
-F1 "natecermak:INA826" -50 0 39 H V C CNN
+F1 "natecermak_INA826" -50 0 39 H V C CNN
 F2 "" -200 -350 50 H I C CNN
 F3 "" -200 -350 50 H I C CNN
 DRAW
@@ -434,11 +449,11 @@ X +Vs 8 50 250 100 D 50 28 1 1 O
 ENDDRAW
 ENDDEF
 #
-# natecermak:ISO7760
+# natecermak_ISO7760
 #
-DEF natecermak:ISO7760 U 0 40 Y Y 1 F N
+DEF natecermak_ISO7760 U 0 40 Y Y 1 F N
 F0 "U" 0 625 50 H V C CNN
-F1 "natecermak:ISO7760" 0 550 50 H V C CNN
+F1 "natecermak_ISO7760" 0 550 50 H V C CNN
 F2 "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" 0 -550 50 H I C CIN
 F3 "" 0 400 50 H I C CNN
 ALIAS ISO7340FC
@@ -500,11 +515,11 @@ X GND2 9 400 -400 100 L 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# power:+12V
+# power_+12V
 #
-DEF power:+12V #PWR 0 0 Y Y 1 F P
+DEF power_+12V #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power:+12V" 0 140 50 H V C CNN
+F1 "power_+12V" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -515,11 +530,11 @@ X +12V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# power:+15V
+# power_+15V
 #
-DEF power:+15V #PWR 0 0 Y Y 1 F P
+DEF power_+15V #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power:+15V" 0 140 50 H V C CNN
+F1 "power_+15V" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -530,11 +545,11 @@ X +15V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# power:+3.3V
+# power_+3.3V
 #
-DEF power:+3.3V #PWR 0 0 Y Y 1 F P
+DEF power_+3.3V #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power:+3.3V" 0 140 50 H V C CNN
+F1 "power_+3.3V" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 ALIAS +3.3V
@@ -546,11 +561,11 @@ X +3V3 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# power:+5V
+# power_+5V
 #
-DEF power:+5V #PWR 0 0 Y Y 1 F P
+DEF power_+5V #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power:+5V" 0 140 50 H V C CNN
+F1 "power_+5V" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -561,11 +576,11 @@ X +5V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# power:-12V
+# power_-12V
 #
-DEF power:-12V #PWR 0 0 Y Y 1 F P
+DEF power_-12V #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 100 50 H I C CNN
-F1 "power:-12V" 0 150 50 H V C CNN
+F1 "power_-12V" 0 150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -574,11 +589,11 @@ X -12V 1 0 0 0 U 50 50 0 0 W N
 ENDDRAW
 ENDDEF
 #
-# power:-15V
+# power_-15V
 #
-DEF power:-15V #PWR 0 0 Y Y 1 F P
+DEF power_-15V #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 100 50 H I C CNN
-F1 "power:-15V" 0 150 50 H V C CNN
+F1 "power_-15V" 0 150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -587,11 +602,11 @@ X -15V 1 0 0 0 U 50 50 0 0 W N
 ENDDRAW
 ENDDEF
 #
-# power:GND
+# power_GND
 #
-DEF power:GND #PWR 0 0 Y Y 1 F P
+DEF power_GND #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -250 50 H I C CNN
-F1 "power:GND" 0 -150 50 H V C CNN
+F1 "power_GND" 0 -150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -600,11 +615,11 @@ X GND 1 0 0 0 D 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# power:GNDREF
+# power_GNDREF
 #
-DEF power:GNDREF #PWR 0 0 Y Y 1 F P
+DEF power_GNDREF #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -250 50 H I C CNN
-F1 "power:GNDREF" 0 -150 50 H V C CNN
+F1 "power_GNDREF" 0 -150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -616,11 +631,11 @@ X GNDREF 1 0 0 0 D 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# teensy:Teensy3.5
+# teensy_Teensy3.5
 #
-DEF teensy:Teensy3.5 U 0 40 Y Y 1 F N
+DEF teensy_Teensy3.5 U 0 40 Y Y 1 F N
 F0 "U" 0 2300 60 H V C CNN
-F1 "teensy:Teensy3.5" 0 -2300 60 H V C CNN
+F1 "teensy_Teensy3.5" 0 -2300 60 H V C CNN
 F2 "" 0 0 60 H V C CNN
 F3 "" 0 0 60 H V C CNN
 DRAW

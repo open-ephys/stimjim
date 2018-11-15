@@ -1,0 +1,17 @@
+Changes in V0.13: 
+
+1) switch is surface mount, not through hole (pcb is throughhole) - FIXED, pcb is now SMD
+2) extra power wire runs up teensy side of board - FIXED, wire removed
+3) teensy power pin to CC3 isn't on side row - FIXED changed from Vusb to Vin (connected on teensy)
+4) 10uF caps on BOM are 1206, board is 0603? - FIXED. board is now 1206.
+5) cc3 top and bottom through-holes are too small!!! - FIXED. increased from 0.75mm to 1.2mm
+6) U11/14 on board is U14/15 on BOM - FIXED. BOM was out of date.
+7) absolutely need 1uF bypass cap on 2.5v reg. FIXED.
+8) C4 is extraneous? - FIXED. moved to address issue 7.
+
+To do:
+9) orientation of ICs is not marked!
+10) board should have voltage out option on each channel!
+11) confirm that two separate SPIs both work  - 
+https://forum.pjrc.com/threads/49786-Multiple-SPI-Devices-Two-s-Good-Three-s-a-Crowd
+

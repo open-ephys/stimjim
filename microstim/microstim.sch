@@ -314,7 +314,7 @@ U 1 1 5B7C9AA6
 P 750 5550
 F 0 "SW1" V 704 5698 50  0000 L CNN
 F 1 "SW_Push" V 795 5698 50  0000 L CNN
-F 2 "Button_Switch_THT:SW_PUSH_6mm" H 750 5750 50  0001 C CNN
+F 2 "Button_Switch_SMD:SW_SPST_PTS645" H 750 5750 50  0001 C CNN
 F 3 "" H 750 5750 50  0001 C CNN
 	1    750  5550
 	0    -1   -1   0   
@@ -325,7 +325,7 @@ U 1 1 5B7C9D93
 P 950 5750
 F 0 "SW2" V 904 5898 50  0000 L CNN
 F 1 "SW_Push" V 995 5898 50  0000 L CNN
-F 2 "Button_Switch_THT:SW_PUSH_6mm" H 950 5950 50  0001 C CNN
+F 2 "Button_Switch_SMD:SW_SPST_PTS645" H 950 5950 50  0001 C CNN
 F 3 "" H 950 5950 50  0001 C CNN
 	1    950  5750
 	0    -1   -1   0   
@@ -930,8 +930,6 @@ Wire Notes Line
 	15300 6400 15300 4750
 Text GLabel 3400 4550 2    50   Input ~ 0
 VUSB
-Wire Wire Line
-	3400 4550 3200 4550
 $Comp
 L Device:C_Small C12
 U 1 1 5C3235C7
@@ -1903,16 +1901,16 @@ Wire Wire Line
 $Comp
 L power:+3.3V #PWR0103
 U 1 1 60B08A15
-P 3350 4850
-F 0 "#PWR0103" H 3350 4700 50  0001 C CNN
-F 1 "+3.3V" H 3365 5023 50  0000 C CNN
-F 2 "" H 3350 4850 50  0001 C CNN
-F 3 "" H 3350 4850 50  0001 C CNN
-	1    3350 4850
+P 3400 4850
+F 0 "#PWR0103" H 3400 4700 50  0001 C CNN
+F 1 "+3.3V" H 3415 5023 50  0000 C CNN
+F 2 "" H 3400 4850 50  0001 C CNN
+F 3 "" H 3400 4850 50  0001 C CNN
+	1    3400 4850
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3200 4850 3350 4850
+	3200 4850 3400 4850
 $Comp
 L Device:R_US R1
 U 1 1 5BF90F47
@@ -2559,28 +2557,18 @@ $EndComp
 Wire Wire Line
 	7450 5650 7450 5600
 Wire Wire Line
-	7750 5350 7850 5350
-Wire Wire Line
-	6450 5350 7050 5350
+	7750 5350 7800 5350
 $Comp
 L Device:C_Small C4
 U 1 1 5D09DD45
-P 7050 5450
-F 0 "C4" H 6958 5404 50  0000 R CNN
-F 1 "1uF" H 6958 5495 50  0000 R CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 7050 5450 50  0001 C CNN
-F 3 "~" H 7050 5450 50  0001 C CNN
-	1    7050 5450
+P 7800 5450
+F 0 "C4" H 7708 5404 50  0000 R CNN
+F 1 "1uF" H 7708 5495 50  0000 R CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 7800 5450 50  0001 C CNN
+F 3 "~" H 7800 5450 50  0001 C CNN
+	1    7800 5450
 	-1   0    0    1   
 $EndComp
-Connection ~ 7050 5350
-Wire Wire Line
-	7050 5350 7150 5350
-Wire Wire Line
-	7050 5550 7050 5600
-Wire Wire Line
-	7050 5600 7450 5600
-Connection ~ 7450 5600
 Connection ~ 6550 3550
 Connection ~ 7450 3750
 $Comp
@@ -2603,6 +2591,66 @@ F 1 "INA826" H 11841 3155 39  0000 L CNN
 F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 11200 2850 50  0001 C CNN
 F 3 "" H 11200 2850 50  0001 C CNN
 	1    11400 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3300 4550 3400 4550
+Wire Wire Line
+	3300 4650 3300 4550
+Wire Wire Line
+	3200 4650 3300 4650
+Connection ~ 7800 5350
+Wire Wire Line
+	7800 5350 7850 5350
+Wire Wire Line
+	6450 5350 7150 5350
+Wire Wire Line
+	7450 5600 7800 5600
+Wire Wire Line
+	7800 5600 7800 5550
+Connection ~ 7450 5600
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5C07145A
+P 3650 6900
+F 0 "H1" H 3750 6946 50  0000 L CNN
+F 1 "MountingHole" H 3750 6855 50  0000 L CNN
+F 2 "MountingHole:MountingHole_5.3mm_M5" H 3650 6900 50  0001 C CNN
+F 3 "~" H 3650 6900 50  0001 C CNN
+	1    3650 6900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5C071952
+P 3650 7100
+F 0 "H2" H 3750 7146 50  0000 L CNN
+F 1 "MountingHole" H 3750 7055 50  0000 L CNN
+F 2 "MountingHole:MountingHole_5.3mm_M5" H 3650 7100 50  0001 C CNN
+F 3 "~" H 3650 7100 50  0001 C CNN
+	1    3650 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 5C071A16
+P 4450 6900
+F 0 "H3" H 4550 6946 50  0000 L CNN
+F 1 "MountingHole" H 4550 6855 50  0000 L CNN
+F 2 "MountingHole:MountingHole_5.3mm_M5" H 4450 6900 50  0001 C CNN
+F 3 "~" H 4450 6900 50  0001 C CNN
+	1    4450 6900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 5C071AE6
+P 4450 7100
+F 0 "H4" H 4550 7146 50  0000 L CNN
+F 1 "MountingHole" H 4550 7055 50  0000 L CNN
+F 2 "MountingHole:MountingHole_5.3mm_M5" H 4450 7100 50  0001 C CNN
+F 3 "~" H 4450 7100 50  0001 C CNN
+	1    4450 7100
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC
