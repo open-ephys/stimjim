@@ -21,7 +21,7 @@ SPISettings settingsADC(1000000, MSBFIRST, SPI_MODE1);
 
 void setup() {                
   pinMode(DacLdacPin, OUTPUT); 
-  digitalWrite(DacLdacPin, HIGH); 
+  digitalWrite(DacLdacPin, HIGH);
 
   pinMode(DacSelectPin, OUTPUT); 
   pinMode(AdcSelectPin, OUTPUT);     
@@ -36,6 +36,43 @@ void setup() {
   Serial.begin(9600);
   SPI.begin();
 }
+
+// amp0 and amp1 go from -2048 to 2047.
+void writeToDacs(int amp0, int amp1){
+  amp0 = amp0+2048;
+  amp1 = amp1+2048;
+
+  SPI.beginTransaction(settingsDAC);
+  digitalWrite(DacSelectPin,LOW);
+  SPI.transfer( (byte) (32+16 + amp0/256));
+  SPI.transfer(amp0%256);
+  digitalWrite(DacSelectPin,HIGH); 
+  digitalWrite(DacSelectPin,LOW);
+  SPI.transfer( (byte) (128+32+16 + amp1/256 ));
+  SPI.transfer(amp1%256);
+  digitalWrite(DacSelectPin,HIGH); 
+  SPI.endTransaction();
+
+  // latch data
+  digitalWrite(DacLdacPin, LOW);    digitalWrite(DacLdacPin, HIGH);  
+}
+
+
+
+// amp0 go from -2048 to 2047.
+void writeToDac(int dac, int amp){
+  amp = amp+2048;
+
+  SPI.beginTransaction(settingsDAC);
+  digitalWrite(DacSelectPin,LOW);
+  SPI.transfer( (byte) ( ((dac)?128:0)+32+16 + amp/256));
+  SPI.transfer(amp/256);
+  digitalWrite(DacSelectPin,HIGH); 
+  SPI.endTransaction();
+  // latch data
+  digitalWrite(DacLdacPin, LOW);    digitalWrite(DacLdacPin, HIGH);  
+}
+
 
 
 void loop() {
@@ -52,34 +89,15 @@ void loop() {
   digitalWrite(DacLdacPin, LOW);
   delayMicroseconds(1);
   digitalWrite(DacLdacPin, HIGH);  */
-
-  //digitalWrite(OEpin[0], LOW);
-  SPI.beginTransaction(settingsDAC);
-  digitalWrite(DacSelectPin,LOW);
-  SPI.transfer( (byte) (32+16 + 15));
-  SPI.transfer(255);
-  digitalWrite(DacSelectPin,HIGH); 
-  digitalWrite(DacSelectPin,LOW);
-  SPI.transfer( (byte) (128+32+16 ));
-  SPI.transfer(0);
-  digitalWrite(DacSelectPin,HIGH); 
-  digitalWrite(DacLdacPin, LOW);    digitalWrite(DacLdacPin, HIGH);  
-  
-  delayMicroseconds(10);
-  digitalWrite(DacSelectPin,LOW);
-  SPI.transfer( (byte) (32+16 + 0/256));
-  SPI.transfer(0 % 256);
-  digitalWrite(DacSelectPin,HIGH); 
-  digitalWrite(DacLdacPin, LOW);     digitalWrite(DacLdacPin, HIGH);  
-  delayMicroseconds(15);
-  digitalWrite(DacSelectPin,LOW);
-  SPI.transfer( (byte) (32+16 + 8));
-  SPI.transfer(0 % 256);
-  digitalWrite(DacSelectPin,HIGH); 
-  digitalWrite(DacLdacPin, LOW);    digitalWrite(DacLdacPin, HIGH);  
-  SPI.endTransaction();
+  float a = sin(0.002*millis());
+  writeToDacs(900*a+1000, 0);
+  digitalWrite(OEpin[0], LOW);  
+  delayMicroseconds(100);
+  writeToDacs(-900*a-1000, 0);
+  delayMicroseconds(100);
+  writeToDacs(0,0);
   delayMicroseconds(400);
-  //digitalWrite(OEpin[0], HIGH);
-  delay(1);
+  digitalWrite(OEpin[0], HIGH);
+  delay(10);
   
 }
