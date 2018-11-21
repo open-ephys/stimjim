@@ -5,7 +5,7 @@ const int OEpin[] = {8,7};
 
 const int DacSelectPin = 10;
 const int DacLdacPin = 9;
-const int AdcSelectPin = 21;
+const int AdcSelectPin = 31;
 
 // set up the speed, mode and endianness of each device
 SPISettings settingsDAC(16000000, MSBFIRST, SPI_MODE0); //max 20MHz, mode 0,0 or 1,1 acceptable
@@ -30,12 +30,14 @@ void setup() {
       
   for (int i=0; i<2; i++){
     pinMode(OEpin[i], OUTPUT);
-    digitalWrite(OEpin[i], HIGH); // FOR TESTING!
+    digitalWrite(OEpin[i], HIGH); // DISABLE OUTPUTS ON BOOT
   }
 
   Serial.begin(9600);
   SPI.begin();
+  SPI1.begin();
 }
+
 
 // amp0 and amp1 go from -2048 to 2047.
 void writeToDacs(int amp0, int amp1){
@@ -73,31 +75,33 @@ void writeToDac(int dac, int amp){
   digitalWrite(DacLdacPin, LOW);    digitalWrite(DacLdacPin, HIGH);  
 }
 
+int readADC(){
+  SPI1.beginTransaction(settingsADC);
+  digitalWrite(AdcSelectPin, LOW);
+  int a =   SPI.transfer(0);
+  int b =   SPI.transfer(0);
+  digitalWrite(AdcSelectPin, HIGH);
+  Serial.print(a); Serial.print(","); Serial.println(b);
+
+  SPI1.endTransaction();
+  return(a*256+b);
+}
 
 
 void loop() {
-  /*SPI.beginTransaction(settingsDAC);
-  digitalWrite(DacSelectPin,LOW);
-  double sinphase = micros()/1000.0*6.28;
-  int amp = 4095*(sin(sinphase)+1)/2;
-  //amp = (micros() % 1000000 < 100)?4095:0;
-  //Serial.println(amp);
-  SPI.transfer( (byte) (32+16 + amp/256));
-  SPI.transfer(amp % 256);
-  digitalWrite(DacSelectPin,HIGH); 
-  SPI.endTransaction();
-  digitalWrite(DacLdacPin, LOW);
-  delayMicroseconds(1);
-  digitalWrite(DacLdacPin, HIGH);  */
+
   float a = sin(0.002*millis());
-  writeToDacs(900*a+1000, 0);
+  
+  /* writeToDacs(900*a+1000, 0);
   digitalWrite(OEpin[0], LOW);  
   delayMicroseconds(100);
   writeToDacs(-900*a-1000, 0);
   delayMicroseconds(100);
   writeToDacs(0,0);
   delayMicroseconds(400);
-  digitalWrite(OEpin[0], HIGH);
-  delay(10);
+  digitalWrite(OEpin[0], HIGH); */
+  writeToDacs(1000*a,1000*a);
+  delay(100);
+  readADC();
   
 }
