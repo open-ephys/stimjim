@@ -9,7 +9,7 @@ const int AdcSelectPin = 31;
 
 // set up the speed, mode and endianness of each device
 SPISettings settingsDAC(16000000, MSBFIRST, SPI_MODE0); //max 20MHz, mode 0,0 or 1,1 acceptable
-SPISettings settingsADC(1000000, MSBFIRST, SPI_MODE1);
+SPISettings settingsADC(5000000, MSBFIRST, SPI_MODE2);  // clock starts high, data latch on falling edge
 
 //bit order for DAC (MCP4922) is notA, buf, notGA, notShutdown, Data11,Data10...Data0
 //bit order for DAC (MCP4922) is 0, zero, channel, sign,  Data11,Data10...Data0
@@ -77,13 +77,13 @@ void writeToDac(int dac, int amp) {
 void setupADC(){
   SPI1.beginTransaction(settingsADC);
   digitalWrite(AdcSelectPin, LOW);
-  int data = 2^15+2^13; // write range register, all zeros (+-10V on both channels)
+  int data = 32768+8192; // write range register, all zeros (+-10V on both channels)
   SPI1.transfer(data/256);
   SPI1.transfer(data%256);
   digitalWrite(AdcSelectPin, HIGH);
-
+  delayMicroseconds(100);
   digitalWrite(AdcSelectPin, LOW);
-  data = 2^15+2^4; // write control register, all zeros
+  data = 32768 + 1024 + 16 + 8; // write control register, ch1, use internal ref, use sequencer
   SPI1.transfer(data/256);
   SPI1.transfer(data%256);
   digitalWrite(AdcSelectPin, HIGH);
@@ -92,14 +92,22 @@ void setupADC(){
 
 int readADC() {
   SPI1.beginTransaction(settingsADC);
-  digitalWrite(AdcSelectPin, LOW);
-  int a =   SPI1.transfer(0);
-  int b =   SPI1.transfer(0);
-  digitalWrite(AdcSelectPin, HIGH);
-  Serial.print(a); Serial.print(","); Serial.println(b);
-
+  
+    digitalWrite(AdcSelectPin, LOW);
+    int a = 256*SPI1.transfer(0);
+    a += SPI1.transfer(0);
+    digitalWrite(AdcSelectPin, HIGH);
+    
+    digitalWrite(AdcSelectPin, LOW);  
+    int b = 256*SPI1.transfer(0);
+    b += SPI1.transfer(0);
+    digitalWrite(AdcSelectPin, HIGH);
+    
   SPI1.endTransaction();
-  return (a * 256 + b);
+  int ch0 = a/2048;
+  Serial.print(a); Serial.print(","); 
+  Serial.println(b); 
+  return (a);
 }
 
 
@@ -123,6 +131,7 @@ void setup() {
   Serial.begin(9600);
   SPI.begin();
   SPI1.begin();
+  delay(100);
   setupADC();
 }
 
@@ -132,19 +141,19 @@ void setup() {
 
 
 void loop() {
-
   float a = sin(0.002 * millis());
 
-  /* writeToDacs(900*a+1000, 0);
-    digitalWrite(OEpin[0], LOW);
-    delayMicroseconds(100);
-    writeToDacs(-900*a-1000, 0);
-    delayMicroseconds(100);
-    writeToDacs(0,0);
-    delayMicroseconds(400);
-    digitalWrite(OEpin[0], HIGH); */
-  writeToDacs(1000 * a, 0);
-  if (millis() % 20 == 0) {
+  //digitalWrite(OEpin[0], LOW);
+  /*writeToDacs(900*a+1000, 0);
+  delayMicroseconds(100);
+  writeToDacs(-900*a-1000, 0);
+  delayMicroseconds(100);
+  writeToDacs(0,0);
+  delayMicroseconds(400);*/
+  //  digitalWrite(OEpin[0], HIGH); 
+  
+  writeToDacs(2047 * a, 0);
+  if (millis() % 10 == 0) {
     readADC();
   }
   delay(1);
