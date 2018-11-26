@@ -1,7 +1,7 @@
 #include <SPI.h>  // include the SPI library:
 
 #define MICROAMPS_PER_DAC 0.40690104166     // 5V * (1/(3000 V/A)) / 2^12 = 0.4uA / DAC unit
-#define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.465
+#define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.2325
 #define SLEW_FUDGE 10                         // microseconds
 const int OEpin[] = {8, 7};
 
