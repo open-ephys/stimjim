@@ -17,6 +17,10 @@ $CMP DG509ACWE
 D Precision 8-Channel / Dual 4-Channel CMOS Analog Multiplexers
 $ENDCMP
 #
+$CMP INA826
+D Precision, 200-μA Supply Current, 3-V to 36-V Supply Instrumentation Amplifier with Rail-to-Rail Output
+$ENDCMP
+#
 $CMP ISO7340FC
 D Low Power Quad-Channel 4/0 Digital Isolator, 25Mbps 31ns, Fail-Safe Low, SO16
 K 4Ch Quad Digital Isolator 25Mbps
