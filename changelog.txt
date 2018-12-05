@@ -1,17 +1,16 @@
-Changes in V0.13: 
+Changes in V0.14: 
 
-1) switch is surface mount, not through hole (pcb is throughhole) - FIXED, pcb is now SMD
-2) extra power wire runs up teensy side of board - FIXED, wire removed
-3) teensy power pin to CC3 isn't on side row - FIXED changed from Vusb to Vin (connected on teensy)
-4) 10uF caps on BOM are 1206, board is 0603? - FIXED. board is now 1206.
-5) cc3 top and bottom through-holes are too small!!! - FIXED. increased from 0.75mm to 1.2mm
-6) U11/14 on board is U14/15 on BOM - FIXED. BOM was out of date.
-7) absolutely need 1uF bypass cap on 2.5v reg. FIXED.
-8) C4 is extraneous? - FIXED. moved to address issue 7.
-
-To do:
-9) orientation of ICs is not marked!
-10) board should have voltage out option on each channel!
-11) confirm that two separate SPIs both work  - 
-https://forum.pjrc.com/threads/49786-Multiple-SPI-Devices-Two-s-Good-Three-s-a-Crowd
-
+1) extra power wire runs up teensy side of board - FIXED, wire removed
+2) teensy power pin to CC3 isn't on side row - FIXED changed from Vusb to Vin (connected on teensy)
+3) 10uF caps on BOM are 1206, board is 0603? - FIXED. board is now 1206.
+4) cc3 top and bottom through-holes are too small!!! - FIXED. increased from 0.75mm to 1.2mm
+5) U11/14 on board is U14/15 on BOM - FIXED. BOM was out of date.
+6) absolutely need 1uF bypass cap on 2.5v reg. FIXED.
+7) C4 is extraneous? - FIXED. moved to address issue 7.
+8) orientation of ICs was not marked. now marked on silkscreen
+9) added voltage output on each channel.
+9b). added mux to monitor either final voltage output or current output from Howland.
+10) moved both ADC and DAC to single SPI line (no reason for extra wires).
+11) I/O breakout changed to BNCs and push-terminals instead of screw terminals and SMA. 
+12) added enclosure and panels pcbs for mounting in a nice box. 
+13) pushbuttons removed. 
