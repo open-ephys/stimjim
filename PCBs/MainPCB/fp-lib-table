@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name microstim)(type KiCad)(uri /home/x/Desktop/microstim/microstim)(options "")(descr ""))
+)

@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/x/Desktop/microstim/microstim/microstim.sch)
-    (date "Wed Dec  5 14:09:07 2018")
+    (date "Wed Dec  5 22:11:00 2018")
     (tool "Eeschema 5.0.2-bee76a0~70~ubuntu18.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
