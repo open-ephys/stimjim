@@ -4,12 +4,14 @@ Microstim is a current and voltage stimulator for stimulating neural tissue (as 
 
 # Specifications:
 
- - Cost of $XXX USD
+ - Cost is approximately $131 USD per stimulator
+ - Channels are isolated from main ground
+ - Two independently-controllable output channels (with a shared ground)
  - Output range in current mode: -833uA to +833uA. 
  - Pulse width in current mode: down to 50 us.
- - Output range in voltage mode: -12V to 12V
+ - Output range in voltage mode: -12V to 12V.
  - Pulse width in current mode: down to 10 us.
- - In current mode, +-12V compliance voltage (fullscale output possible for resistances up to 14k)
+ - In current mode, +-11V compliance voltage (+/-833uA output possible for resistances up to 13k, +-110uA possible for resistances up to 100k)
  - Onboard ADC measurement of actual output current or voltage
  
 
@@ -18,9 +20,9 @@ Microstim is a current and voltage stimulator for stimulating neural tissue (as 
 
 To generate a pulse train, you need to send a serial command, terminated by a newline (\n). An example command would be:
 
-   T0,3,200,-200,50,2000,1000000\n
+   T0,3,200,-200,50,2000,1000000
    
-The "T" indicates to generate a pulse train. If any comma-separated numbers appear following the T, they are the pulse train parameters. 
+The "T" indicates to generate a pulse train. If any comma-separated numbers appear following the T, they are the pulse train parameters. (Any unspecified parameters will use the most recent specification of those parameters, or the defaults if no pulse trains have yet been run.) Pulse train parameters 1-7 are shown graphically below.
 
 ![Alt text](./pulseTrainParametrization.svg)
 
