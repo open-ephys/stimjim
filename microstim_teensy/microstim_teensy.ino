@@ -1,16 +1,14 @@
 /* microstim_teensy (c) Nathan Cermak 2019
-
-
-
-*/
+ *  
+ */
 
 #include <SPI.h>  // include the SPI library:
 
 #define MICROAMPS_PER_DAC 0.40690104166     // 5V * (1/(3000 V/A)) / 2^12 = 0.4uA / DAC unit
 #define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.2325
-#define VOLTS_PER_DAC 1
-#define VOLTS_PER_ADC 1
-#define SLEW_FUDGE 10                         // microseconds
+#define MILLIVOLTS_PER_DAC 5.9              // 5V / 2^12 * gain of ~4.9 ~= 6 mV / DAC unit
+#define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
+#define SLEW_FUDGE 10                       // microseconds
 #define OE0 6
 #define OE1 5
 #define OE2 4
@@ -19,6 +17,8 @@
 #define CS1 7
 #define NLDAC 9
 
+
+// ------------- SPI setup ------------------------------------ //
 //MCP4922 DAC runs at max 20MHz, mode 0,0 or 1,1 acceptable
 SPISettings settingsDAC(16000000, MSBFIRST, SPI_MODE0);
 //AD7321 settings
@@ -31,7 +31,7 @@ int nChar;
 
 // ------------- data from adc --------------------------------- //
 int lastAdcRead[2];
-volatile long avgCurrent[3];
+volatile long avgPulsePhase[3];
 volatile int nPulses;
 
 // ------------- compensation for imperfect resistors ---------- //
@@ -114,7 +114,7 @@ void pulse() {
   if (micros() - PT.trainStartTime > PT.duration) {
     char str[40];
     sprintf(str, "Train complete. Average current in 3 phases: %ld, %ld, %ld.\n",
-            avgCurrent[0] / nPulses, avgCurrent[1] / nPulses, avgCurrent[2] / nPulses);
+            avgPulsePhase[0] / nPulses, avgPulsePhase[1] / nPulses, avgPulsePhase[2] / nPulses);
     Serial.print(str);
     IT.end();
     return;
@@ -123,12 +123,12 @@ void pulse() {
   setOutputMode(1, PT.mode[1]);
 
   for (int i = 0; i < 3; i++) {
-    writeToDacs(1.0 * PT.amplitude[i] / MICROAMPS_PER_DAC * (PT.mode[0] != 3),
-                1.0 * PT.amplitude[i] / MICROAMPS_PER_DAC * (PT.mode[1] != 3));
-    //unsigned long t = micros();
+    writeToDacs(1.0 * PT.amplitude[i] / ((!PT.mode[0])?MILLIVOLTS_PER_DAC:MICROAMPS_PER_DAC) * (PT.mode[0] != 3),
+                1.0 * PT.amplitude[i] / ((!PT.mode[1])?MILLIVOLTS_PER_DAC:MICROAMPS_PER_DAC) * (PT.mode[1] != 3));
+
     delayMicroseconds(max( ((long int) PT.pulseWidth) - SLEW_FUDGE, 0));
     readADC(lastAdcRead); // this limits bandwidth for voltage pulses
-    avgCurrent[i] += lastAdcRead[0] * MICROAMPS_PER_ADC;
+    avgPulsePhase[i] += lastAdcRead[0] * ((!PT.mode[0])?MILLIVOLTS_PER_ADC:MICROAMPS_PER_ADC);
   }
 
   setOutputMode(0, 3);
@@ -305,7 +305,7 @@ void loop() {
 
         if (comBuf[0] == 'T') {
           nPulses = 0;
-          for (int i = 0; i < 3; i++) avgCurrent[i] = 0;
+          for (int i = 0; i < 3; i++) avgPulsePhase[i] = 0;
           PT.trainStartTime = micros();
           if (!IT.begin(pulse, PT.period))
             Serial.println("loop: failure to initiate intervalTimer");
