@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="177.55656mm"
-   height="58.921101mm"
-   viewBox="0 0 177.55656 58.921101"
+   width="207.00732mm"
+   height="58.945217mm"
+   viewBox="0 0 207.00732 58.945218"
    version="1.1"
    id="svg8"
    sodipodi:docname="pulseTrainParametrization.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <defs
      id="defs2">
     <marker
@@ -268,16 +268,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="100.57472"
-     inkscape:cy="299.3421"
+     inkscape:zoom="1.4"
+     inkscape:cx="405.4157"
+     inkscape:cy="217.02199"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="1879"
+     inkscape:window-height="1028"
+     inkscape:window-x="41"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      fit-margin-top="10"
      fit-margin-left="10"
@@ -299,7 +299,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-16.994223,-4.2379954)">
+     transform="translate(12.456541,-4.2379954)">
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 26.994223,36.679481 h 22.584275 v -9.354434 h 3.608137 v 19.510674 h 3.60814 V 36.412209 h 25.261578 v -9.755338 h 3.340873 v 20.17885 h 3.60814 V 36.412209 h 29.202794"
@@ -360,7 +360,7 @@
        id="text7566"><tspan
          sodipodi:role="line"
          id="tspan7564"
-         x="41.816818"
+         x="41.758251"
          y="35.7672"
          style="text-align:center;text-anchor:middle;stroke-width:0.26458332">#3-4, </tspan><tspan
          sodipodi:role="line"
@@ -397,5 +397,21 @@
        id="path8312-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="13.580379"
+       y="22.208969"
+       id="text7566-5"><tspan
+         sodipodi:role="line"
+         x="13.580379"
+         y="22.208969"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332"
+         id="tspan8314-2">#1-2, channel modes</tspan><tspan
+         sodipodi:role="line"
+         x="13.580379"
+         y="26.61869"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332"
+         id="tspan1907"> (current or voltage)</tspan></text>
   </g>
 </svg>
