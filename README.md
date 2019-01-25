@@ -4,8 +4,8 @@ Microstim is a current and voltage stimulator for stimulating neural tissue (as 
 
 # Specifications:
 
- - Cost is approximately $131 USD per stimulator
- - Two independently-controllable output channels
+ - Two independently-controllable output channels, each with both current and voltage output modes
+ - Total cost: $131 USD.
  - Output range in current mode: -833uA to +833uA. 
  - Pulse width in current mode: down to 50 us.
  - Output range in voltage mode: -12V to 12V.
@@ -18,12 +18,12 @@ Microstim is a current and voltage stimulator for stimulating neural tissue (as 
 
 Here are the steps to build your very own microstim box. 
 
-1. Order [PCBs](./PCBs/CombinedPCB_fabricationFiles_20181210/)  (from Seeedstudio or any other PCB manufacturer). 
-2. Order [components](./microstim_BOM.xlsx) (entirely from digikey, except for the enclosure).
-3. Order an enclosure (optional, but it protects the circuit and looks pretty) from Newark.
+1. Order [PCBs](./PCBs/CombinedPCB_fabricationFiles_20181210/)  (from [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
+2. Order [components](./microstim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/), except for the enclosure).
+3. Order an [enclosure](https://www.newark.com/box-enclosures/b5-080bk/enclosure-instrument-aluminium/dp/39M5412?ost=B5-080BK) (optional, but it protects the circuit and looks pretty) from Newark.
 4. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering ability.
 5. Compile and download the [firmware](./microstim_teensy/microstim_teensy.ino) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!)
-6. Shock something!
+6. Stimulate something!
 
 # Getting started using microstim:
 
