@@ -54,6 +54,10 @@ After the "S", the first parameter is the number of the PulseTrain that we are d
  - 2 = Current output, ADC reads output current
  - 3 = Output is grounded, ADC reads output current (shunted through a 1k resistor to ground).
 
+Our example command above was: 
+   
+   S0,2,0,2000,1000000;100,0,150;-100,-100,200
+   
 In this example, output 1 is generating a current output (mode 2), and output 1 is generating a voltage output (mode 0). To specify that a channel should not output anything during a pulse train, set the mode to 3 (ground).  
 
 The fourth parameter is the _period_ of the pulse train. In this example, pulses are delivered every 2000 ms.
