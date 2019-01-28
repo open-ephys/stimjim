@@ -27,30 +27,44 @@ Here are the steps to build your very own microstim box.
 
 # Getting started using microstim:
 
-To generate a pulse train, you need to send a serial command, terminated by a newline (\n). An example command would be:
+To generate a pulse train, you first need to send a serial command, terminated by a newline (\n) in order to define a pulse train. An example command would be:
 
-   T0,3,200,-200,50,2000,1000000
+   S0,2,0,2000,1000000;100,0,150;-100,-100,200
    
-The "T" indicates to generate a pulse train. If any comma-separated numbers appear following the T, they are the pulse train parameters. (Any unspecified parameters will use the most recent specification of those parameters, or the defaults if no pulse trains have yet been run.) Pulse train parameters 1-7 are shown graphically below.
+The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain #0. microstim can store 10 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain #0. 
+
+Once a PulseTrain is defined, to run it you would send a command of the form:
+
+   T0
+
+This tells microstim to start running PulseTrain #0. If we had parameterized PulseTrain #3, we could just as easily run PulseTrain #3 with the command "T3".
+
+##  Parameterization 
 
 ![Alt text](./pulseTrainParametrization.svg)
 
-The first two parameters are the mode of each output channels. Modes are as follows:
+The paramerization of a PulseTrain via an "S" command is as follows:
+
+S[PulseTrain number],[output 0 mode],[output 1 mode],[period],[duration];[mV or uA for stage 0 output 0],[mV or uA for stage 0 output 1],[stage 0 duration (ms)]; [mV or uA for stage 1 output 0],[mV or uA for stage 1 output 1],[stage 1 duration (ms)]; (etc for additional stages, up to 10 total stages).
+
+After the "S", the first parameter is the number of the PulseTrain that we are defining. The next two parameters are the modes of each output channels. Modes are as follows:
 
  - 0 = Voltage output, ADC reads voltage of output
  - 1 = Current output, ADC reads voltage of output 
  - 2 = Current output, ADC reads output current
  - 3 = Output is grounded, ADC reads output current (shunted through a 1k resistor to ground).
 
-In this example, output 0 is generating a voltage output, and output 1 is grounded (not doing anything). 
+In this example, output 1 is generating a current output (mode 2), and output 1 is generating a voltage output (mode 0). To specify that a channel should not output anything during a pulse train, set the mode to 3 (ground).  
 
-The third and fourth parameters are the _amplitude_ of the two phases of the pulse, in millivolts if mode is 0 and microamps if mode is non-zero. In the example given above, the pulse would be biphasic, first rising to 200 mV and then falling to -200 mV before returning to 0. 
+The fourth parameter is the _period_ of the pulse train. In this example, pulses are delivered every 2000 ms.
 
-The fifth parameter is the the _duration of each phase_ of the pulse, in microseconds. In the example, the 200 mV phase would last 50 us, followed by 50 us at -200 mV.
+The fifth parameter is the _duration_ of the pulse train, in microseconds. In the example, the pulse train lasts for one second (1000000 microseconds).
 
-The sixth parameter is the _period_ of the pulse train. In this example, biphasic pulses are delivered every 2000 ms.
+Parameters after the 5th come in sets of 3, and describe a "stage" of a pulse in the train. Note that a semi-colon is before the beginning of each set of 3, and the three parameters themselves are separated from each other by commas. The first two parameters are the amplitude (in mV or uA, depending on whether the output is voltage or current) of each channel during that stage, and the third is the duration (in microseconds) of that stage. 
 
-The seventh and last parameter is the _duration_ of the pulse train, in microseconds. In the example, the pulse train lasts for one second (1000000 microseconds).
+In the example given above, there are two stages to each pulse. In the first, channel 0 outputs 100uA, channel 1 outputs nothing, and that lasts for 150 usec. Then channel 0 switches to outputting -100uA, and channel 2 outputs -100mV for 200 usec. 
+
+
 
 
 
