@@ -1,10 +1,10 @@
-/* microstim_teensy (c) Nathan Cermak 2019
+/* microstim_teensy (c) Nathan Cermak 2019.
  *  
  */
 
 #include <SPI.h> 
 
-// Vout = 4.758*Vin - 12.08. Vin must be 2.54
+// In voltage mode, Vout = 4.758*Vin - 12.08. 
 
 #define MICROAMPS_PER_DAC 0.40690104166     // 5V * (1/(3000 V/A)) / 2^12 = 0.4uA / DAC unit
 #define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.2325
@@ -62,9 +62,6 @@ void readADC(int *data);
 void pulse0();
 void pulse1();
 void getCurrentOffsets();
-
-
-
 
 
 
@@ -232,13 +229,22 @@ int pulse (volatile PulseTrain* PT) {
   if (PT->nPulses==0)
     PT->trainStartTime = micros();
 
-  if (micros() - PT->trainStartTime > PT->duration) {
+  if (micros() - PT->trainStartTime >= PT->duration) {
     Serial.print("Train complete. Delivered "); Serial.print(PT->nPulses); 
     Serial.println(" pulses.\nCurrent/Voltage by phase: ");
+    char str[100];
     for (int i = 0; i < PT->nPhases; i++) {
-      Serial.print("Phase "); Serial.print(i); Serial.print(": ");
-      Serial.print(PT->measuredAmplitude[0][i] / PT->nPulses); Serial.print(", ");
-      Serial.println(PT->measuredAmplitude[1][i] / PT->nPulses);
+      sprintf(str, "Phase %d: %6d%s, %6d%s,    (target %6d%s, %6d%s)\n", i,
+              PT->measuredAmplitude[0][i] / PT->nPulses,
+              (PT->mode[0] < 2)?"mV":"uA",
+              PT->measuredAmplitude[1][i] / PT->nPulses,
+              (PT->mode[1] < 2)?"mV":"uA", 
+              PT->amplitude[0][i], 
+              (PT->mode[0]==0)?"mV":"uA", 
+              PT->amplitude[1][i],
+              (PT->mode[1]==0)?"mV":"uA");
+      Serial.print(str);
+      
     }
     return 0;
   }
@@ -283,18 +289,28 @@ void pulse1() {
 void printPulseTrainParameters(int i){
   if (i < 0) i=0;
   if (i >= PT_ARRAY_LENGTH) i = PT_ARRAY_LENGTH;
+
+  const char modeStrings[4][40] = {"Voltage output, measure voltage", 
+  "Current output, measure voltage", "Current output, measure current", "No output"};
+
   Serial.println("----------------------------------");
   Serial.print("Parameters for PulseTrain["); Serial.print(i); Serial.println("]");
-  Serial.print("  mode[ch0]: "); Serial.println(PTs[i].mode[0]);
-  Serial.print("  mode[ch1]: "); Serial.println(PTs[i].mode[1]);
-  Serial.print("  period: "); Serial.println(PTs[i].period);
-  Serial.print("  duration: "); Serial.println(PTs[i].duration);
-  Serial.print("  nPhases: "); Serial.println(PTs[i].nPhases);
+  Serial.print("  mode[ch0]: "); Serial.print(PTs[i].mode[0]);
+  Serial.print(" ("); Serial.print(modeStrings[PTs[i].mode[0]]); Serial.println(")");
+  Serial.print("  mode[ch1]: "); Serial.print(PTs[i].mode[1]);
+  Serial.print(" ("); Serial.print(modeStrings[PTs[i].mode[1]]); Serial.println(")");
+  char str[100];
+  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration: %d usec (%0.3f sec)\n",
+    PTs[i].period, 0.000001*PTs[i].period, 1000000.0/PTs[i].period, PTs[i].duration, 0.000001*PTs[i].duration);
+  Serial.print(str);
+  
+  Serial.println("\n  phase    duration     output0   output1");
   for (int j = 0; j< PTs[i].nPhases; j++){
-    Serial.print("  phase "); Serial.println(j);
-    Serial.print("    amplitude ch0: "); Serial.println(PTs[i].amplitude[0][j]);
-    Serial.print("    amplitude ch1: "); Serial.println(PTs[i].amplitude[1][j]);
-    Serial.print("    phaseDuration: "); Serial.println(PTs[i].phaseDuration[j]);
+    sprintf(str, "   %2d  %7d usec %8d%s %8d%s\n", j, PTs[i].phaseDuration[j],
+            PTs[i].amplitude[0][j], (PTs[i].mode[0] == 0)?"mV":"uA",
+            PTs[i].amplitude[1][j], (PTs[i].mode[1] == 0)?"mV":"uA");
+    Serial.print(str);
+    
   }
   Serial.println("----------------------------------\n");
 }
@@ -374,7 +390,7 @@ void setup() {
 
   nChar = 0;
  
-  Serial.println("Ready to go!");
+  Serial.println("Ready to go!\n\n");
 
 }
 
@@ -430,7 +446,7 @@ void loop() {
           nChar=0;
           return;
         }
-        Serial.print("Starting "); Serial.print(comBuf[0]); 
+        Serial.print("\nStarting "); Serial.print(comBuf[0]); 
         Serial.print(" train with parameters of PulseTrain "); Serial.println(ptIndex);
         if (comBuf[0] == 'T'){
           activePT0 = clearPulseTrainHistory(&PTs[ptIndex]);

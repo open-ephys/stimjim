@@ -29,7 +29,7 @@ Here are the steps to build your very own microstim box.
 
 To generate a pulse train, you first need to send a serial command, terminated by a newline (\n) in order to define a pulse train. An example command would be:
 
-   S0,2,0,2000,1000000;100,0,150;-100,-100,200
+   S0,2,0,2000,1000000; 100,0,150; -100,-100,200
    
 The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain #0. microstim can store 10 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain #0. 
 
@@ -56,7 +56,7 @@ After the "S", the first parameter is the number of the PulseTrain that we are d
 
 Our example command above was: 
    
-   S0,2,0,2000,1000000;100,0,150;-100,-100,200
+   S0,2,0,2000,1000000; 100,0,150; -100,-100,200
    
 In this example, output 1 is generating a current output (mode 2), and output 1 is generating a voltage output (mode 0). To specify that a channel should not output anything during a pulse train, set the mode to 3 (ground).  
 
@@ -64,7 +64,7 @@ The fourth parameter is the _period_ of the pulse train. In this example, pulses
 
 The fifth parameter is the _duration_ of the pulse train, in microseconds. In the example, the pulse train lasts for one second (1000000 microseconds).
 
-Parameters after the 5th come in sets of 3, and describe a "stage" of a pulse in the train. Note that a semi-colon is before the beginning of each set of 3, and the three parameters themselves are separated from each other by commas. The first two parameters are the amplitude (in mV or uA, depending on whether the output is voltage or current) of each channel during that stage, and the third is the duration (in microseconds) of that stage. 
+Parameters after the 5th come in sets of 3, and describe a "stage" of a pulse in the train.  The first two parameters are the amplitude (in mV or uA, depending on whether the output is voltage or current) of each channel during that stage, and the third is the duration (in microseconds) of that stage. Note that a semi-colon is before the beginning of each set of 3, and the three parameters themselves are separated from each other by commas.
 
 In the example given above, there are two stages to each pulse. In the first, channel 0 outputs 100uA, channel 1 outputs nothing, and that lasts for 150 usec. Then channel 0 switches to outputting -100uA, and channel 2 outputs -100mV for 200 usec. 
 
