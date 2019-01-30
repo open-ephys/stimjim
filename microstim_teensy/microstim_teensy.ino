@@ -43,12 +43,12 @@ struct PulseTrain {
   unsigned long duration;                       // usec
 
   int nPhases;
-  int amplitude[2][MAX_NUM_PHASES];             // mV or uA, deppending on mode
+  int amplitude[2][MAX_NUM_PHASES];             // mV or uA, depending on mode
   unsigned int phaseDuration[MAX_NUM_PHASES];   // usec
 
   unsigned long trainStartTime;                 // usec 
-  long nPulses;
-  long measuredAmplitude[2][MAX_NUM_PHASES];
+  int nPulses;
+  int measuredAmplitude[2][MAX_NUM_PHASES];
 };
 volatile PulseTrain PTs[PT_ARRAY_LENGTH];
 volatile PulseTrain *activePT0, *activePT1;
@@ -173,51 +173,66 @@ void readADC(int *data) {
 
 
 void getCurrentOffsets() {
-  int lastAdcRead[2];
-  for (int channel = 0; channel < 2; channel++) {
-    setOutputMode(channel, 3); // no output, Iout goes to ground via 1k on-board resistor, ADC reads Isense
-    currentOffsets[channel] = 0;
-    int bestOffset = 0;
-    int bestDcVal = 10000;
-    for (int i = -500; i < 500; i++) {
-      writeToDac(channel, i);
-      delayMicroseconds(100);
+  int lastAdcRead[2], adcReadSum[2];
+  int bestDcVal[2] = {10000,10000};
+  
+  setOutputMode(0, 3); // no output, Iout goes to ground via 1k on-board resistor, ADC reads Isense
+  setOutputMode(1, 3); // no output, Iout goes to ground via 1k on-board resistor, ADC reads Isense
+  
+  for (int i = -500; i < 500; i++) {
+    writeToDacs(i, i);
+    delayMicroseconds(100);
+    adcReadSum[0] = adcReadSum[1] = 0;
+    for (int j=0; j<100; j++){
       readADC(lastAdcRead);
-      if ( abs(lastAdcRead[channel]) < abs(bestDcVal)) {
-        bestOffset = i;
-        bestDcVal = lastAdcRead[channel];
+      adcReadSum[0]+=lastAdcRead[0];
+      adcReadSum[1]+=lastAdcRead[1];
+    }
+    for (int channel=0; channel < 2; channel++){
+      if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
+        currentOffsets[channel] = i;
+        bestDcVal[channel] = abs(adcReadSum[channel]);
       }
     }
-    currentOffsets[channel] = bestOffset;
   }
+  writeToDacs(currentOffsets[0], currentOffsets[1]);
+  
   char str[40];
-  sprintf(str, "best current offsets: %d, %d\n", currentOffsets[0], currentOffsets[1]);
+  sprintf(str, "Best current offsets: %d, %d\n", currentOffsets[0], currentOffsets[1]);
   Serial.print(str);
 }
 
 
 void getVoltageOffsets() {
-  int lastAdcRead[2];
-  for (int channel = 0; channel < 2; channel++) {
-    setOutputMode(channel, 0); // no output, Iout goes to ground via 1k on-board resistor, ADC reads Isense
-    voltageOffsets[channel] = 0;
-    int bestOffset = 0;
-    int bestDcVal = 10000;
-    for (int i = -500; i < 500; i++) {
-      writeToDac(channel, i);
-      delayMicroseconds(100);
+  int lastAdcRead[2], adcReadSum[2];
+  int bestDcVal[2] = {10000,10000};
+  
+  setOutputMode(0, 0); // VOLTAGE OUTPUT - DANGEROUS
+  setOutputMode(1, 0); // VOLTAGE OUTPUT - DANGEROUS
+  
+  for (int i = -500; i < 500; i++) {
+    writeToDacs(i, i);
+    delayMicroseconds(20);
+    adcReadSum[0] = adcReadSum[1] = 0;
+    for (int j=0; j<100; j++){
       readADC(lastAdcRead);
-      if ( abs(lastAdcRead[channel]) < abs(bestDcVal)) {
-        bestOffset = i;
-        bestDcVal = lastAdcRead[channel];
+      adcReadSum[0]+=lastAdcRead[0];
+      adcReadSum[1]+=lastAdcRead[1];
+    }
+    for (int channel=0; channel < 2; channel++){
+      if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
+        voltageOffsets[channel] = i;
+        bestDcVal[channel] = abs(adcReadSum[channel]);
       }
     }
-    voltageOffsets[channel] = bestOffset;
-    setOutputMode(channel, 3);
   }
-  
+
+  writeToDacs(voltageOffsets[0],voltageOffsets[1]);
+  setOutputMode(0, 3);
+  setOutputMode(1, 3);
+
   char str[40];
-  sprintf(str, "best voltage offsets: %d, %d\n", voltageOffsets[0], voltageOffsets[1]);
+  sprintf(str, "Best voltage offsets: %d, %d\n", voltageOffsets[0], voltageOffsets[1]);
   Serial.print(str);
 }
 
@@ -300,7 +315,7 @@ void printPulseTrainParameters(int i){
   Serial.print("  mode[ch1]: "); Serial.print(PTs[i].mode[1]);
   Serial.print(" ("); Serial.print(modeStrings[PTs[i].mode[1]]); Serial.println(")");
   char str[100];
-  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration: %d usec (%0.3f sec)\n",
+  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration: %lu usec (%0.3f sec)\n",
     PTs[i].period, 0.000001*PTs[i].period, 1000000.0/PTs[i].period, PTs[i].duration, 0.000001*PTs[i].duration);
   Serial.print(str);
   
