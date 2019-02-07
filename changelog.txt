@@ -1,4 +1,4 @@
-Changes in V0.14: 
+Changes in V0.14 (V2): 
 
 1) extra power wire runs up teensy side of board - FIXED, wire removed
 2) teensy power pin to CC3 isn't on side row - FIXED changed from Vusb to Vin (connected on teensy)
@@ -14,3 +14,17 @@ Changes in V0.14:
 11) I/O breakout changed to BNCs and push-terminals instead of screw terminals and SMA. 
 12) added enclosure and panels pcbs for mounting in a nice box. 
 13) pushbuttons removed. 
+
+
+Changes in V0.16 (V3):
+
+1) removed +-12V LDO regulators - CHECK
+2) removed MCP4922 DAC (0-5V,12bit), replaced with AD5752 (+-10V, 16bit) - CHECK
+3) added breakout for teensy pins in enclosure panel - CHECK
+
+4) added reset button for teensy on enclosure panel - program pin isnt broken out!
+5) bigger ground vias
+6) add indicator LEDs
+7) add buffer before ADC
+8) change name! - stim-jim?  gimmie stimmie? slim-stim?
+9) isolate each channel?
