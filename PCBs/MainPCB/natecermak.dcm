@@ -1,5 +1,35 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP +15V_0
+D Power flag, +15V
+K power-flag
+$ENDCMP
+#
+$CMP +15V_1
+D Power flag, +15V
+K power-flag
+$ENDCMP
+#
+$CMP +5V_0
+D Power flag, +5V
+K power-flag
+$ENDCMP
+#
+$CMP +5V_1
+D Power flag, +5V
+K power-flag
+$ENDCMP
+#
+$CMP -15V_0
+D Power flag, -15V
+K power-flag
+$ENDCMP
+#
+$CMP -15V_1
+D Power flag, -15V
+K power-flag
+$ENDCMP
+#
 $CMP AD1582
 D IC Voltage reference 2.5V SOT23-3
 F http://www.analog.com/media/en/technical-documentation/data-sheets/AD1582_1583_1584_1585.pdf
