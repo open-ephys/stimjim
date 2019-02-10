@@ -17,14 +17,10 @@ Changes in V0.14 (V2):
 
 
 Changes in V0.16 (V3):
-
-1) removed +-12V LDO regulators - CHECK
-2) removed MCP4922 DAC (0-5V,12bit), replaced with AD5752 (+-10V, 16bit) - CHECK
-3) added breakout for teensy pins in enclosure panel - CHECK
-
-4) added reset button for teensy on enclosure panel - program pin isnt broken out!
-5) bigger ground vias
-6) add indicator LEDs
-7) add buffer before ADC
-8) change name! - stim-jim?  gimmie stimmie? slim-stim?
-9) isolate each channel?
+0) isolated each channel separately (no shared ground)
+1) removed +-12V LDO regulators (now directly using +-15V)
+2) removed MCP4922 DAC (0-5V,12bit), replaced with AD5752 (+-10V, 16bit)
+3) added breakout for teensy pins in enclosure panel
+4) added reset button for teensy on enclosure panel (program pin isnt broken out - need airwire!)
+5) added indicator LEDs
+6) change name! - stim-jim?  gimmie stimmie? slim-stim?
