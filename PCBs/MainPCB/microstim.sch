@@ -119,17 +119,6 @@ $EndComp
 Wire Wire Line
 	6050 1850 5850 1850
 $Comp
-L power:+3.3V #PWR03
-U 1 1 5B7D2A4B
-P 700 1850
-F 0 "#PWR03" H 700 1700 50  0001 C CNN
-F 1 "+3.3V" H 715 2023 50  0000 C CNN
-F 2 "" H 700 1850 50  0001 C CNN
-F 3 "" H 700 1850 50  0001 C CNN
-	1    700  1850
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:R_US R5
 U 1 1 5B7EBBC6
 P 12900 2500
@@ -291,10 +280,6 @@ Text GLabel 1100 1400 0    50   Input ~ 0
 CS1_0
 Text GLabel 1100 1500 0    50   Input ~ 0
 CS0_0
-Wire Wire Line
-	1250 1900 700  1900
-Wire Wire Line
-	700  1900 700  1850
 Text GLabel 8300 2450 0    50   Input ~ 0
 SCK_0i
 Text GLabel 8300 2650 0    50   Input ~ 0
@@ -1819,8 +1804,6 @@ Wire Wire Line
 Connection ~ 700  3200
 Wire Wire Line
 	700  3200 700  3300
-Wire Wire Line
-	600  3000 1250 3000
 Text GLabel 2600 5200 2    50   Input ~ 0
 VUSB
 $Comp
@@ -3575,17 +3558,6 @@ Wire Wire Line
 	700  4300 1250 4300
 Wire Wire Line
 	2600 5200 2500 5200
-$Comp
-L power:+3.3V #PWR0111
-U 1 1 5D1270A2
-P 600 3000
-F 0 "#PWR0111" H 600 2850 50  0001 C CNN
-F 1 "+3.3V" H 615 3173 50  0000 C CNN
-F 2 "" H 600 3000 50  0001 C CNN
-F 3 "" H 600 3000 50  0001 C CNN
-	1    600  3000
-	1    0    0    -1  
-$EndComp
 Text GLabel 2600 5900 2    50   Input ~ 0
 GPIO11
 Wire Wire Line
@@ -3751,4 +3723,17 @@ Text Notes 5200 7350 1    79   ~ 0
 Stim channel 1
 Text Notes 5200 2700 1    79   ~ 0
 Stim channel 0
+$Comp
+L power:+3.3V #PWR0115
+U 1 1 5C672D77
+P 3750 4000
+F 0 "#PWR0115" H 3750 3850 50  0001 C CNN
+F 1 "+3.3V" H 3765 4173 50  0000 C CNN
+F 2 "" H 3750 4000 50  0001 C CNN
+F 3 "" H 3750 4000 50  0001 C CNN
+	1    3750 4000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 4000 3750 4000
 $EndSCHEMATC

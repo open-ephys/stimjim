@@ -1,0 +1,59 @@
+---
+title: "Microstim: open source hardware for precise electrical stimulation"
+author: ""
+date: "February 11, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Microstim is built like so
+  - Two independently-controllable output channels, each with both current and voltage output modes
+  - Total cost: $131 USD.
+  - Output range in current mode: -833uA to +833uA.
+  - Pulse width in current mode: down to 50 us.
+  - Output range in voltage mode: -12V to 12V.
+  - Pulse width in current mode: down to 10 us.
+  - In current mode, +-11V compliance voltage (+/-833uA output possible for resistances up to 13k, +-110uA possible for resistances up to 100k)
+  - Channels are isolated 
+  - Onboard ADC measurement of actual output current or voltage
+  - runs on USB power
+  - uses a Teensy-based microcontroller
+  - FIGURE 1 (picture)
+
+## Microstim is precise
+
+  - amplitude accuracy
+    - voltage and current output
+  - pulse timing accuracy
+  - channels are isolated
+  - FIGURE 2 (benchmarks)
+
+## Microstim is digital and highly configurable
+
+
+## Microstim is better than everything else
+  - TABLE 1 comparing stimulators?
+    - STG3000 / 4000 from multichannel systems
+    - WPI A310 Accupulser?
+    - pulsepal
+    
+## Microstim limitations
+
+## Potential applications
+  
+  - in vivo stimulation
+
+## Supplemental materials
+  - BOM
+  - gerbers
+  - schematic
+  - link to bitbucket
+  
+
+
+  
