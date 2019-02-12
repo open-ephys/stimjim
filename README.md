@@ -5,13 +5,14 @@ Microstim is a current and voltage stimulator for stimulating neural tissue (as 
 # Specifications:
 
  - Two independently-controllable output channels, each with both current and voltage output modes
- - Total cost: $131 USD.
- - Output range in current mode: -833uA to +833uA. 
+ - Total cost: $190 USD.
+ - Output range in current mode: -3.33mA to +3.33mA. 
  - Pulse width in current mode: down to 50 us.
- - Output range in voltage mode: -12V to 12V.
+ - Output range in voltage mode: -15V to 15V.
  - Pulse width in current mode: down to 10 us.
- - In current mode, +-11V compliance voltage (+/-833uA output possible for resistances up to 13k, +-110uA possible for resistances up to 100k)
- - Channels are isolated from power supply (but not from each other).
+ - In current mode, +-13.7V compliance voltage (+/-3.33uA output possible for resistances up to 4k, +-137uA possible for resistances up to 100k)
+ - Powered by USB
+ - Channels are isolated from power supply and from each other.
  - Onboard ADC measurement of actual output current or voltage
  
 # Building your own microstim:
@@ -43,9 +44,20 @@ This tells microstim to start running PulseTrain #0. If we had parameterized Pul
 
 ![Alt text](./pulseTrainParametrization.svg)
 
-The paramerization of a PulseTrain via an "S" command is as follows:
+The numbers that come after an "S" indicate parameters as denoted below:
 
-S[PulseTrain number],[output 0 mode],[output 1 mode],[period],[duration];[mV or uA for stage 0 output 0],[mV or uA for stage 0 output 1],[stage 0 duration (ms)]; [mV or uA for stage 1 output 0],[mV or uA for stage 1 output 1],[stage 1 duration (ms)]; (etc for additional stages, up to 10 total stages).
+1. [PulseTrain number], 
+2. [output 0 mode],
+3. [output 1 mode],
+4. [period],
+5. [duration];
+6. [mV or uA for stage 0 output 0],
+7. [mV or uA for stage 0 output 1],
+8. [stage 0 duration (ms)]; 
+9. [mV or uA for stage 1 output 0],
+10. [mV or uA for stage 1 output 1],
+11. [stage 1 duration (ms)];
+12. (etc for additional stages, up to 10 total stages).
 
 After the "S", the first parameter is the number of the PulseTrain that we are defining. The next two parameters are the modes of each output channels. Modes are as follows:
 

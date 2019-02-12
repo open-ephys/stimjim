@@ -1,21 +1,24 @@
+# Generate test parameters for benchmarking microstim 
+# (c) Nathan Cermak 2019
+#
+#
+
+projectDirectory = '/home/x/Desktop/microstim/'
 
 duration = 1e6
-
 paramMat = NULL
+mode0 = 0
+mode1 = 2
+amp = c(1000,100,100,100)[c(mode0,mode1)+1]
+ampScalings = c(1,5)
+pulseDurations = c(20,50,100,200,500,1000,2000)
+periods = round(exp(seq(log(500), log(5e5), length.out=10)))
 
-for (mode1 in 0:3){
-  for(mode2 in 0:3){
-    for (period in round(exp(seq(log(500), log(5e5), length.out=20)))){
-      amp = c(1000,100,100,100)[c(mode1,mode2)+1]
-      for (pulseDuration in c(20,30,40,50,75,100,200)){
-        params = c(mode1, mode2, period, duration, amp, pulseDuration, -amp, pulseDuration)
-        paramMat = rbind(paramMat, params)        
-      }
-      amp = amp*5
-      for (pulseDuration in c(20,30,40,50,75,100,200)){
-        params = c(mode1, mode2, period, duration, amp, pulseDuration, -amp, pulseDuration)
-        paramMat = rbind(paramMat, params)        
-      }
+for (period in periods){
+  for (pulseDuration in pulseDurations[pulseDurations<period/2]){
+    for (ampScaling in ampScalings){
+      params = c(mode0, mode1, period, duration, amp*ampScaling, pulseDuration, -amp*ampScaling, pulseDuration)
+      paramMat = rbind(paramMat, params)        
     }
   }
 }
@@ -25,24 +28,26 @@ par2string = function(p){
 }
 
 stringVector = apply(paramMat,1,par2string)
-cat(stringVector, file="/home/x/Desktop/paramStringFile.txt")
-write.csv(paramMat, "/home/x/Desktop/paramMat.csv")
+cat(stringVector, file=paste(projectDirectory,"benchmarking/paramStringFile.txt", sep=''))
+write.csv(paramMat, paste(projectDirectory,"benchmarking/paramMat.csv", sep=''),row.names = FALSE)
 
-con <- serial::serialConnection(name = "testcon",port = "ttyACM0",
-                        mode = "256000,n,8,1",
-                        newline = 0,
-                        translation = "auto")
-open(con)
-serial::read.serialConnection(con)
 
-# write some stuff
-for (i in 1:10){
-  serial::write.serialConnection(con, par2string(paramMat[i,]))
-  serial::write.serialConnection(con, "T0\n")
-  print(serial::read.serialConnection(con))
-  Sys.sleep(1.5)
-  # read, in case something came in
-  print(serial::read.serialConnection(con))
-}
-# close the connection
-close(con)
+# ###### testing with serial connection
+# con <- serial::serialConnection(name = "testcon",port = "ttyACM0",
+#                         mode = "256000,n,8,1",
+#                         newline = 0,
+#                         translation = "auto")
+# open(con)
+# serial::read.serialConnection(con)
+# 
+# # write some stuff
+# for (i in 1:10){
+#   serial::write.serialConnection(con, par2string(paramMat[i,]))
+#   serial::write.serialConnection(con, "T0\n")
+#   print(serial::read.serialConnection(con))
+#   Sys.sleep(1.5)
+#   # read, in case something came in
+#   print(serial::read.serialConnection(con))
+# }
+# # close the connection
+# close(con)
