@@ -19,6 +19,8 @@
 #define NLDAC 9
 #define PT_ARRAY_LENGTH 10
 #define MAX_NUM_STAGES 10
+#define IN0 22
+#define IN1 23
 
 
 // ------------- SPI setup ------------------------------------- //
@@ -52,6 +54,9 @@ struct PulseTrain {
 volatile PulseTrain PTs[PT_ARRAY_LENGTH];
 volatile PulseTrain *activePT0, *activePT1;
 IntervalTimer IT0, IT1;
+
+// ------------ Globals for trigger status -------------------- //
+int triggerTargetPTs[2];
 
 // ------------ Function prototypes --------------------------- //
 void writeToDacs(int amp0, int amp1);
@@ -244,7 +249,7 @@ int pulse (volatile PulseTrain* PT) {
     PT->trainStartTime = micros();
 
   if (micros() - PT->trainStartTime >= PT->duration) {
-    Serial.print("Train complete. Delivered "); Serial.print(PT->nPulses); 
+    /*Serial.print("Train complete. Delivered "); Serial.print(PT->nPulses); 
     Serial.println(" pulses.\nCurrent/Voltage by stage: ");
     char str[100];
     for (int i = 0; i < PT->nStages; i++) {
@@ -259,7 +264,7 @@ int pulse (volatile PulseTrain* PT) {
               (PT->mode[1]==0)?"mV":"uA");
       Serial.print(str);
       
-    }
+    }*/
     return 0;
   }
   
@@ -298,7 +303,21 @@ void pulse1() {
     IT1.end();
 }
 
+void trigISR0(){
+  if (triggerTargetPTs[0] >= 0){
+    activePT0 = clearPulseTrainHistory(&PTs[triggerTargetPTs[0]]);
+    if (!IT0.begin(pulse0, activePT0->period))
+      Serial.println("trigISR0: failure to initiate IntervalTimer IT0");
+  }
+}
 
+void trigISR1(){
+  if (triggerTargetPTs[1] >= 0){
+    activePT1 = clearPulseTrainHistory(&PTs[triggerTargetPTs[1]]);
+    if (!IT1.begin(pulse1, activePT1->period))
+      Serial.println("trigISR1: failure to initiate IntervalTimer IT1");  
+  }
+}
 
 void printPulseTrainParameters(int i){
   if (i < 0) i=0;
@@ -349,7 +368,7 @@ volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT){
 
 void setup() {
   delay(2000);
-  Serial.begin(9600);
+  Serial.begin(112500);
 
   Serial.println("Booting microstim on Teensy 3.5!");
 
@@ -401,11 +420,15 @@ void setup() {
     PTs[1].stageDuration[j] = 100;
   }
 
-
+  pinMode(IN0, INPUT);
+  pinMode(IN1, INPUT);
+  // initialize inputs so that triggers do nothing
+  triggerTargetPTs[0] = -1;
+  triggerTargetPTs[1] = -1;
+  
   nChar = 0;
  
   Serial.println("Ready to go!\n\n");
-
 }
 
 
@@ -483,6 +506,31 @@ void loop() {
         getCurrentOffsets();
         getVoltageOffsets();
       }
+
+      else if (comBuf[0] == 'R') {
+        int trigSrc = 0;
+        int ptIndex = 0;
+        int falling = 0;
+        sscanf(comBuf + 1, "%d,%d,%d", &trigSrc, &ptIndex, &falling );
+        if (ptIndex >= PT_ARRAY_LENGTH){
+          Serial.println("Invalid PulseTrain index.");
+          nChar=0;
+          return;
+        }
+        if (ptIndex>=0){
+          Serial.print("Attaching interrupt to IN"); Serial.print(trigSrc); 
+          Serial.print(" to run PulseTrain["); Serial.print(ptIndex); Serial.println("]");
+          triggerTargetPTs[trigSrc] = ptIndex;
+          // 
+          attachInterrupt( (trigSrc)?IN1:IN0, (trigSrc)?trigISR1:trigISR0, RISING);
+        }
+        else {
+          Serial.print("Detaching interrupt to IN"); Serial.println(trigSrc); 
+          detachInterrupt( (trigSrc)?IN1:IN0);
+          triggerTargetPTs[(trigSrc)?IN1:IN0] = -1;
+        }
+      }
+      
       
       nChar = 0; // reset the pointer!
     }
