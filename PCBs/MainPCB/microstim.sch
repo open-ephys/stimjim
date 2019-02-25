@@ -826,9 +826,9 @@ Wire Wire Line
 	13050 1650 13050 1700
 Wire Wire Line
 	13050 1700 13250 1700
-Text Notes 950  8550 0    50   ~ 0
+Text Notes 100  9400 0    50   ~ 0
 gain is Rsense*(1+49.4k/Rg) = 100*(1+49.4k/1.8k) =  2.87 mV/uA\nVoltage output range is thus  +-3333*0.00287 = +-9.57V\noutput needs to be within +-10V\ncurrent sensing resolution is 10000 mV / 2^12 / (2.87mV/uA) = 0.85uA\n\n
-Text Notes 950  8050 0    50   ~ 0
+Text Notes 100  8900 0    50   ~ 0
 Max current output (0ohm load) is (+/-10V)/3k = +- 3.33mA.\nCurrent resolution is 20V/2^16/3k = 0.1uA\nMax voltage output (infinite load) is 40/43*14.8V = +/-13.76V
 $Comp
 L Device:R_US R12
@@ -1105,23 +1105,23 @@ Wire Wire Line
 $Comp
 L Mechanical:MountingHole H1
 U 1 1 5C07145A
-P 3650 5650
-F 0 "H1" H 3750 5696 50  0000 L CNN
-F 1 "MountingHole" H 3750 5605 50  0000 L CNN
-F 2 "MountingHole:MountingHole_4.3mm_M4" H 3650 5650 50  0001 C CNN
-F 3 "~" H 3650 5650 50  0001 C CNN
-	1    3650 5650
+P 4250 5650
+F 0 "H1" H 4150 5696 50  0000 R CNN
+F 1 "MountingHole" H 4150 5605 50  0000 R CNN
+F 2 "MountingHole:MountingHole_4.3mm_M4" H 4250 5650 50  0001 C CNN
+F 3 "~" H 4250 5650 50  0001 C CNN
+	1    4250 5650
 	1    0    0    -1  
 $EndComp
 $Comp
 L Mechanical:MountingHole H2
 U 1 1 5C071952
-P 3650 5850
-F 0 "H2" H 3750 5896 50  0000 L CNN
-F 1 "MountingHole" H 3750 5805 50  0000 L CNN
-F 2 "MountingHole:MountingHole_4.3mm_M4" H 3650 5850 50  0001 C CNN
-F 3 "~" H 3650 5850 50  0001 C CNN
-	1    3650 5850
+P 4250 5850
+F 0 "H2" H 4150 5896 50  0000 R CNN
+F 1 "MountingHole" H 4150 5805 50  0000 R CNN
+F 2 "MountingHole:MountingHole_4.3mm_M4" H 4250 5850 50  0001 C CNN
+F 3 "~" H 4250 5850 50  0001 C CNN
+	1    4250 5850
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1198,7 +1198,7 @@ L Device:R_US R3
 U 1 1 5C0A05C6
 P 12300 1050
 F 0 "R3" V 12505 1050 50  0000 C CNN
-F 1 "500" V 12414 1050 50  0000 C CNN
+F 1 "5k" V 12414 1050 50  0000 C CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 12340 1040 50  0001 C CNN
 F 3 "~" H 12300 1050 50  0001 C CNN
 	1    12300 1050
@@ -1209,7 +1209,7 @@ L Device:R_US R1
 U 1 1 5C0A0946
 P 11350 1050
 F 0 "R1" V 11555 1050 50  0000 C CNN
-F 1 "1k" V 11464 1050 50  0000 C CNN
+F 1 "10k" V 11464 1050 50  0000 C CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 11390 1040 50  0001 C CNN
 F 3 "~" H 11350 1050 50  0001 C CNN
 	1    11350 1050
@@ -1317,7 +1317,7 @@ L Device:R_US R10
 U 1 1 5C16699B
 P 12550 5800
 F 0 "R10" V 12755 5800 50  0000 C CNN
-F 1 "500" V 12664 5800 50  0000 C CNN
+F 1 "5k" V 12664 5800 50  0000 C CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 12590 5790 50  0001 C CNN
 F 3 "~" H 12550 5800 50  0001 C CNN
 	1    12550 5800
@@ -1328,7 +1328,7 @@ L Device:R_US R8
 U 1 1 5C1669A2
 P 11600 5800
 F 0 "R8" V 11805 5800 50  0000 C CNN
-F 1 "1k" V 11714 5800 50  0000 C CNN
+F 1 "10k" V 11714 5800 50  0000 C CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 11640 5790 50  0001 C CNN
 F 3 "~" H 11600 5800 50  0001 C CNN
 	1    11600 5800
@@ -1513,7 +1513,7 @@ OUT_0
 Wire Wire Line
 	13100 3900 13050 3900
 Connection ~ 13050 3900
-Text Notes 950  7650 0    50   ~ 0
+Text Notes 100  8500 0    50   ~ 0
 OE0    OE1       Output      \n\n 0        0        VOLTAGE     \n 1        0        CURRENT    \n 0        1        High-Z  \n 1        1        GND  
 Wire Wire Line
 	13100 3200 13050 3200
@@ -3736,4 +3736,174 @@ F 3 "" H 3750 4000 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	3250 4000 3750 4000
+$Comp
+L Device:R_Small_US R17
+U 1 1 5C780809
+P 4050 500
+F 0 "R17" V 3845 500 50  0000 C CNN
+F 1 "R_Small_US" V 3936 500 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4050 500 50  0001 C CNN
+F 3 "~" H 4050 500 50  0001 C CNN
+	1    4050 500 
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C_Small C53
+U 1 1 5C780E8F
+P 4300 700
+F 0 "C53" V 4437 700 50  0000 C CNN
+F 1 "C_Small" V 4528 700 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D12.5mm_W5.0mm_P10.00mm" H 4300 700 50  0001 C CNN
+F 3 "~" H 4300 700 50  0001 C CNN
+	1    4300 700 
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R19
+U 1 1 5C782E14
+P 4300 500
+F 0 "R19" V 4095 500 50  0000 C CNN
+F 1 "R_Small_US" V 4186 500 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 500 50  0001 C CNN
+F 3 "~" H 4300 500 50  0001 C CNN
+	1    4300 500 
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R21
+U 1 1 5C7DBF6D
+P 4550 500
+F 0 "R21" V 4345 500 50  0000 C CNN
+F 1 "R_Small_US" V 4436 500 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4550 500 50  0001 C CNN
+F 3 "~" H 4550 500 50  0001 C CNN
+	1    4550 500 
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4400 500  4450 500 
+Wire Wire Line
+	4150 500  4200 500 
+Wire Wire Line
+	4200 700  3950 700 
+Wire Wire Line
+	3950 700  3950 500 
+Wire Wire Line
+	4400 700  4650 700 
+Wire Wire Line
+	4650 700  4650 500 
+$Comp
+L power:GND #PWR01
+U 1 1 5CA52EA1
+P 3950 700
+F 0 "#PWR01" H 3950 450 50  0001 C CNN
+F 1 "GND" H 3955 527 50  0000 C CNN
+F 2 "" H 3950 700 50  0001 C CNN
+F 3 "" H 3950 700 50  0001 C CNN
+	1    3950 700 
+	-1   0    0    -1  
+$EndComp
+Connection ~ 3950 700 
+$Comp
+L natecermak:GND_0 #GND_035
+U 1 1 5CA52FF3
+P 4650 700
+F 0 "#GND_035" H 4650 490 50  0001 C CNN
+F 1 "GND_0" H 4650 527 50  0000 C CNN
+F 2 "" H 4500 350 50  0001 C CNN
+F 3 "" H 4500 350 50  0001 C CNN
+	1    4650 700 
+	1    0    0    -1  
+$EndComp
+Connection ~ 4650 700 
+$Comp
+L Device:R_Small_US R18
+U 1 1 5CA53471
+P 4050 1250
+F 0 "R18" V 3845 1250 50  0000 C CNN
+F 1 "R_Small_US" V 3936 1250 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4050 1250 50  0001 C CNN
+F 3 "~" H 4050 1250 50  0001 C CNN
+	1    4050 1250
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C_Small C54
+U 1 1 5CA53478
+P 4300 1450
+F 0 "C54" V 4437 1450 50  0000 C CNN
+F 1 "C_Small" V 4528 1450 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D12.5mm_W5.0mm_P10.00mm" H 4300 1450 50  0001 C CNN
+F 3 "~" H 4300 1450 50  0001 C CNN
+	1    4300 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R20
+U 1 1 5CA5347F
+P 4300 1250
+F 0 "R20" V 4095 1250 50  0000 C CNN
+F 1 "R_Small_US" V 4186 1250 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 1250 50  0001 C CNN
+F 3 "~" H 4300 1250 50  0001 C CNN
+	1    4300 1250
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R22
+U 1 1 5CA53486
+P 4550 1250
+F 0 "R22" V 4345 1250 50  0000 C CNN
+F 1 "R_Small_US" V 4436 1250 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4550 1250 50  0001 C CNN
+F 3 "~" H 4550 1250 50  0001 C CNN
+	1    4550 1250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4400 1250 4450 1250
+Wire Wire Line
+	4150 1250 4200 1250
+Wire Wire Line
+	4200 1450 3950 1450
+Wire Wire Line
+	3950 1450 3950 1250
+Wire Wire Line
+	4400 1450 4650 1450
+Wire Wire Line
+	4650 1450 4650 1250
+$Comp
+L power:GND #PWR03
+U 1 1 5CA53493
+P 3950 1450
+F 0 "#PWR03" H 3950 1200 50  0001 C CNN
+F 1 "GND" H 3955 1277 50  0000 C CNN
+F 2 "" H 3950 1450 50  0001 C CNN
+F 3 "" H 3950 1450 50  0001 C CNN
+	1    3950 1450
+	-1   0    0    -1  
+$EndComp
+Connection ~ 3950 1450
+$Comp
+L natecermak:GND_1 #GND_036
+U 1 1 5CAB138B
+P 4650 1450
+F 0 "#GND_036" H 4650 1240 50  0001 C CNN
+F 1 "GND_1" H 4650 1277 50  0000 C CNN
+F 2 "" H 4500 1100 50  0001 C CNN
+F 3 "" H 4500 1100 50  0001 C CNN
+	1    4650 1450
+	1    0    0    -1  
+$EndComp
+Connection ~ 4650 1450
+Wire Notes Line
+	3700 50   3700 1750
+Wire Notes Line
+	3700 1750 4900 1750
+Wire Notes Line
+	4900 1750 4900 50  
+Wire Notes Line
+	4900 50   3700 50  
+Text Notes 3750 150  0    50   ~ 0
+Ground coupling
 $EndSCHEMATC

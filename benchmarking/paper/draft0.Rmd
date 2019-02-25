@@ -51,10 +51,10 @@ getPulseParams = function(f, thresh=100, fs, vpau){
     isStageHigh = 1.0*(x > thresh)
     isStageLow = 1.0*(x < -thresh)
     
-    plot(x[1:3000], type='l', ylim=c(190,220))
-    points(pulseIndices, x[pulseIndices], cex=0.3, col='red')
-    points(pulseStartIndices, x[pulseStartIndices], cex=1, col='blue')
-    points(pulseEndIndices, x[pulseEndIndices], cex=1, col='orange')
+    #plot(x[1:3000], type='l', ylim=c(190,220))
+    #points(pulseIndices, x[pulseIndices], cex=0.3, col='red')
+    #points(pulseStartIndices, x[pulseStartIndices], cex=1, col='blue')
+    #points(pulseEndIndices, x[pulseEndIndices], cex=1, col='orange')
 
     IPI = diff(pulseStartIndices/fs)
     IPI.summary = summary(IPI)
@@ -68,10 +68,11 @@ getPulseParams = function(f, thresh=100, fs, vpau){
     sh.sd = sd(x[which(mmand::erode(isStageHigh, rep(1,13))>0)])*vpau
     sl.median = median(x[which(isStageLow>0)])*vpau
     sl.sd = sd(x[which(mmand::erode(isStageLow, rep(1,13))>0)])*vpau
-  
+    
+    pulseMat = sapply(pulseStartIndices, function(j) x[j+(-100:1000)])
     list(IPI.summary=IPI.summary, IPI.sd=IPI.sd, PW.summary=PW.summary, 
              PW.sd=PW.sd, sh.median=sh.median, sh.sd=sh.sd, 
-             sl.median=sl.median, sl.sd=sl.sd)
+             sl.median=sl.median, sl.sd=sl.sd, pulseMat=pulseMat)
   })
 }
 
@@ -111,14 +112,14 @@ To benchmark, we varied mode, pulse frequency (from `r round(1e6/max(paramMat$pe
 
 
 par(mar=c(4,5,2,2), mfrow=c(4,3))
-plot(sapply(res, function(x) x$IPI.summary[3])*1e6, ylab='Median interpulse interval\n(microsec)')
-abline(h=2*unique(paramMat$period), col='red')
+plot(sapply(res, function(x) x$IPI.summary[3])*1e6, ylab='Median interpulse interval\n(microsec)', log='y')
+abline(h=unique(paramMat$period), col='red')
 plot(sapply(res, function(x) x$IPI.sd)*1e6, ylab='Interpulse interval stdev\n(microsec)')
 abline(h=0.5)
 plot(sapply(res, function(x) diff(x$IPI.summary[c(1,6)]))*1e6, ylab='Interpulse interval range\n(microsec)')
 abline(h=0.5)
 
-plot(sapply(res, function(x) x$PW.summary[3])*1e6, ylab='Median pulse width\n(microsec)')
+plot(sapply(res, function(x) x$PW.summary[3])*1e6, ylab='Median pulse width\n(microsec)', log='y')
 abline(h=2*unique(paramMat$dur0), col='red')
 plot(sapply(res, function(x) x$PW.sd)*1e6, ylab='Pulse width stdev\n(microsec)')
 abline(h=0.5)
@@ -135,8 +136,18 @@ plot(sapply(res, function(x) x$sl.sd), ylab='Pulse amplitude sd (V)')
 abline(h=0.5)
 plot(1,1)
 
+
 ```
 
+
+```{r fuckit}
+
+par(mfrow=c(3,3), mar=c(0,0,0,0))
+for (i in 1:10){#(length(res)/2)){
+  plot(rowMeans(res[[2*i-1]]$pulseMat), type='l', col='black', axes=FALSE, lty=1)
+  lines(rowMeans(res[[2*i]]$pulseMat), type='l', col='red', lty=1)
+}
+```
 ## Microstim is digital and highly configurable
 
 
