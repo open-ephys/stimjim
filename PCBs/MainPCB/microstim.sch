@@ -3737,61 +3737,24 @@ $EndComp
 Wire Wire Line
 	3250 4000 3750 4000
 $Comp
-L Device:R_Small_US R17
-U 1 1 5C780809
-P 4050 500
-F 0 "R17" V 3845 500 50  0000 C CNN
-F 1 "R_Small_US" V 3936 500 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4050 500 50  0001 C CNN
-F 3 "~" H 4050 500 50  0001 C CNN
-	1    4050 500 
-	0    1    1    0   
-$EndComp
-$Comp
 L Device:C_Small C53
 U 1 1 5C780E8F
 P 4300 700
 F 0 "C53" V 4437 700 50  0000 C CNN
-F 1 "C_Small" V 4528 700 50  0000 C CNN
-F 2 "Capacitor_THT:C_Disc_D12.5mm_W5.0mm_P10.00mm" H 4300 700 50  0001 C CNN
+F 1 "2.2nF" V 4528 700 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 700 50  0001 C CNN
 F 3 "~" H 4300 700 50  0001 C CNN
 	1    4300 700 
 	0    1    1    0   
 $EndComp
-$Comp
-L Device:R_Small_US R19
-U 1 1 5C782E14
-P 4300 500
-F 0 "R19" V 4095 500 50  0000 C CNN
-F 1 "R_Small_US" V 4186 500 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 500 50  0001 C CNN
-F 3 "~" H 4300 500 50  0001 C CNN
-	1    4300 500 
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R_Small_US R21
-U 1 1 5C7DBF6D
-P 4550 500
-F 0 "R21" V 4345 500 50  0000 C CNN
-F 1 "R_Small_US" V 4436 500 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4550 500 50  0001 C CNN
-F 3 "~" H 4550 500 50  0001 C CNN
-	1    4550 500 
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	4400 500  4450 500 
-Wire Wire Line
-	4150 500  4200 500 
 Wire Wire Line
 	4200 700  3950 700 
 Wire Wire Line
-	3950 700  3950 500 
+	3950 700  3950 550 
 Wire Wire Line
 	4400 700  4650 700 
 Wire Wire Line
-	4650 700  4650 500 
+	4650 700  4650 550 
 $Comp
 L power:GND #PWR01
 U 1 1 5CA52EA1
@@ -3817,23 +3780,12 @@ F 3 "" H 4500 350 50  0001 C CNN
 $EndComp
 Connection ~ 4650 700 
 $Comp
-L Device:R_Small_US R18
-U 1 1 5CA53471
-P 4050 1250
-F 0 "R18" V 3845 1250 50  0000 C CNN
-F 1 "R_Small_US" V 3936 1250 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4050 1250 50  0001 C CNN
-F 3 "~" H 4050 1250 50  0001 C CNN
-	1    4050 1250
-	0    1    1    0   
-$EndComp
-$Comp
 L Device:C_Small C54
 U 1 1 5CA53478
 P 4300 1450
 F 0 "C54" V 4437 1450 50  0000 C CNN
-F 1 "C_Small" V 4528 1450 50  0000 C CNN
-F 2 "Capacitor_THT:C_Disc_D12.5mm_W5.0mm_P10.00mm" H 4300 1450 50  0001 C CNN
+F 1 "2.2nF" V 4528 1450 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 1450 50  0001 C CNN
 F 3 "~" H 4300 1450 50  0001 C CNN
 	1    4300 1450
 	0    1    1    0   
@@ -3841,37 +3793,22 @@ $EndComp
 $Comp
 L Device:R_Small_US R20
 U 1 1 5CA5347F
-P 4300 1250
-F 0 "R20" V 4095 1250 50  0000 C CNN
-F 1 "R_Small_US" V 4186 1250 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 1250 50  0001 C CNN
-F 3 "~" H 4300 1250 50  0001 C CNN
-	1    4300 1250
+P 4300 1300
+F 0 "R20" V 4095 1300 50  0000 C CNN
+F 1 "1M" V 4186 1300 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 1300 50  0001 C CNN
+F 3 "~" H 4300 1300 50  0001 C CNN
+	1    4300 1300
 	0    1    1    0   
 $EndComp
-$Comp
-L Device:R_Small_US R22
-U 1 1 5CA53486
-P 4550 1250
-F 0 "R22" V 4345 1250 50  0000 C CNN
-F 1 "R_Small_US" V 4436 1250 50  0000 C CNN
-F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4550 1250 50  0001 C CNN
-F 3 "~" H 4550 1250 50  0001 C CNN
-	1    4550 1250
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	4400 1250 4450 1250
-Wire Wire Line
-	4150 1250 4200 1250
 Wire Wire Line
 	4200 1450 3950 1450
 Wire Wire Line
-	3950 1450 3950 1250
+	3950 1450 3950 1300
 Wire Wire Line
 	4400 1450 4650 1450
 Wire Wire Line
-	4650 1450 4650 1250
+	4650 1450 4650 1300
 $Comp
 L power:GND #PWR03
 U 1 1 5CA53493
@@ -3906,4 +3843,23 @@ Wire Notes Line
 	4900 50   3700 50  
 Text Notes 3750 150  0    50   ~ 0
 Ground coupling
+$Comp
+L Device:R_Small_US R19
+U 1 1 5C782E14
+P 4300 550
+F 0 "R19" V 4095 550 50  0000 C CNN
+F 1 "1M" V 4186 550 50  0000 C CNN
+F 2 "Resistor_SMD:R_1210_3225Metric_Pad1.42x2.65mm_HandSolder" H 4300 550 50  0001 C CNN
+F 3 "~" H 4300 550 50  0001 C CNN
+	1    4300 550 
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4400 1300 4650 1300
+Wire Wire Line
+	3950 1300 4200 1300
+Wire Wire Line
+	3950 550  4200 550 
+Wire Wire Line
+	4400 550  4650 550 
 $EndSCHEMATC

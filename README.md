@@ -1,6 +1,6 @@
-Microstim - a flexible, precise, and inexpensive open-source stimulator
+Stimjim - a flexible, precise, and inexpensive open-source stimulator
 -------------------------------
-Microstim is a current and voltage stimulator for stimulating neural tissue (as with stimulating electrodes). 
+Stimjim is a current and voltage stimulator for stimulating neural tissue (as with stimulating electrodes). 
 
 # Specifications:
 
@@ -15,29 +15,29 @@ Microstim is a current and voltage stimulator for stimulating neural tissue (as 
  - Channels are isolated from power supply and from each other.
  - Onboard ADC measurement of actual output current or voltage
  
-# Building your own microstim:
+# Building your own Stimjim:
 
-Here are the steps to build your very own microstim box. 
+Here are the steps to build your very own Stimjim box. 
 
 1. Order [printed circuit boards (PCBs)](./PCBs/CombinedPCB_fabricationFiles_20181210/)  (from [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
-2. Order [components](./microstim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
+2. Order [components](./Stimjim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
 3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering ability.
-4. Compile and download the [firmware](./microstim_teensy/microstim_teensy.ino) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!)
+4. Compile and download the [firmware](./Stimjim_teensy/Stimjim_teensy.ino) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!)
 5. Stimulate something!
 
-# Getting started using microstim:
+# Getting started using Stimjim:
 
 To generate a pulse train, you first need to send a serial command, terminated by a newline (\n) in order to define a pulse train. An example command would be:
 
    S0,2,0,2000,1000000; 100,0,150; -100,-100,200
    
-The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain #0. microstim can store 10 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain #0. 
+The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain #0. Stimjim can store 10 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain #0. 
 
 Once a PulseTrain is defined, to run it you would send a command of the form:
 
    T0
 
-This tells microstim to start running PulseTrain #0. If we had parameterized PulseTrain #3, we could just as easily run PulseTrain #3 with the command "T3".
+This tells Stimjim to start running PulseTrain #0. If we had parameterized PulseTrain #3, we could just as easily run PulseTrain #3 with the command "T3".
 
 ##  Parameterization 
 

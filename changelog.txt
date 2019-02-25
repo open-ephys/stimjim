@@ -23,4 +23,6 @@ Changes in V0.16 (V3):
 3) added breakout for teensy pins in enclosure panel
 4) added reset button for teensy on enclosure panel (program pin isnt broken out - need airwire!)
 5) added indicator LEDs
-6) change name! - stim-jim?  gimmie stimmie? slim-stim?
+6) added 1Mohm resistors and 2.2nF caps to couple GND_0 and GND_1 with GND (avoid huge floating potentials
+and make sure animal can slowly discharge)
+7) changed name to stimjim
