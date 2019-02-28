@@ -19,7 +19,7 @@ Stimjim is a current and voltage stimulator for stimulating neural tissue (as wi
 
 Here are the steps to build your very own Stimjim box. 
 
-1. Order [printed circuit boards (PCBs)](./PCBs/CombinedPCB_fabricationFiles_20181210/)  (from [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
+1. Order [printed circuit boards (PCBs)](./PCB/stimjim_fabricationFiles_20180225.zip)  (from [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
 2. Order [components](./stimjim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
 3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering ability.
 4. Compile and download the [firmware](./stimjim_teensy/stimjim_teensy.ino) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!)
