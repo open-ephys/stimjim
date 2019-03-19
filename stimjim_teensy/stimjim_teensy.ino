@@ -4,8 +4,6 @@
 
 #include <SPI.h> 
 
-// In voltage mode, Vout = 4.758*Vin - 12.08. 
-
 #define MICROAMPS_PER_DAC 0.1017            // 20V * (1/(3000 V/A)) / 2^16 = 0.4uA / DAC unit
 #define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.2325
 #define MILLIVOLTS_PER_DAC 0.442             // 20V / 2^16 * gain of 1.45 ~= 6 mV / DAC unit
@@ -31,7 +29,7 @@
 
 // ------------- SPI setup ------------------------------------- //
 //AD5752 DAC runs at max 30MHz, mode 0,0 or 1,1 acceptable
-SPISettings settingsDAC(20000000, MSBFIRST, SPI_MODE0);
+SPISettings settingsDAC(10000000, MSBFIRST, SPI_MODE1T0);
 //AD7321 settings - clock starts high, data latch on falling edge
 SPISettings settingsADC(5000000, MSBFIRST, SPI_MODE2);  
 
@@ -102,13 +100,12 @@ void writeToDacs(int16_t amp0, int16_t amp1) {
   SPI.transfer(0);
   SPI.transfer16(amp0);
   digitalWrite(CS0_0, HIGH);
-  
   digitalWrite(CS0_1, LOW);
   SPI.transfer(0);
   SPI.transfer16(amp1);
   digitalWrite(CS0_1, HIGH);
   SPI.endTransaction();
-
+  
   // latch data on both DACs
   digitalWrite(NLDAC_0, LOW);
   digitalWrite(NLDAC_1, LOW);
@@ -156,6 +153,24 @@ void setupADCs() {
   }
   SPI.endTransaction();
 }
+
+void setupDACs() {
+  SPI.beginTransaction(settingsDAC);
+  for (int i = 0; i < 2; i++){
+    int cs = (i==0)?CS0_0:CS0_1;
+    digitalWrite(cs, LOW);
+    SPI.transfer(8); // select "output range" register
+    SPI.transfer16(4); // set mode as "+-10V mode (xxx...100)
+    digitalWrite(cs, HIGH);
+    digitalWrite(cs, LOW);
+    SPI.transfer(16); // select "power control" register
+    SPI.transfer16(1); // set mode as dac_A powered up
+    digitalWrite(cs, HIGH);
+    delayMicroseconds(100);
+  }
+  SPI.endTransaction();
+}
+
 
 
 void readADC(byte channel, int *data) {
@@ -270,11 +285,12 @@ int pulse (volatile PulseTrain* PT) {
                 PT->amplitude[1][i] / ((!PT->mode[1])?MILLIVOLTS_PER_DAC:MICROAMPS_PER_DAC) + ((PT->mode[1])?currentOffsets[1]:voltageOffsets[1])); //* (PT->mode[1] != 3));
 
     delayMicroseconds(max( ((long int) PT->stageDuration[i]), 0));
-    
-    int lastAdcRead[2];
+    // TESTING
+    /*int lastAdcRead[2];
     readADC(0,lastAdcRead); // note: this limits bandwidth for voltage pulses
     PT->measuredAmplitude[0][i] += lastAdcRead[0] * ((PT->mode[0] < 2)?MILLIVOLTS_PER_ADC:MICROAMPS_PER_ADC);
     PT->measuredAmplitude[1][i] += lastAdcRead[1] * ((PT->mode[1] < 2)?MILLIVOLTS_PER_ADC:MICROAMPS_PER_ADC);
+    */
   }
 
   setOutputMode(0, 3);
@@ -317,8 +333,8 @@ void printPulseTrainParameters(int i){
   if (i < 0) i=0;
   if (i >= PT_ARRAY_LENGTH) i = PT_ARRAY_LENGTH;
 
-  const char modeStrings[4][40] = {"Voltage output, measure voltage", 
-  "Current output, measure voltage", "Current output, measure current", "No output"};
+  const char modeStrings[4][40] = {"Voltage output", 
+  "Current output", "No output (high-Z)", "No output (grounded)"};
 
   Serial.println("----------------------------------");
   Serial.print("Parameters for PulseTrain["); Serial.print(i); Serial.println("]");
@@ -369,29 +385,32 @@ void setup() {
   Serial.begin(112500);
 
   Serial.println("Booting microstim on Teensy 3.5!");
-
-  Serial.println("Initializing DAC and ADC...");
-  int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
-  for (int i =0; i < 6; i++){
-    pinMode(pins[i], OUTPUT);
-    digitalWrite(pins[i], HIGH);
-  }
-
-  Serial.println("Setting initial outputs off...");
-  for (int i =6; i < 12; i++)
-    pinMode(pins[i], OUTPUT);
-  setOutputMode(0,3);
-  setOutputMode(1,3);
-
+  
   Serial.println("Initializing SPI...");
   SPI.begin();
 
+  Serial.println("Initializing pins...");
+  int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
+  for (int i =0; i < 12; i++){
+    pinMode(pins[i], OUTPUT);
+    digitalWrite(pins[i], HIGH);
+  }
+  setOutputMode(0,3); // redundant to set this, but safe in case of future changes
+  setOutputMode(1,3); 
+
   Serial.println("Initializing ADC...");
   setupADCs();
-
+  setupDACs();
+  
   Serial.println("Measuring DC offset...");
-  getCurrentOffsets();
-  getVoltageOffsets();
+  //getCurrentOffsets();
+  //getVoltageOffsets();
+  currentOffsets[0] = 0;
+  currentOffsets[1] = 0;
+  voltageOffsets[0] = 0;
+  voltageOffsets[1] = 0;
+  
+  
    
   
   for (int i=0; i < PT_ARRAY_LENGTH; i++){
@@ -422,7 +441,6 @@ void setup() {
   triggerTargetPTs[1] = -1;
   
   nChar = 0;
-
 
   digitalWrite(LED0, LOW);
   digitalWrite(LED1, LOW);
