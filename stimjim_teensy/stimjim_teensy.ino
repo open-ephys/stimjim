@@ -6,26 +6,32 @@
 
 // In voltage mode, Vout = 4.758*Vin - 12.08. 
 
-#define MICROAMPS_PER_DAC 0.40690104166     // 5V * (1/(3000 V/A)) / 2^12 = 0.4uA / DAC unit
+#define MICROAMPS_PER_DAC 0.1017            // 20V * (1/(3000 V/A)) / 2^16 = 0.4uA / DAC unit
 #define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.2325
-#define MILLIVOLTS_PER_DAC 5.81             // 5V / 2^12 * gain of 4.758 ~= 6 mV / DAC unit
-#define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
-#define OE0 6
-#define OE1 5
-#define OE2 4
-#define OE3 3
-#define CS0 8
-#define CS1 7
-#define NLDAC 9
+#define MILLIVOLTS_PER_DAC 0.442             // 20V / 2^16 * gain of 1.45 ~= 6 mV / DAC unit
+#define MILLIVOLTS_PER_ADC 2.44              // 20V / 2^13 = 2.44 mV / ADC unit
+
 #define PT_ARRAY_LENGTH 10
 #define MAX_NUM_STAGES 10
+
+#define OE0_0 7
+#define OE1_0 6
+#define OE0_1 2
+#define OE1_1 1
+#define CS0_0 9
+#define CS1_0 8
+#define CS0_1 4
+#define CS1_1 3
+#define NLDAC_1 5
+#define NLDAC_0 10
 #define IN0 22
 #define IN1 23
-
+#define LED0 21
+#define LED1 20
 
 // ------------- SPI setup ------------------------------------- //
-//MCP4922 DAC runs at max 20MHz, mode 0,0 or 1,1 acceptable
-SPISettings settingsDAC(16000000, MSBFIRST, SPI_MODE0);
+//AD5752 DAC runs at max 30MHz, mode 0,0 or 1,1 acceptable
+SPISettings settingsDAC(20000000, MSBFIRST, SPI_MODE0);
 //AD7321 settings - clock starts high, data latch on falling edge
 SPISettings settingsADC(5000000, MSBFIRST, SPI_MODE2);  
 
@@ -59,77 +65,69 @@ IntervalTimer IT0, IT1;
 int triggerTargetPTs[2];
 
 // ------------ Function prototypes --------------------------- //
-void writeToDacs(int amp0, int amp1);
-void writeToDac(int ch, int amp);
-void setupADC();
-void readADC(int *data);
+void setOutputMode(byte channel, byte mode);
+void writeToDacs(int16_t amp0, int16_t amp1);
+void writeToDac(byte channel, int16_t amp);
+void setupADCs();
+void readADC(byte channel, int *data);
+void getCurrentOffsets();
+void getVoltageOffsets();
+int pulse (volatile PulseTrain* PT);
 void pulse0();
 void pulse1();
-void getCurrentOffsets();
-
-
-
+void trigISR0();
+void trigISR1();
+void printPulseTrainParameters(int i);
+volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT);
 
 
 void setOutputMode(byte channel, byte mode) {
-  /* Output Input
-      VOUT   VOUT       mode=0
-      IOUT   VOUT       mode=1
-      IOUT   ISENSE     mode=2
-      GND    ISENSE     mode=3  */
-  if (channel == 0) {
-    digitalWrite(OE0, (0b00000001 & mode) ? HIGH : LOW);
-    digitalWrite(OE1, (0b00000010 & mode) ? HIGH : LOW);
-  } else if (channel == 1) {
-    digitalWrite(OE2, (0b00000001 & mode) ? HIGH : LOW);
-    digitalWrite(OE3, (0b00000010 & mode) ? HIGH : LOW);
-  } else {
-    Serial.println("Invalid channel specified!");
-  }
+  /* mode = 0, output = VOLTAGE
+     mode = 1, output = CURRENT
+     mode = 2, output = HIGH-Z
+     mode = 3, output = GROUND */
+  digitalWrite((channel)?OE0_1:OE0_0, (0b00000001 & mode) ? HIGH : LOW);
+  digitalWrite((channel)?OE1_1:OE1_0, (0b00000010 & mode) ? HIGH : LOW);
 }
 
 
-// input arguments amp0 and amp1 go from -2048 to 2047.
-void writeToDacs(int amp0, int amp1) {
-  // convert to unsigned value
-  amp0 = amp0 + 2048;
-  amp1 = amp1 + 2048;
-  // make sure values saturate and don't exceed [0-4095]
-  if (amp0 > 4095) amp0 = 4095;
-  if (amp1 > 4095) amp1 = 4095;
-  if (amp0 < 0) amp0 = 0;
-  if (amp1 < 0) amp1 = 0;
+void writeToDacs(int16_t amp0, int16_t amp1) {
+  /* The input shift register is 24 bits wide. Data is loaded into the
+   * device MSB first as a 24-bit word. The input register consists of a read/write
+   * bit, three register select bits, three DAC address bits, and 16 data bits. 
+   * Stimjim AD5752 uses two's complement. */
 
   SPI.beginTransaction(settingsDAC);
-  //bit order for DAC (MCP4922) is notA, buf, notGA, notShutdown, Data11,Data10...Data0
-  digitalWrite(CS0, LOW);
-  SPI.transfer16(8192 + 4096 + amp0);
-  digitalWrite(CS0, HIGH);
-  digitalWrite(CS0, LOW);
-  SPI.transfer16(32768 + 8192 + 4096 + amp1);
-  digitalWrite(CS0, HIGH);
+  digitalWrite(CS0_0, LOW);
+  SPI.transfer(0);
+  SPI.transfer16(amp0);
+  digitalWrite(CS0_0, HIGH);
+  
+  digitalWrite(CS0_1, LOW);
+  SPI.transfer(0);
+  SPI.transfer16(amp1);
+  digitalWrite(CS0_1, HIGH);
   SPI.endTransaction();
 
-  // latch data
-  digitalWrite(NLDAC, LOW);
-  digitalWrite(NLDAC, HIGH);
+  // latch data on both DACs
+  digitalWrite(NLDAC_0, LOW);
+  digitalWrite(NLDAC_1, LOW);
+  digitalWrite(NLDAC_0, HIGH);
+  digitalWrite(NLDAC_1, HIGH);
 }
 
 
-// amp goes from -2048 to 2047.
-void writeToDac(int channel, int amp) {
-  amp = amp + 2048;
-  if (amp > 4095) amp = 4095;
-  if (amp < 0) amp = 0;
+void writeToDac(byte channel, int16_t amp) {
 
   SPI.beginTransaction(settingsDAC);
-  digitalWrite(CS0, LOW);
-  SPI.transfer16( (channel ? 32768 : 0) + 8192 + 4096 + amp);
-  digitalWrite(CS0, HIGH);
+  digitalWrite((channel)?CS0_1:CS0_0, LOW);
+  SPI.transfer(0);
+  SPI.transfer16(amp);
+  digitalWrite((channel)?CS0_1:CS0_0, HIGH);
   SPI.endTransaction();
 
-  digitalWrite(NLDAC, LOW);
-  digitalWrite(NLDAC, HIGH);
+  digitalWrite((channel)?NLDAC_1:NLDAC_0, LOW);
+  digitalWrite((channel)?NLDAC_1:NLDAC_0, HIGH);
 }
 
 
@@ -144,27 +142,28 @@ void writeToDac(int channel, int amp) {
   4: reference (0 = external; 1=internal)
   3: sequencer - if (1,0), then alternate channels
   2: sequencer */
-void setupADC() {
+void setupADCs() {
   SPI.beginTransaction(settingsADC);
-  digitalWrite(CS1, LOW);
-  int data = 32768 + 8192; // write range register, all zeros (+-10V on both channels)
-  SPI.transfer16(data);
-  digitalWrite(CS1, HIGH);
-  delayMicroseconds(100);
-  digitalWrite(CS1, LOW);
-  data = 32768 + 1024 + 16 + 8; // write control register, ch1, use internal ref, use sequencer
-  SPI.transfer16(data);
-  digitalWrite(CS1, HIGH);
+  for (int i = 0; i < 2; i++){
+    int cs = (i==0)?CS1_0:CS1_1;
+    digitalWrite(cs, LOW);
+    SPI.transfer16(32768 + 8192); // write range register, all zeros (+-10V on both channels)
+    digitalWrite(cs, HIGH);
+    delayMicroseconds(100);
+    digitalWrite(cs, LOW);
+    SPI.transfer16(32768 + 1024 + 16 + 8); // write control register, ch1, use internal ref, use sequencer
+    digitalWrite(cs, HIGH);
+  }
   SPI.endTransaction();
 }
 
 
-void readADC(int *data) {
+void readADC(byte channel, int *data) {
   SPI.beginTransaction(settingsADC);
   for (int i =0; i<2; i++){
-    digitalWrite(CS1, LOW);
+    digitalWrite((channel)?CS1_1:CS1_0, LOW);
     data[i] = SPI.transfer16(0) - (i?8192:0);
-    digitalWrite(CS1, HIGH);
+    digitalWrite((channel)?CS1_1:CS1_0, HIGH);
     if (data[i] > 4095)
       data[i] -= 8192;
     //Serial.print(data[i]); Serial.print(" ");
@@ -174,21 +173,19 @@ void readADC(int *data) {
 }
 
 
-
-
 void getCurrentOffsets() {
   int lastAdcRead[2], adcReadSum[2];
   int bestDcVal[2] = {10000,10000};
   
-  setOutputMode(0, 3); // no output, Iout goes to ground via 1k on-board resistor, ADC reads Isense
-  setOutputMode(1, 3); // no output, Iout goes to ground via 1k on-board resistor, ADC reads Isense
+  setOutputMode(0, 3); // output grounded, Iout goes to ground via 1k on-board resistor
+  setOutputMode(1, 3); // output grounded, Iout goes to ground via 1k on-board resistor
   
   for (int i = -500; i < 500; i++) {
     writeToDacs(i, i);
     delayMicroseconds(100);
     adcReadSum[0] = adcReadSum[1] = 0;
     for (int j=0; j<100; j++){
-      readADC(lastAdcRead);
+      readADC(0,lastAdcRead);
       adcReadSum[0]+=lastAdcRead[0];
       adcReadSum[1]+=lastAdcRead[1];
     }
@@ -219,7 +216,7 @@ void getVoltageOffsets() {
     delayMicroseconds(20);
     adcReadSum[0] = adcReadSum[1] = 0;
     for (int j=0; j<100; j++){
-      readADC(lastAdcRead);
+      readADC(0,lastAdcRead);
       adcReadSum[0]+=lastAdcRead[0];
       adcReadSum[1]+=lastAdcRead[1];
     }
@@ -239,9 +236,6 @@ void getVoltageOffsets() {
   sprintf(str, "Best voltage offsets: %d, %d\n", voltageOffsets[0], voltageOffsets[1]);
   Serial.print(str);
 }
-
-
-
 
 
 int pulse (volatile PulseTrain* PT) {
@@ -278,7 +272,7 @@ int pulse (volatile PulseTrain* PT) {
     delayMicroseconds(max( ((long int) PT->stageDuration[i]), 0));
     
     int lastAdcRead[2];
-    readADC(lastAdcRead); // note: this limits bandwidth for voltage pulses
+    readADC(0,lastAdcRead); // note: this limits bandwidth for voltage pulses
     PT->measuredAmplitude[0][i] += lastAdcRead[0] * ((PT->mode[0] < 2)?MILLIVOLTS_PER_ADC:MICROAMPS_PER_ADC);
     PT->measuredAmplitude[1][i] += lastAdcRead[1] * ((PT->mode[1] < 2)?MILLIVOLTS_PER_ADC:MICROAMPS_PER_ADC);
   }
@@ -367,24 +361,25 @@ volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT){
 
 
 void setup() {
+  pinMode(LED0, OUTPUT);
+  pinMode(LED1, OUTPUT);
+  digitalWrite(LED0, HIGH);
+  digitalWrite(LED1, HIGH);
   delay(2000);
   Serial.begin(112500);
 
   Serial.println("Booting microstim on Teensy 3.5!");
 
   Serial.println("Initializing DAC and ADC...");
-  pinMode(NLDAC, OUTPUT);
-  digitalWrite(NLDAC, HIGH);
-  pinMode(CS0, OUTPUT);
-  pinMode(CS1, OUTPUT);
-  digitalWrite(CS0, HIGH);
-  digitalWrite(CS1, HIGH);
+  int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
+  for (int i =0; i < 6; i++){
+    pinMode(pins[i], OUTPUT);
+    digitalWrite(pins[i], HIGH);
+  }
 
   Serial.println("Setting initial outputs off...");
-  pinMode(OE0, OUTPUT);
-  pinMode(OE1, OUTPUT);
-  pinMode(OE2, OUTPUT);
-  pinMode(OE3, OUTPUT);
+  for (int i =6; i < 12; i++)
+    pinMode(pins[i], OUTPUT);
   setOutputMode(0,3);
   setOutputMode(1,3);
 
@@ -392,7 +387,7 @@ void setup() {
   SPI.begin();
 
   Serial.println("Initializing ADC...");
-  setupADC();
+  setupADCs();
 
   Serial.println("Measuring DC offset...");
   getCurrentOffsets();
@@ -427,7 +422,10 @@ void setup() {
   triggerTargetPTs[1] = -1;
   
   nChar = 0;
- 
+
+
+  digitalWrite(LED0, LOW);
+  digitalWrite(LED1, LOW);
   Serial.println("Ready to go!\n\n");
 }
 
@@ -527,7 +525,7 @@ void loop() {
         else {
           Serial.print("Detaching interrupt to IN"); Serial.println(trigSrc); 
           detachInterrupt( (trigSrc)?IN1:IN0);
-          triggerTargetPTs[(trigSrc)?IN1:IN0] = -1;
+          triggerTargetPTs[trigSrc] = -1;
         }
       }
       
