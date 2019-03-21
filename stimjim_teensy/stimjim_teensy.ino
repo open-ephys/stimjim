@@ -3,9 +3,9 @@
 #include <SPI.h>
 
 #define MICROAMPS_PER_DAC 0.1017            // 20V * (1/(3000 V/A)) / 2^16 = 0.1uA / DAC unit
-#define MICROAMPS_PER_ADC 0.2325            // 20V * (1/(10500 V/A)) / 2^13 = 0.2325
-#define MILLIVOLTS_PER_DAC 0.442             // 20V / 2^16 * gain of 1.45 ~= 0.44 mV / DAC unit
-#define MILLIVOLTS_PER_ADC 2.44              // 20V / 2^13 = 2.44 mV / ADC unit
+#define MICROAMPS_PER_ADC 0.85              //  (1/(100*(1+49.9k/1.8k) V/A)) * 20V / 2^13 = 0.85
+#define MILLIVOLTS_PER_DAC 0.442            // 20V / 2^16 * gain of 1.45 ~= 0.44 mV / DAC unit
+#define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
 
 #define PT_ARRAY_LENGTH 10
 #define MAX_NUM_STAGES 10
@@ -27,9 +27,9 @@
 
 // ------------- SPI setup ------------------------------------- //
 //AD5752 DAC runs at max 30MHz, SPI mode 1 or 2
-SPISettings settingsDAC(10000000, MSBFIRST, SPI_MODE1); //S0,0,0,10000,10000000;100,100,300;-100,-100,300;
+SPISettings settingsDAC(10000000, MSBFIRST, SPI_MODE1); // Does not seem to work at 20MHz!
 //AD7321 settings - clock starts high, data latch on falling edge
-SPISettings settingsADC(1000000, MSBFIRST, SPI_MODE2);
+SPISettings settingsADC(5000000, MSBFIRST, SPI_MODE2);  // Can't run SPI clock faster than 1MHz without errors
 
 // ------------- Serial setup ---------------------------------- //
 char comBuf[1000];
@@ -51,7 +51,7 @@ struct PulseTrain {
 
   unsigned long trainStartTime;                 // usec
   int nPulses;
-  int measuredAmplitude[4][MAX_NUM_STAGES];
+  int measuredAmplitude[4][MAX_NUM_STAGES];     // Ch0_V, Ch0_I, Ch1_V, Ch1_I
 };
 volatile PulseTrain PTs[PT_ARRAY_LENGTH];
 volatile PulseTrain *activePT0, *activePT1;
@@ -140,9 +140,8 @@ void setupADCs() {
     SPI.transfer16(32768 + 8192); // write range register, all zeros (+-10V on both channels)
     digitalWrite(cs, HIGH);
     delayMicroseconds(100);
-    digitalWrite(cs, LOW); // [15] = write, [10]=
-    uint16_t data = 32768 + 1024 + 16 + 8;
-    SPI.transfer16(data); // write control register, ch1, use internal ref, use sequencer
+    digitalWrite(cs, LOW);
+    SPI.transfer16(32768 + 1024 + 16 + 8); // write control register, ch1, use internal ref, use sequencer
     digitalWrite(cs, HIGH);
   }
   SPI.endTransaction();
@@ -173,6 +172,7 @@ void readADC(byte channel, int *data) {
   SPI.beginTransaction(settingsADC);
   for (int i = 0; i < 2; i++) {
     digitalWrite((channel) ? CS1_1 : CS1_0, LOW);
+    delayMicroseconds(10);     // TODO - figure out why exactly this is necessary. 10us = NO errors, 3us = rare errors
     data[i] = SPI.transfer16(0) - (i ? 8192 : 0);
     digitalWrite((channel) ? CS1_1 : CS1_0, HIGH);
     if (data[i] > 4095)
@@ -191,11 +191,12 @@ void getCurrentOffsets() {
 
   for (int i = -500; i < 500; i++) {
     writeToDacs(i, i);
-    delayMicroseconds(100);
+    delayMicroseconds(30);
     adcReadSum[0] = adcReadSum[1] = 0;
-    for (int j = 0; j < 1; j++) {
+    for (int j = 0; j < 10; j++) {
       readADC(0, lastAdcRead);
       adcReadSum[0] += lastAdcRead[1];
+      delayMicroseconds(10);
       readADC(1, lastAdcRead);
       adcReadSum[1] += lastAdcRead[1];
     } 
@@ -227,10 +228,12 @@ void getVoltageOffsets() {
     writeToDacs(i, i);
     delayMicroseconds(20);
     adcReadSum[0] = adcReadSum[1] = 0;
-    for (int j = 0; j < 100; j++) {
+    for (int j = 0; j < 10; j++) {
       readADC(0, lastAdcRead);
       adcReadSum[0] += lastAdcRead[0];
-      adcReadSum[1] += lastAdcRead[1];
+      delayMicroseconds(10);
+      readADC(1, lastAdcRead);
+      adcReadSum[1] += lastAdcRead[0];
     }
     for (int channel = 0; channel < 2; channel++) {
       if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
@@ -261,21 +264,29 @@ int pulse (volatile PulseTrain* PT) {
   setOutputMode(1, PT->mode[1]);
 
   for (int i = 0; i < PT->nStages; i++) {
+    // minimum time is 5us, seems to actually be 10us
     writeToDacs(PT->amplitude[0][i] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]), //* (PT->mode[0] != 3),
                 PT->amplitude[1][i] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1])); //* (PT->mode[1] != 3));
 
-    delayMicroseconds(max( ((long int) PT->stageDuration[i]), 0));
+    // add 10 if no read, 47 if read (4x)
+    delayMicroseconds(max( ((long int) PT->stageDuration[i])-67, 0));
 
-    int lastAdcRead[2];
-    readADC(1, lastAdcRead); // note: this limits bandwidth for voltage pulses
-    PT->measuredAmplitude[0][i] += lastAdcRead[0] * ((PT->mode[0] < 2) ? MILLIVOLTS_PER_ADC : MICROAMPS_PER_ADC);
-    PT->measuredAmplitude[1][i] += lastAdcRead[1] * ((PT->mode[1] < 2) ? MILLIVOLTS_PER_ADC : MICROAMPS_PER_ADC);
+    int adcValue[2];
+    readADC(0, adcValue); // note: this limits bandwidth for voltage pulses
+    PT->measuredAmplitude[0][i] += adcValue[0] * MILLIVOLTS_PER_ADC; 
+    PT->measuredAmplitude[1][i] += adcValue[1] * MICROAMPS_PER_ADC;
+    //Serial.print(round(adcValue[0] * MILLIVOLTS_PER_ADC)); Serial.print("\t");
+    //Serial.print(round(adcValue[1] * MICROAMPS_PER_ADC));  Serial.print("\t");
+    readADC(1, adcValue); 
+    PT->measuredAmplitude[2][i] += adcValue[0] * MILLIVOLTS_PER_ADC;
+    PT->measuredAmplitude[3][i] += adcValue[1] * MICROAMPS_PER_ADC;
+    //Serial.print(round(adcValue[0] * MILLIVOLTS_PER_ADC)); Serial.print("\t");
+    //Serial.print(round(adcValue[1] * MICROAMPS_PER_ADC));  Serial.println(""); 
   }
-
-  setOutputMode(0, 3);
-  setOutputMode(1, 3);
   writeToDacs((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0],
               (PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
+  setOutputMode(0, 3);
+  setOutputMode(1, 3);
   PT->nPulses++;
 
   return 1;
@@ -285,14 +296,22 @@ int pulse (volatile PulseTrain* PT) {
 void printTrainResultSummary(volatile PulseTrain* PT) {
   Serial.print("Train complete. Delivered "); Serial.print(PT->nPulses);
   Serial.println(" pulses.\nCurrent/Voltage by stage: ");
-  char str[100];
+  Serial.println("           Ch0                Ch1 ");
+  char str[200];
   for (int i = 0; i < PT->nStages; i++) {
-    sprintf(str, "Stage %d: %6d%s, %6d%s,    (target %6d%s, %6d%s)\n", i,
-            PT->measuredAmplitude[0][i] / PT->nPulses,  (PT->mode[0] < 2) ? "mV" : "uA",
-            PT->measuredAmplitude[1][i] / PT->nPulses,  (PT->mode[1] < 2) ? "mV" : "uA",
-            PT->amplitude[0][i],  (PT->mode[0] == 0) ? "mV" : "uA",
-            PT->amplitude[1][i],  (PT->mode[1] == 0) ? "mV" : "uA");
+    Serial.print("Stage "); Serial.print(i);
+    if (PT->mode[0]==0) {
+      sprintf(str, "%6dmV,          ", PT->measuredAmplitude[0][i] / PT->nPulses);
+    } else {
+      sprintf(str, "%6duA(%dmV), ", PT->measuredAmplitude[1][i]/PT->nPulses, PT->measuredAmplitude[0][i]/PT->nPulses);
+    }
     Serial.print(str);
+    if (PT->mode[1]==0) {
+      sprintf(str, "%6dmV,  ", PT->measuredAmplitude[2][i] / PT->nPulses);
+    } else {
+      sprintf(str, "%6duA(%dmV), ",PT->measuredAmplitude[3][i]/PT->nPulses,  PT->measuredAmplitude[2][i]/PT->nPulses );
+    }
+    Serial.println(str);
   }
 }
 
@@ -317,6 +336,7 @@ void startIT0ViaInputTrigger() {
 
 void startIT0(int ptIndex) {
   activePT0 = clearPulseTrainHistory(&PTs[ptIndex]);
+  Serial.print("\nStarting T train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
 }
@@ -328,6 +348,7 @@ void startIT1ViaInputTrigger() {
 
 void startIT1(int ptIndex) {
   activePT1 = clearPulseTrainHistory(&PTs[ptIndex]);
+  Serial.print("\nStarting U train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (!IT1.begin(pulse1, activePT1->period))
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
 }
@@ -339,15 +360,12 @@ void printPulseTrainParameters(int i) {
     return;
   }
 
-  const char modeStrings[4][40] = {"Voltage output","Current output", 
-                                   "No output (high-Z)", "No output (grounded)"  };
+  const char modeStrings[4][40] = {"Voltage output","Current output", "No output (high-Z)", "No output (grounded)"};
   Serial.println("----------------------------------");
-  Serial.print("Parameters for PulseTrain["); Serial.print(i); Serial.println("]");
-  Serial.print("  mode[ch0]: "); Serial.print(PTs[i].mode[0]);
-  Serial.print(" ("); Serial.print(modeStrings[PTs[i].mode[0]]); Serial.println(")");
-  Serial.print("  mode[ch1]: "); Serial.print(PTs[i].mode[1]);
-  Serial.print(" ("); Serial.print(modeStrings[PTs[i].mode[1]]); Serial.println(")");
-  char str[100];
+  char str[200];
+  sprintf(str, "Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
+    i, PTs[i].mode[0], modeStrings[PTs[i].mode[0]], PTs[i].mode[1], modeStrings[PTs[i].mode[1]]);
+  Serial.print(str);
   sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration: %lu usec (%0.3f sec)\n",
           PTs[i].period, 0.000001 * PTs[i].period, 1000000.0 / PTs[i].period, PTs[i].duration, 0.000001 * PTs[i].duration);
   Serial.print(str);
@@ -364,10 +382,9 @@ void printPulseTrainParameters(int i) {
 
 volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT) {
   PT->nPulses = 0;
-  for (int i = 0; i < PT->nStages; i++) {
-    PT->measuredAmplitude[0][i] = 0;
-    PT->measuredAmplitude[1][i] = 0;
-  }
+  for (int i = 0; i < PT->nStages; i++)
+    for (int j=0; j < 4; j++)
+      PT->measuredAmplitude[j][i] = 0;
   return (PT);
 }
 
@@ -384,7 +401,7 @@ void setup() {
   pinMode(LED1, OUTPUT);
   digitalWrite(LED0, HIGH);
   digitalWrite(LED1, HIGH);
-  delay(2000);
+  delay(1000);
   
   Serial.begin(112500);
   bytesRecvd = 0;
@@ -408,17 +425,14 @@ void setup() {
   setupDACs();
 
   
-  Serial.println("Measuring DC offset...");
-  //while(true)
-    getCurrentOffsets();
-  //getVoltageOffsets();
-  currentOffsets[0] = currentOffsets[1] = 0;
-  voltageOffsets[0] = voltageOffsets[1] = 0;
+  Serial.println("Measuring DC offsets...");
+  getCurrentOffsets();
+  getVoltageOffsets();
   
   for (int i = 0; i < PT_ARRAY_LENGTH; i++) {
     PTs[i].mode[0] = 0;
     PTs[i].mode[1] = 0;
-    PTs[i].period = 1000;
+    PTs[i].period = 10000;
     PTs[i].duration = 10000000;
     PTs[i].nStages = 2;
     for (int j = 0; j < MAX_NUM_STAGES; j++) {
@@ -428,8 +442,8 @@ void setup() {
     }
   }
 
-  PTs[1].mode[0] = 2;
-  PTs[1].mode[1] = 2;
+  PTs[1].mode[0] = 1;
+  PTs[1].mode[1] = 1;
   for (int j = 0; j < MAX_NUM_STAGES; j++) {
     PTs[1].amplitude[0][j] = j ? -100 : 100;
     PTs[1].amplitude[1][j] = j ? 100 : 1 - 00;
@@ -500,8 +514,6 @@ void loop() {
           bytesRecvd = 0;
           return;
         }
-        Serial.print("\nStarting "); Serial.print(comBuf[0]);
-        Serial.print(" train with parameters of PulseTrain "); Serial.println(ptIndex);
         if (comBuf[0] == 'T') startIT0(ptIndex);
         if (comBuf[0] == 'U') startIT1(ptIndex);
       }
