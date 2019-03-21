@@ -343,6 +343,7 @@ void startIT0(int ptIndex) {
   Serial.print("\nStarting T train with parameters of PulseTrain "); Serial.println(ptIndex);
   if(activePT0->mode[0] < 2)  digitalWrite(LED0, HIGH);
   if(activePT0->mode[1] < 2)  digitalWrite(LED1, HIGH);
+  pulse0();
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
 }
@@ -357,6 +358,7 @@ void startIT1(int ptIndex) {
   Serial.print("\nStarting U train with parameters of PulseTrain "); Serial.println(ptIndex);
   if(activePT1->mode[0] < 2)  digitalWrite(LED0, HIGH);
   if(activePT1->mode[1] < 2)  digitalWrite(LED1, HIGH);
+  pulse1();
   if (!IT1.begin(pulse1, activePT1->period))
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
 }
