@@ -200,8 +200,8 @@ void getCurrentOffsets() {
       readADC(1, lastAdcRead);
       adcReadSum[1] += lastAdcRead[1];
     } 
-    Serial.print(i); Serial.print(","); 
-    Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
+    //Serial.print(i); Serial.print(","); 
+    //Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
     for (int channel = 0; channel < 2; channel++) {
       if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
         currentOffsets[channel] = i;
@@ -319,6 +319,8 @@ void pulse0() {
   if (!pulse(activePT0)) {
     IT0.end();
     printTrainResultSummary(activePT0);
+    if(activePT0->mode[0] < 2)  digitalWrite(LED0, LOW);
+    if(activePT0->mode[1] < 2)  digitalWrite(LED1, LOW);
   }
 }
 
@@ -326,6 +328,8 @@ void pulse1() {
   if (!pulse(activePT1)) {
     IT1.end();
     printTrainResultSummary(activePT1);
+    if(activePT1->mode[0] < 2)  digitalWrite(LED0, LOW);
+    if(activePT1->mode[1] < 2)  digitalWrite(LED1, LOW);
   }
 }
 
@@ -337,6 +341,8 @@ void startIT0ViaInputTrigger() {
 void startIT0(int ptIndex) {
   activePT0 = clearPulseTrainHistory(&PTs[ptIndex]);
   Serial.print("\nStarting T train with parameters of PulseTrain "); Serial.println(ptIndex);
+  if(activePT0->mode[0] < 2)  digitalWrite(LED0, HIGH);
+  if(activePT0->mode[1] < 2)  digitalWrite(LED1, HIGH);
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
 }
@@ -349,6 +355,8 @@ void startIT1ViaInputTrigger() {
 void startIT1(int ptIndex) {
   activePT1 = clearPulseTrainHistory(&PTs[ptIndex]);
   Serial.print("\nStarting U train with parameters of PulseTrain "); Serial.println(ptIndex);
+  if(activePT1->mode[0] < 2)  digitalWrite(LED0, HIGH);
+  if(activePT1->mode[1] < 2)  digitalWrite(LED1, HIGH);
   if (!IT1.begin(pulse1, activePT1->period))
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
 }
