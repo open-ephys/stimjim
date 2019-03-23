@@ -39,6 +39,9 @@ int bytesRecvd;
 int currentOffsets[2];
 int voltageOffsets[2];
 
+// ------------- States of ADCs --------------------------------//
+volatile bool adcSelectedInput[2];
+
 // ------------- PulseTrain parameter setup -------------------- //
 struct PulseTrain {
   unsigned int mode[2];
@@ -66,7 +69,7 @@ void setupDACs();
 void setOutputMode(byte channel, byte mode);
 void writeToDacs(int16_t amp0, int16_t amp1);
 void writeToDac(byte channel, int16_t amp);
-void readADC(byte channel, int *data);
+int readADC(byte channel, byte line);
 
 void getCurrentOffsets();
 void getVoltageOffsets();
@@ -141,7 +144,7 @@ void setupADCs() {
     digitalWrite(cs, HIGH);
     delayMicroseconds(100);
     digitalWrite(cs, LOW);
-    SPI.transfer16(32768 + 1024 + 16 + 8); // write control register, ch1, use internal ref, use sequencer
+    SPI.transfer16(32768 + 16); // write control register, read channel 0 (voltage), use internal ref, 
     digitalWrite(cs, HIGH);
   }
   SPI.endTransaction();
@@ -168,22 +171,28 @@ void setupDACs() {
 
 
 
-void readADC(byte channel, int *data) {
+int readADC(byte channel, byte line) {
   SPI.beginTransaction(settingsADC);
-  for (int i = 0; i < 2; i++) {
-    digitalWrite((channel) ? CS1_1 : CS1_0, LOW);
-    delayMicroseconds(10);     // TODO - figure out why exactly this is necessary. 10us = NO errors, 3us = rare errors
-    data[i] = SPI.transfer16(0) - (i ? 8192 : 0);
+  digitalWrite((channel) ? CS1_1 : CS1_0, LOW);
+  delayMicroseconds(10);     // TODO - figure out why exactly this is necessary. 10us = NO errors, 3us = rare errors
+  if(adcSelectedInput[channel] != line){
+    adcSelectedInput[channel] = line;
+    SPI.transfer16(32768 + 16 + 1024*line);
     digitalWrite((channel) ? CS1_1 : CS1_0, HIGH);
-    if (data[i] > 4095)
-      data[i] -= 8192;
+    digitalWrite((channel) ? CS1_1 : CS1_0, LOW);
   }
+
+  int data = SPI.transfer16(0) - (line ? 8192 : 0);
+  digitalWrite((channel) ? CS1_1 : CS1_0, HIGH);
   SPI.endTransaction();
+  if (data > 4095)
+    data -= 8192;
+  return(data);
 }
 
 
 void getCurrentOffsets() {
-  int lastAdcRead[2], adcReadSum[2];
+  int adcReadSum[2];
   int bestDcVal[2] = {10000, 10000};
 
   setOutputMode(0, 3); // output grounded, Iout goes to ground via 1k on-board resistor
@@ -194,14 +203,13 @@ void getCurrentOffsets() {
     delayMicroseconds(30);
     adcReadSum[0] = adcReadSum[1] = 0;
     for (int j = 0; j < 10; j++) {
-      readADC(0, lastAdcRead);
-      adcReadSum[0] += lastAdcRead[1];
-      delayMicroseconds(10);
-      readADC(1, lastAdcRead);
-      adcReadSum[1] += lastAdcRead[1];
+      adcReadSum[0] += readADC(0, 1);
+      delayMicroseconds(10);      
+      adcReadSum[1] += readADC(1, 1);
+      delayMicroseconds(10);     
     } 
-    //Serial.print(i); Serial.print(","); 
-    //Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
+    Serial.print(i); Serial.print(","); 
+    Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
     for (int channel = 0; channel < 2; channel++) {
       if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
         currentOffsets[channel] = i;
@@ -218,7 +226,7 @@ void getCurrentOffsets() {
 
 
 void getVoltageOffsets() {
-  int lastAdcRead[2], adcReadSum[2];
+  int adcReadSum[2];
   int bestDcVal[2] = {10000, 10000};
 
   setOutputMode(0, 0); // VOLTAGE OUTPUT - DANGEROUS
@@ -229,11 +237,9 @@ void getVoltageOffsets() {
     delayMicroseconds(20);
     adcReadSum[0] = adcReadSum[1] = 0;
     for (int j = 0; j < 10; j++) {
-      readADC(0, lastAdcRead);
-      adcReadSum[0] += lastAdcRead[0];
+      adcReadSum[0] += readADC(0, 0);
       delayMicroseconds(10);
-      readADC(1, lastAdcRead);
-      adcReadSum[1] += lastAdcRead[0];
+      adcReadSum[1] += readADC(1, 0);
     }
     for (int channel = 0; channel < 2; channel++) {
       if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
@@ -271,15 +277,12 @@ int pulse (volatile PulseTrain* PT) {
     // add 10 if no read, 47 if read (4x)
     delayMicroseconds(max( ((long int) PT->stageDuration[i])-67, 0));
 
-    int adcValue[2];
-    readADC(0, adcValue); // note: this limits bandwidth for voltage pulses
-    PT->measuredAmplitude[0][i] += adcValue[0] * MILLIVOLTS_PER_ADC; 
-    PT->measuredAmplitude[1][i] += adcValue[1] * MICROAMPS_PER_ADC;
+    // note: this limits bandwidth for voltage pulses
+    PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
+    PT->measuredAmplitude[1][i] += readADC(0, PT->mode[1] > 0) * ((PT->mode[1])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
+
     //Serial.print(round(adcValue[0] * MILLIVOLTS_PER_ADC)); Serial.print("\t");
     //Serial.print(round(adcValue[1] * MICROAMPS_PER_ADC));  Serial.print("\t");
-    readADC(1, adcValue); 
-    PT->measuredAmplitude[2][i] += adcValue[0] * MILLIVOLTS_PER_ADC;
-    PT->measuredAmplitude[3][i] += adcValue[1] * MICROAMPS_PER_ADC;
     //Serial.print(round(adcValue[0] * MILLIVOLTS_PER_ADC)); Serial.print("\t");
     //Serial.print(round(adcValue[1] * MICROAMPS_PER_ADC));  Serial.println(""); 
   }
@@ -300,17 +303,9 @@ void printTrainResultSummary(volatile PulseTrain* PT) {
   char str[200];
   for (int i = 0; i < PT->nStages; i++) {
     Serial.print("Stage "); Serial.print(i);
-    if (PT->mode[0]==0) {
-      sprintf(str, "%6dmV,          ", PT->measuredAmplitude[0][i] / PT->nPulses);
-    } else {
-      sprintf(str, "%6duA(%dmV), ", PT->measuredAmplitude[1][i]/PT->nPulses, PT->measuredAmplitude[0][i]/PT->nPulses);
-    }
+    sprintf(str, "%6d%s,          ", PT->measuredAmplitude[0][i] / PT->nPulses, (PT->mode[0])?"uA":"mV");
     Serial.print(str);
-    if (PT->mode[1]==0) {
-      sprintf(str, "%6dmV,  ", PT->measuredAmplitude[2][i] / PT->nPulses);
-    } else {
-      sprintf(str, "%6duA(%dmV), ",PT->measuredAmplitude[3][i]/PT->nPulses,  PT->measuredAmplitude[2][i]/PT->nPulses );
-    }
+    sprintf(str, "%6d%s,          ", PT->measuredAmplitude[1][i] / PT->nPulses, (PT->mode[1])?"uA":"mV");
     Serial.println(str);
   }
 }
@@ -466,6 +461,9 @@ void setup() {
   triggerTargetPTs[0] = -1; // initialize target to -1 so that triggers do nothing
   triggerTargetPTs[1] = -1;
 
+  adcSelectedInput[0] = 0;
+  adcSelectedInput[1] = 0;
+  
   Serial.println("Ready to go!\n\n");
 }
 
