@@ -3,15 +3,15 @@
 #
 #
 
-projectDirectory = '/home/x/Desktop/microstim/'
+projectDirectory = 'C:/Users/Jackie/Desktop/cermak/stimjim/'
 
 duration = 1e6
 paramMat = NULL
 mode0 = 0
-mode1 = 2
+mode1 = 1
 amp = c(1000,100,100,100)[c(mode0,mode1)+1]
 ampScalings = c(1,5)
-pulseDurations = c(20,50,100,200,500,1000,2000)
+pulseDurations = c(100,200,500,1000,2000)
 periods = round(exp(seq(log(500), log(5e5), length.out=10)))
 
 for (period in periods){
