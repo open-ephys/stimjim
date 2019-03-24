@@ -263,6 +263,7 @@ int pulse (volatile PulseTrain* PT) {
   if (PT->nPulses == 0)
     PT->trainStartTime = micros();
 
+  //check if the pulseTrain is finished; if so, exit
   if (micros() - PT->trainStartTime >= PT->duration)
     return 0;
 
@@ -270,21 +271,20 @@ int pulse (volatile PulseTrain* PT) {
   setOutputMode(1, PT->mode[1]);
 
   for (int i = 0; i < PT->nStages; i++) {
-    // minimum time is 5us, seems to actually be 10us
     writeToDacs(PT->amplitude[0][i] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]), //* (PT->mode[0] != 3),
                 PT->amplitude[1][i] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1])); //* (PT->mode[1] != 3));
+    
+    long stageStartTime = micros();
+    
+    delayMicroseconds(20); // allow 20 us for output to settle
 
-    // add 10 if no read, 47 if read (4x)
-    delayMicroseconds(max( ((long int) PT->stageDuration[i])-67, 0));
-
-    // note: this limits bandwidth for voltage pulses
+    // note: this limits bandwidth to do these reads (each requires 32 bytes at 5MHz SPI)
     PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
     PT->measuredAmplitude[1][i] += readADC(0, PT->mode[1] > 0) * ((PT->mode[1])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
-
-    //Serial.print(round(adcValue[0] * MILLIVOLTS_PER_ADC)); Serial.print("\t");
-    //Serial.print(round(adcValue[1] * MICROAMPS_PER_ADC));  Serial.print("\t");
-    //Serial.print(round(adcValue[0] * MILLIVOLTS_PER_ADC)); Serial.print("\t");
-    //Serial.print(round(adcValue[1] * MICROAMPS_PER_ADC));  Serial.println(""); 
+    
+    //end this stage only once time since write reaches stage duration.
+    while (micros() - stageStartTime < PT->stageDuration[i])
+      continue;
   }
   writeToDacs((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0],
               (PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
