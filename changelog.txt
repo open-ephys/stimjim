@@ -26,3 +26,7 @@ Changes in V0.16 (V3):
 6) added 1Mohm resistors and 2.2nF caps to couple GND_0 and GND_1 with GND (avoid huge floating potentials
 and make sure animal can slowly discharge)
 7) changed name to stimjim
+
+Changes in V0.17:
+1) moved MISO lines out of isolators onto different teensy pins so that they don't interfere.
+2) added 10k pulldown resistors to MISO lines (in isolated sections) - not strictly necessary but probably a good idea.
