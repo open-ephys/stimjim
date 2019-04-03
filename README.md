@@ -7,12 +7,11 @@ Stimjim is a current and voltage stimulator for stimulating neural tissue (as wi
 # Specifications:
 
  - Two independently-controllable output channels, each with both current and voltage output modes
- - Total cost: $190 USD.
+ - Total cost: $200 USD.
  - Output range in current mode: -3.33mA to +3.33mA. 
- - Pulse width in current mode: down to 50 us.
  - Output range in voltage mode: -15V to 15V.
- - Pulse width in current mode: down to 10 us.
- - In current mode, +-13.7V compliance voltage (+/-3.33uA output possible for resistances up to 4k, +-137uA possible for resistances up to 100k)
+ - Pulse width down to 0.1 ms (as configured with default firmware; down to 0.01 ms voltage pulses with custom firmware)
+ - Compliance voltage is +-13.7V in current mode (+/-3.33uA output possible for resistances up to 4k, +-137uA possible for resistances up to 100k)
  - Powered by USB
  - Channels are isolated from power supply and from each other.
  - Onboard ADC measurement of actual output current or voltage
