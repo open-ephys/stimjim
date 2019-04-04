@@ -267,20 +267,32 @@ int pulse (volatile PulseTrain* PT) {
   if (micros() - PT->trainStartTime >= PT->duration)
     return 0;
 
-  setOutputMode(0, PT->mode[0]);
-  setOutputMode(1, PT->mode[1]);
+  if (PT->mode[0] < 2)   setOutputMode(0, PT->mode[0]);
+  if (PT->mode[1] < 2)   setOutputMode(1, PT->mode[1]);
 
+  int dac0val, dac1val;
   for (int i = 0; i < PT->nStages; i++) {
-    writeToDacs(PT->amplitude[0][i] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]), //* (PT->mode[0] != 3),
-                PT->amplitude[1][i] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1])); //* (PT->mode[1] != 3));
+    
+    dac0val = PT->amplitude[0][i] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]);
+    dac1val = PT->amplitude[1][i] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
+
+    if (PT->mode[0] < 2 && PT->mode[1] < 2){
+      writeToDacs(dac0val, dac1val);
+    } else if (PT->mode[0] < 2){
+      writeToDac(0, dac0val);
+    } else if (PT->mode[1] < 2){
+      writeToDac(1, dac1val);
+    }
     
     long stageStartTime = micros();
     
     delayMicroseconds(20); // allow 20 us for output to settle
 
     // note: this limits bandwidth to do these reads (each requires 32 bytes at 5MHz SPI)
-    PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
-    PT->measuredAmplitude[1][i] += readADC(1, PT->mode[1] > 0) * ((PT->mode[1])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
+    if (PT->mode[0] < 2)
+      PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
+    if (PT->mode[1] < 2)
+      PT->measuredAmplitude[1][i] += readADC(1, PT->mode[1] > 0) * ((PT->mode[1])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
     
     //end this stage only once time since write reaches stage duration.
     while (micros() - stageStartTime < PT->stageDuration[i])
@@ -288,8 +300,10 @@ int pulse (volatile PulseTrain* PT) {
   }
   writeToDacs((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0],
               (PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
-  setOutputMode(0, 3);
-  setOutputMode(1, 3);
+              
+  if (PT->mode[0] < 2)     setOutputMode(0, 3);
+  if (PT->mode[1] < 2)     setOutputMode(1, 3);
+  
   PT->nPulses++;
 
   return 1;
