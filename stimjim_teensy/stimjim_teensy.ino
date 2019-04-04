@@ -280,7 +280,7 @@ int pulse (volatile PulseTrain* PT) {
 
     // note: this limits bandwidth to do these reads (each requires 32 bytes at 5MHz SPI)
     PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
-    PT->measuredAmplitude[1][i] += readADC(0, PT->mode[1] > 0) * ((PT->mode[1])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
+    PT->measuredAmplitude[1][i] += readADC(1, PT->mode[1] > 0) * ((PT->mode[1])?MICROAMPS_PER_ADC:MILLIVOLTS_PER_ADC); 
     
     //end this stage only once time since write reaches stage duration.
     while (micros() - stageStartTime < PT->stageDuration[i])
