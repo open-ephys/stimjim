@@ -1,26 +1,36 @@
-# Generate test parameters for benchmarking microstim 
+# Generate test parameters for benchmarking stimjim 
 # (c) Nathan Cermak 2019
 #
 #
 
 projectDirectory = 'C:/Users/Jackie/Desktop/cermak/stimjim/'
+projectDirectory = '/home/x/Desktop/stimjim/'
 
 duration = 1e6
 paramMat = NULL
 mode0 = 0
 mode1 = 1
-amp = c(1000,100,100,100)[c(mode0,mode1)+1]
-ampScalings = c(1,5)
-pulseDurations = c(100,200,500,1000,2000)
-periods = round(exp(seq(log(500), log(5e5), length.out=10)))
+amp = c(10,1)
+ampScalings = seq(0,1000,length.out=30)
+pulseDurations = round(exp(seq(log(100),log(5000), length.out=30)))
+periods = round(exp(seq(log(500), log(5e5), length.out=30)))
 
+ampScaling=5; pulseDuration=100
 for (period in periods){
-  for (pulseDuration in pulseDurations[pulseDurations<period/2]){
-    for (ampScaling in ampScalings){
-      params = c(mode0, mode1, period, duration, amp*ampScaling, pulseDuration, -amp*ampScaling, pulseDuration)
-      paramMat = rbind(paramMat, params)        
-    }
-  }
+  params = c(mode0, mode1, period, duration, round(amp*ampScaling), pulseDuration, -round(amp*ampScaling), pulseDuration)
+  paramMat = rbind(paramMat, params)        
+}
+
+ampScaling=5; period=10000;
+for (pulseDuration in pulseDurations){
+  params = c(mode0, mode1, period, duration, round(amp*ampScaling), pulseDuration, -round(amp*ampScaling), pulseDuration)
+  paramMat = rbind(paramMat, params)        
+}
+
+pulseDuration=100; period=1000;
+for (ampScaling in ampScalings){
+  params = c(mode0, mode1, period, duration, round(amp*ampScaling), pulseDuration, -round(amp*ampScaling), pulseDuration)
+  paramMat = rbind(paramMat, params)        
 }
 
 par2string = function(p){
