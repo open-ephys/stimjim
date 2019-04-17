@@ -10,20 +10,22 @@
 #define PT_ARRAY_LENGTH 10
 #define MAX_NUM_STAGES 10
 
-#define OE0_0 7
-#define OE1_0 6
-#define OE0_1 2
-#define OE1_1 1
+#define OE0_0 6
+#define OE1_0 5
+#define OE0_1 1
+#define OE1_1 0
 #define CS0_0 9
-#define CS1_0 8
-#define CS0_1 4
-#define CS1_1 3
-#define NLDAC_1 5
+#define CS1_0 7
+#define CS0_1 3
+#define CS1_1 2
+#define NLDAC_1 4
 #define NLDAC_0 10
 #define IN0 22
 #define IN1 23
 #define LED0 21
 #define LED1 20
+#define MISO_0 8
+#define MISO_1 12
 
 // ------------- SPI setup ------------------------------------- //
 //AD5752 DAC runs at max 30MHz, SPI mode 1 or 2
@@ -39,7 +41,7 @@ int bytesRecvd;
 int currentOffsets[2];
 int voltageOffsets[2];
 
-// ------------- States of ADCs --------------------------------//
+// --------- States of ADCs (set to read current or voltage?) ---//
 volatile bool adcSelectedInput[2];
 
 // ------------- PulseTrain parameter setup -------------------- //
@@ -125,7 +127,7 @@ void writeToDacs(int16_t amp0, int16_t amp1) {
 void writeToDac(byte channel, int16_t amp) {
   SPI.beginTransaction(settingsDAC);
   digitalWrite((channel) ? CS0_1 : CS0_0, LOW);
-  SPI.transfer(0);
+  SPI.transfer(0);     // write to AD5752 is 24-bit, first 8 low means output 0
   SPI.transfer16(amp);
   digitalWrite((channel) ? CS0_1 : CS0_0, HIGH);
   SPI.endTransaction();
@@ -142,7 +144,7 @@ void setupADCs() {
     digitalWrite(cs, LOW); //[15] = write, [13] = range register
     SPI.transfer16(32768 + 8192); // write range register, all zeros (+-10V on both channels)
     digitalWrite(cs, HIGH);
-    delayMicroseconds(100);
+    delayMicroseconds(1);
     digitalWrite(cs, LOW);
     SPI.transfer16(32768 + 16); // write control register, read channel 0 (voltage), use internal ref, 
     digitalWrite(cs, HIGH);
@@ -164,7 +166,7 @@ void setupDACs() {
     SPI.transfer(16); // select "power control" register
     SPI.transfer16(1); // set mode as dac_A powered up
     digitalWrite(cs, HIGH);
-    delayMicroseconds(100);
+    delayMicroseconds(10);
   }
   SPI.endTransaction();
 }
@@ -172,18 +174,21 @@ void setupDACs() {
 
 
 int readADC(byte channel, byte line) {
+  
+  int cs = (channel) ? CS1_1 : CS1_0;
+  
+  SPI.setMISO((channel)?MISO_1:MISO_0); // channels 0 & 1 use different MISO lines because isolators dont do tristate
   SPI.beginTransaction(settingsADC);
-  digitalWrite((channel) ? CS1_1 : CS1_0, LOW);
-  delayMicroseconds(10);     // TODO - figure out why exactly this is necessary. 10us = NO errors, 3us = rare errors
-  if(adcSelectedInput[channel] != line){
+  digitalWrite(cs, LOW);
+  if(adcSelectedInput[channel] != line){  // make sure we're reading the correct input (voltage or current)
     adcSelectedInput[channel] = line;
     SPI.transfer16(32768 + 16 + 1024*line);
-    digitalWrite((channel) ? CS1_1 : CS1_0, HIGH);
-    digitalWrite((channel) ? CS1_1 : CS1_0, LOW);
+    digitalWrite(cs, HIGH);
+    digitalWrite(cs, LOW);
   }
 
   int data = SPI.transfer16(0) - (line ? 8192 : 0);
-  digitalWrite((channel) ? CS1_1 : CS1_0, HIGH);
+  digitalWrite(cs, HIGH);
   SPI.endTransaction();
   if (data > 4095)
     data -= 8192;
@@ -200,16 +205,14 @@ void getCurrentOffsets() {
 
   for (int i = -500; i < 500; i++) {
     writeToDacs(i, i);
-    delayMicroseconds(30);
+    delayMicroseconds(50);
     adcReadSum[0] = adcReadSum[1] = 0;
     for (int j = 0; j < 10; j++) {
-      adcReadSum[0] += readADC(0, 1);
-      delayMicroseconds(10);      
+      adcReadSum[0] += readADC(0, 1); // channel(0,1), line(V/I)
       adcReadSum[1] += readADC(1, 1);
-      delayMicroseconds(10);     
     } 
-    Serial.print(i); Serial.print(","); 
-    Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
+    // Serial.print(i); Serial.print(","); 
+    // Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
     for (int channel = 0; channel < 2; channel++) {
       if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
         currentOffsets[channel] = i;
@@ -234,11 +237,10 @@ void getVoltageOffsets() {
 
   for (int i = -500; i < 500; i++) {
     writeToDacs(i, i);
-    delayMicroseconds(20);
+    delayMicroseconds(30);
     adcReadSum[0] = adcReadSum[1] = 0;
     for (int j = 0; j < 10; j++) {
-      adcReadSum[0] += readADC(0, 0);
-      delayMicroseconds(10);
+      adcReadSum[0] += readADC(0, 0); // channel(0,1), line(V/I)
       adcReadSum[1] += readADC(1, 0);
     }
     for (int channel = 0; channel < 2; channel++) {
@@ -298,14 +300,15 @@ int pulse (volatile PulseTrain* PT) {
     while (micros() - stageStartTime < PT->stageDuration[i])
       continue;
   }
+  // set DACs back to 0 voltage/current
   writeToDacs((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0],
               (PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
-              
+  
+  // switch outputs to ground
   if (PT->mode[0] < 2)     setOutputMode(0, 3);
   if (PT->mode[1] < 2)     setOutputMode(1, 3);
   
   PT->nPulses++;
-
   return 1;
 }
 
