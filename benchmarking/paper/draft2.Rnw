@@ -1,0 +1,208 @@
+\documentclass{article}
+\usepackage[margin=2cm]{geometry}
+%\usepackage[superscript,biblabel]{cite}
+\usepackage[super]{natbib}
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+
+
+\title{Stimjim: open source hardware for precise electrical stimulation}
+\author{}
+\date{}
+\maketitle
+
+<<loadBenchmarkData, echo=FALSE, cache=TRUE>>=
+library(parallel)
+
+projectDirectory = '/home/x/Desktop/stimjim/benchmarking/'
+setwd(projectDirectory)
+
+BOM=openxlsx::read.xlsx("../stimjim_BOM.xlsx")
+stimjimCost = ceiling(sum(BOM$Unit.cost*BOM$Quantity, na.rm=TRUE))
+
+paramMat = read.csv(paste(projectDirectory,"paramMat.csv", sep=''))
+colnames(paramMat) = c('mode0','mode1','period','duration','ch0amp0','ch1amp0','dur0', 'ch0amp1','ch1amp1','dur1')
+
+vpau = 20/2^12 # volts per adc unit
+fs = 2e6       # sampling rate of measurements
+
+
+dataFiles = list.files(path=paste(projectDirectory,'data',sep=''), pattern="[.]bin", full.names = TRUE)
+
+
+getPulseParams = function(f, thresh=25, fs, vpau){
+  
+  dat = matrix(readBin(f, what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
+  
+  apply(dat, 2, function(x) {  
+    isPulse = 1.0*(x>thresh | x < -thresh)
+    isPulse = mmand::erode(mmand::dilate(isPulse, rep(1,21)),rep(1,21))
+    pulseIndices = which(isPulse>0)
+    
+    pulseStartIndices = pulseIndices[c(1,which(diff(pulseIndices) > 3)+1)]
+    pulseEndIndices = pulseIndices[c(which(diff(pulseIndices) > 3), length(pulseIndices))]
+    
+    isStageHigh = 1.0*(x > thresh)
+    isStageLow = 1.0*(x < -thresh)
+    
+    #plot(x[1:3000], type='l', ylim=c(190,220))
+    #points(pulseIndices, x[pulseIndices], cex=0.3, col='red')
+    #points(pulseStartIndices, x[pulseStartIndices], cex=1, col='blue')
+    #points(pulseEndIndices, x[pulseEndIndices], cex=1, col='orange')
+
+    IPI = diff(pulseStartIndices/fs)
+    IPI.summary = summary(IPI)
+    IPI.sd = sd(IPI)
+    
+    PW = (pulseEndIndices-pulseStartIndices)/fs
+    PW.summary = summary(PW)
+    PW.sd = sd(PW)
+    
+    sh.median = median(x[which(isStageHigh>0)])*vpau
+    sh.sd = sd(x[which(mmand::erode(isStageHigh, rep(1,13))>0)])*vpau
+    sl.median = median(x[which(isStageLow>0)])*vpau
+    sl.sd = sd(x[which(mmand::erode(isStageLow, rep(1,13))>0)])*vpau
+    
+    pulseMat = sapply(pulseStartIndices, function(j) x[j+(-100:1000)])
+    list(IPI.summary=IPI.summary, IPI.sd=IPI.sd, PW.summary=PW.summary, 
+             PW.sd=PW.sd, sh.median=sh.median, sh.sd=sh.sd, 
+             sl.median=sl.median, sl.sd=sl.sd, pulseMat=pulseMat)
+  })
+}
+
+
+cl = makeCluster(detectCores()-1)
+res = parLapply(cl, dataFiles, getPulseParams, fs=fs, vpau=vpau)
+res = unlist(res, recursive = FALSE)
+stopCluster(cl)
+@
+
+\section*{Abstract}
+Electrical stimulation is a powerful tool to perturb and understand the function of neurons and neural circuits. Despite this, electronics that can provide precise current or voltage stimulation are expensive and closed-source. Here, we introduce stimjim, precise yet inexpensive (\$200) open-source hardware for electrical stimulation that combines both function generation and isolation. Stimjim provides microsecond temporal resolution with microampere or millivolt level precision on two isolated output channels. To show the utility of Stimjim, we demonstrate training of mice to perform intracranial self-stimulation (ICSS) for brain stimulation reward (BSR) in a novel head-fixed paradigm, and that interest in the reward can be tuned by adjusting either stimulation frequency or amplitude. 
+
+
+\section*{Introduction}
+Electrical stimulation of neural tissue is an invaluable research tool. Over the past 150 years, it has enabled an understanding of the function of various brain regions by directly causing neurons in those regions to fire \cite{hitzig_uber_1870,ferrier_functions_1876,penfield_somatic_1937}. More recently, it has also found important clinicial applications in neurological disorders including Parkinson's disease\cite{deuschl_randomized_2006} and depression\cite{mayberg_deep_2005}. However, to date, the hardware enabling precise control over current and voltage stimulation remains generally expensive and closed source. 
+
+In contrast, there has been a recent push within the scientific community to produce open labware - open source hardware and software replacements for a variety of common laboratory tasks. Examples include Open Ephys\cite{siegle_open_2017}, Cyclops\cite{newman_optogenetic_2015}, OpenPCR\cite{noauthor_openpcr_nodate}, FlyPi\cite{chagas_100_2017}, Openspritzer\cite{forman_openspritzer:_2017}, and Audiomoth\cite{hill_audiomoth:_2018}. Many of these designs have been enabled by developments fueling the rapid growth of the maker community at large, including Arduino, Raspberry Pi, Teensy, openMV, pixyCam, open-source 3d printers like reprap.  
+
+\begin{table}
+\small{
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+                                & Stimjim     & PulsePal     & STG400x (Multichannel Systems)    & PHM-15x (Med associates) \\
+\hline
+ Number of output channels      & 2           & 4            &  2-8                              & 2                        \\
+ Current output mode            & X           &              &  X                                & X                        \\
+ Voltage output mode            & X           & X            &  X                                &                          \\
+ Outputs are electrically isolated           & X           &              &  X                                & X                        \\
+ Onboard measurement            & X           &              &                                   & Optional                 \\
+ Compliance voltage             & $\pm$ 13.7V & $\pm$ 15V    & $\pm$ 120V                        & $\pm$ 45V                \\
+ Fastest pulse                  & 50us        & 10us         & 20us                              & 60us                     \\
+ Cost (USD)                     & \$194       & \$200        & \$4131 (2 channels)               &                          \\
+                                &             &              & \$7462  (4 channels)              &                          \\
+                                &             &              & \$10327 (8 channels)              &                          \\
+ Open source                    & X           & X            &                                   &                          \\
+ \hline
+\end{tabular}
+}
+\caption{\label{tab:stimulatorComparison} Comparison of Stimjim vs other related hardware. Cost was obtained as either the complete cost of the bill of materials (Stimjim and PulsePal) or quoted prices from manufacturers (STG400x and PHM-15x).}
+\end{table}
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{../../photo.png}
+\caption{\textbf{Stimjim is a compact, configurable, and precise stimulator.}}
+\label{fig:picture}
+\end{figure}
+
+
+\section*{Results}
+
+
+To benchmark Stimjim, we varied the pulse frequency (from \Sexpr{round(1e6/max(paramMat$period),2)} Hz to \Sexpr{round(1e6/min(paramMat$period),2)} kHz), duration (from \Sexpr{min(paramMat$dur0)} to \Sexpr{max(paramMat$dur0)} us), and amplitude. We simultaneously recorded from both output channels on a National Instruments PCI-6110 card (12-bit ADC, sampling each channel at 2MHz).
+
+<<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=8,fig.cap="\\label{fig:benchmarking}">>=
+
+par(mar=c(4,5,2,2), mfrow=c(4,3))
+
+plotParams = list(
+   list(j=1:30, column=3, label='Inter-pulse interval'),
+   list(j=31:60, column=5, label='Inter-pulse interval'),
+   list(j=61:90, column=7, label='Inter-pulse interval'))
+
+for (i in 1:3){
+  with(plotParams[[i]], {
+    x = paramMat[j,column];
+    
+    plot(x, sapply(res[j], function(x) x$IPI.summary[3])*1e6, xlab=paste(label, "setting"), ylab=paste("Measured median",label), log='xy')
+    plot(x, sapply(res[j], function(x) x$IPI.sd)*1e6,         xlab=paste(label, "setting"), ylab=paste("Measured median",label), log='xy')
+    plot(x, sapply(res[j], function(x) x$IPI.sd)*1e6,         xlab=paste(label, "setting"), ylab=paste("Measured median",label), log='xy')
+  })
+}
+@
+
+
+To demonstrate the utility of Stimjim, we used it to train mice in a classical paradigm known as intra-cranial self stimulation (ICSS)\cite{olds_positive_1954}. In this assay, animals are implanted with electrodes (or more recently optical fibers) enabling activation of a pleasure/reward-related brain region\cite{carlezon_intracranial_2007}. Animals are then placed in a training paradigm in which they learn that a simple motor action (typically spinning a wheel or pressing a lever) causes direct activation of this brain region. Animals quickly learn the required action and are willing to repeat it for extended periods of time. 
+
+Here, we trained two mice in a head-fixed variant of ICSS, in which animals could lick a sensor in order to obtain brain stimulation reward (BSR). After animals had learned the licking behavior (usually within their first hour session), we varied the stimulation frequency and amplitude and assessed how it affected licking behavior. Both animals showed clear frequency- and amplitude-dependent responses, in which animals ceased licking when the rewarding stimulation was insufficiently intense (Fig. \ref{fig:icss}).
+
+<<icssAnalysis, echo=FALSE, fig.cap="\\label{fig:icss}\\textbf{Stimjim enables measuring frequency- and amplitude-dependent responses in an intracranial self-stimulation paradigm.} Mice decreased their licking rates when the frequency and amplitude of the rewarding stimulation decreased. For each animal, three frequency sweeps (highest to lowest frequency, 1 minute per frequency) were performed in a 45-minute session. Amplitude sweeps were performed in the same way.", cache=TRUE, fig.height=5, fig.width=5>>=
+
+
+icss.files = c("/home/x/Desktop/stimjim/benchmarking/2019-04-04_4309/20190404_115638.txt",
+               "/home/x/Desktop/stimjim/benchmarking/2019-04-04_4309/20190404_143910.txt",
+               "/home/x/Desktop/stimjim/benchmarking/2019-04-04_4476/20190404_130105.txt",
+               "/home/x/Desktop/stimjim/benchmarking/2019-04-04_4476/20190404_181300.txt")
+
+par(mar=c(4,4,1,1),mfrow=c(2,2), tck=0, mgp=c(1.5,0.1,0), oma=c(0,3,3,0))
+
+for (i in 1:4){
+  dat = read.csv(icss.files[i])
+  names(dat) = c('time','c1','c2','pass','freq','amp', 'comment')
+  
+  x = mmand::dilate(dat$c1, kernel=rep(1,11))
+  breaks = which(diff(dat$freq)!=0 | diff(dat$amp)!=0)
+  amp = length(unique(dat$freq)) < length(unique(dat$amp))
+
+  m = sapply(breaks, function(i) x[i+1000:11000])
+  
+  licks = apply(m-900,2, function(x) sum(c(x,0) > 0 & c(0,x) < 0))
+
+  if (!amp){
+    matplot(x=rev(sort(unique(dat$freq))), matrix(licks,nrow=15), type='p', ylim=c(0,30), bty='l', yaxt='n',
+            xlab='Stimulation frequency (Hz)', ylab='licks per 50-second trial',lty=1,  pch=16, col=adjustcolor(1,0.5))
+    lines(x=rev(sort(unique(dat$freq))), rowMeans(matrix(licks,nrow=15)), type='l', lwd=2)
+  } else {
+    matplot(x=rev(sort(unique(dat$amp))), matrix(licks,nrow=15), type='p', ylim=c(0,30), bty='l', yaxt='n',
+            xlab='Stimulation amplitude (uA)', ylab='licks per 50-second trial',lty=1, pch=16, col=adjustcolor(1,0.5))
+    lines(x=rev(sort(unique(dat$amp))), rowMeans(matrix(licks,nrow=15)), type='l', lwd=2)
+  }
+  axis(2,las=2)
+}
+mtext("Mouse 1", 2, adj=0.9,  outer=TRUE, cex=0.75)
+mtext("Mouse 2", 2, adj=0.3,  outer=TRUE, cex=0.75)
+mtext("Frequency Sweep", 3, adj=0.25,  outer=TRUE, cex=0.75)
+mtext("Amplitude Sweep", 3, adj=0.85,  outer=TRUE, cex=0.75)
+
+@
+
+
+\section*{Conclusion}
+
+
+
+\section*{Supplemental materials}
+
+  - BOM
+  - gerbers
+  - schematic
+  - link to bitbucket
+  
+\section*{References}
+\bibliographystyle{unsrt}
+\bibliography{stimjimBibliography}
+
+  
+
+
+\end{document}
