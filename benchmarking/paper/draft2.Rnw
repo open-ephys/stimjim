@@ -12,7 +12,7 @@
 \maketitle
 
 <<loadBenchmarkData, echo=FALSE, cache=TRUE>>=
-library(parallel)
+library(parallel) 
 
 projectDirectory = '/home/x/Desktop/stimjim/benchmarking/'
 setwd(projectDirectory)
@@ -29,9 +29,7 @@ fs = 2e6       # sampling rate of measurements
 
 dataFiles = list.files(path=paste(projectDirectory,'data',sep=''), pattern="[.]bin", full.names = TRUE)
 
-
 getPulseParams = function(f, thresh=25, fs, vpau){
-  
   dat = matrix(readBin(f, what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
   
   apply(dat, 2, function(x) {  
@@ -123,22 +121,52 @@ To benchmark Stimjim, we varied the pulse frequency (from \Sexpr{round(1e6/max(p
 
 <<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=8,fig.cap="\\label{fig:benchmarking}">>=
 
+
 par(mar=c(4,5,2,2), mfrow=c(4,3))
+#matplot(sapply(res[1:60], function(x) x$pulseMat[,1]), col=c(1,2), type='l', lty=1)
+plot(paramMat[1:30,3], sapply(res[seq(1,60,by=2)], function(x) x$IPI.summary[3])*1e6, 
+  log='xy', main='median IPI vs target', cex=0.75, xlab='Target IPI', ylab='Median measured IPI')
+points(paramMat[1:30,3], sapply(res[seq(2,60,by=2)], function(x) x$IPI.summary[3])*1e6,
+  col='red', cex=0.75)
+abline(a=0,b=1)
 
-plotParams = list(
-   list(j=1:30, column=3, label='Inter-pulse interval'),
-   list(j=31:60, column=5, label='Inter-pulse interval'),
-   list(j=61:90, column=7, label='Inter-pulse interval'))
+#matplot(dendRites::offset(sapply(res[61:120], function(x) x$pulseMat[,1])), col=c(1,2), type='l', lty=1)
+plot(paramMat[1:30,3], sapply(res[seq(1,60,by=2)], function(x) x$IPI.sd)*1e6, 
+  log='x', main='IPI sd', cex=0.75, xlab='Target IPI', ylab='Measured IPI std. dev.')
+points(paramMat[1:30,3], sapply(res[seq(2,60,by=2)], function(x) x$IPI.sd)*1e6,
+  col='red', cex=0.75)
 
-for (i in 1:3){
-  with(plotParams[[i]], {
-    x = paramMat[j,column];
-    
-    plot(x, sapply(res[j], function(x) x$IPI.summary[3])*1e6, xlab=paste(label, "setting"), ylab=paste("Measured median",label), log='xy')
-    plot(x, sapply(res[j], function(x) x$IPI.sd)*1e6,         xlab=paste(label, "setting"), ylab=paste("Measured median",label), log='xy')
-    plot(x, sapply(res[j], function(x) x$IPI.sd)*1e6,         xlab=paste(label, "setting"), ylab=paste("Measured median",label), log='xy')
-  })
-}
+plot(paramMat[1:30,3], sapply(res[seq(1,60,by=2)], function(x) diff(x$IPI.summary[c(1,6)]))*1e6, 
+  log='x', main='IPI range', cex=0.75, xlab='Target IPI', ylab='Range of measured IPIs')
+points(paramMat[1:30,3], sapply(res[seq(2,60,by=2)], function(x) diff(x$IPI.summary[c(1,6)]))*1e6,
+  col='red', cex=0.75)
+
+
+
+
+plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) x$PW.summary[3])*1e6/2, 
+  log='xy', main='median PW vs target', ylab='measured median PW', cex=0.75)
+points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) x$PW.summary[3])*1e6/2,
+  col='red', cex=0.75)
+abline(a=0,b=1)
+
+plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) x$PW.sd)*1e6/2, 
+  log='x', main='PW sd', ylab='PW sd', cex=0.75)
+points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) x$PW.sd)*1e6/2,
+  col='red', cex=0.75)
+
+plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) diff(x$PW.summary[c(1,6)]))*1e6/2, 
+  log='x', main='PW range', ylab='PW range', cex=0.75)
+points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) diff(x$PW.summary[c(1,6)]))*1e6/2,
+  col='red', cex=0.75)
+
+
+plot(paramMat[61:90,5], sapply(res[seq(121,180,by=2)], function(x) x$sh.median*1e3), 
+  log='', main='amplitude vs target', xlab='Target amplitude (mV)', ylab='measured amplitude (mV)', cex=0.75)
+abline(a=0,b=1.0)
+points(paramMat[61:90,5], sapply(res[seq(122,180,by=2)], function(x) x$sh.median*1e3),
+  col='red', cex=0.75)
+
 @
 
 
