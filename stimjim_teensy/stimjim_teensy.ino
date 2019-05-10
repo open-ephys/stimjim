@@ -137,16 +137,23 @@ void writeToDac(byte channel, int16_t amp) {
 }
 
 
-void setupADCs() {
+void setupADCs(float range) {
   SPI.beginTransaction(settingsADC);
   for (int i = 0; i < 2; i++) {
     int cs = (i == 0) ? CS1_0 : CS1_1; //CS1_x is ADC for channel x
     digitalWrite(cs, LOW); //[15] = write, [13] = range register
-    SPI.transfer16(32768 + 8192); // write range register, all zeros (+-10V on both channels)
+    if (range == 2.5){
+      SPI.transfer16(0b1011000100000000); // write range register +-2.5V on both channels
+    } else if (range == 5) {
+      SPI.transfer16(0b1010100010000000);       // write range register +-5V on both channels)
+    } else {
+      SPI.transfer16(32768 + 8192);       // write range register, +-10V on both channels
+    }
     digitalWrite(cs, HIGH);
     delayMicroseconds(1);
     digitalWrite(cs, LOW);
     SPI.transfer16(32768 + 16); // write control register, read channel 0 (voltage), use internal ref, 
+    adcSelectedInput[i] = 0;
     digitalWrite(cs, HIGH);
   }
   SPI.endTransaction();
@@ -202,12 +209,12 @@ void getCurrentOffsets() {
 
   setOutputMode(0, 3); // output grounded, Iout goes to ground via 1k on-board resistor
   setOutputMode(1, 3); // output grounded, Iout goes to ground via 1k on-board resistor
-
-  for (int i = -500; i < 500; i++) {
+  setupADCs(2.5);
+  for (int i = -100; i < 100; i++) {
     writeToDacs(i, i);
     delayMicroseconds(50);
     adcReadSum[0] = adcReadSum[1] = 0;
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < 100; j++) {
       adcReadSum[0] += readADC(0, 1); // channel(0,1), line(V/I)
       adcReadSum[1] += readADC(1, 1);
     } 
@@ -221,7 +228,7 @@ void getCurrentOffsets() {
     }
   }
   writeToDacs(currentOffsets[0], currentOffsets[1]);
-
+  setupADCs(10);
   char str[40];
   sprintf(str, "Best current offsets: %d, %d\n", currentOffsets[0], currentOffsets[1]);
   Serial.print(str);
@@ -234,15 +241,17 @@ void getVoltageOffsets() {
 
   setOutputMode(0, 0); // VOLTAGE OUTPUT - DANGEROUS
   setOutputMode(1, 0); // VOLTAGE OUTPUT - DANGEROUS
-
-  for (int i = -500; i < 500; i++) {
+  setupADCs(2.5);
+  for (int i = -100; i < 100; i++) {
     writeToDacs(i, i);
     delayMicroseconds(30);
     adcReadSum[0] = adcReadSum[1] = 0;
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < 100; j++) {
       adcReadSum[0] += readADC(0, 0); // channel(0,1), line(V/I)
       adcReadSum[1] += readADC(1, 0);
     }
+    // Serial.print(i); Serial.print(","); 
+    // Serial.print(adcReadSum[0]); Serial.print(","); Serial.println(adcReadSum[1]); 
     for (int channel = 0; channel < 2; channel++) {
       if (abs(adcReadSum[channel]) < bestDcVal[channel]) {
         voltageOffsets[channel] = i;
@@ -252,9 +261,9 @@ void getVoltageOffsets() {
   }
 
   writeToDacs(voltageOffsets[0], voltageOffsets[1]);
-  setOutputMode(0, 3);
+  setOutputMode(0, 3); 
   setOutputMode(1, 3);
-
+  setupADCs(10);
   char str[40];
   sprintf(str, "Best voltage offsets: %d, %d\n", voltageOffsets[0], voltageOffsets[1]);
   Serial.print(str);
@@ -288,7 +297,7 @@ int pulse (volatile PulseTrain* PT) {
     
     long stageStartTime = micros();
     
-    delayMicroseconds(20); // allow 20 us for output to settle
+    delayMicroseconds(30); // allow 30 us for output to settle
 
     // note: this limits bandwidth to do these reads (each requires 32 bytes at 5MHz SPI)
     if (PT->mode[0] < 2)
@@ -444,7 +453,7 @@ void setup() {
   SPI.begin();
   
   Serial.println("Initializing DACs and ADCs...");
-  setupADCs();
+  setupADCs(10);
   setupDACs();
 
   
@@ -478,9 +487,6 @@ void setup() {
   pinMode(IN1, INPUT);
   triggerTargetPTs[0] = -1; // initialize target to -1 so that triggers do nothing
   triggerTargetPTs[1] = -1;
-
-  adcSelectedInput[0] = 0;
-  adcSelectedInput[1] = 0;
   
   Serial.println("Ready to go!\n\n");
 }
@@ -545,9 +551,10 @@ void loop() {
       }
 
       else if (comBuf[0] == 'D') {
-        //sscanf(comBuf + 1, "%d,%d", &(currentOffsets[0]), &(currentOffsets[1]) );
-        Serial.print("currentOffsets[0]: "); Serial.println(currentOffsets[0]);
-        Serial.print("currentOffsets[1]: "); Serial.println(currentOffsets[1]);
+        char str[100];
+        sprintf(str, "current offsets: %d, %d\nvoltage offsets: %d, %d\n", 
+            currentOffsets[0], currentOffsets[1], voltageOffsets[0], voltageOffsets[1]);
+        Serial.println(str);    
       }
 
       else if (comBuf[0] == 'C') {
@@ -575,6 +582,24 @@ void loop() {
           detachInterrupt( (trigSrc) ? IN1 : IN0);
           triggerTargetPTs[trigSrc] = -1;
         }
+      }
+      else if (comBuf[0] == 'M') {
+        int channel = 0, mode = 0;
+        sscanf(comBuf + 1, "%d,%d", &channel, &mode );
+        setOutputMode(channel,mode);
+        Serial.print("Set channel "); Serial.print(channel); Serial.print(" to mode "); Serial.println(mode);
+      }   
+      else if (comBuf[0] == 'A') {
+        int channel = 0, amp = 0;
+        sscanf(comBuf + 1, "%d,%d", &channel, &amp );        
+        writeToDac(channel,amp);
+        Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.println(amp);
+      }
+      else if (comBuf[0] == 'E') {
+        int channel = 0, line = 0;
+        sscanf(comBuf + 1, "%d,%d", &channel, &line );        
+        int val = readADC(channel, line);
+        Serial.print("Read value: "); Serial.println(val);
       }
 
       bytesRecvd = 0; // reset the pointer!
