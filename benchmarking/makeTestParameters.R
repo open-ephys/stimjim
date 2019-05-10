@@ -15,13 +15,13 @@ ampScalings = seq(0,1000,length.out=30)
 pulseDurations = round(exp(seq(log(100),log(5000), length.out=30)))
 periods = round(exp(seq(log(500), log(5e5), length.out=30)))
 
-ampScaling=5; pulseDuration=100
+ampScaling=500; pulseDuration=100
 for (period in periods){
   params = c(mode0, mode1, period, duration, round(amp*ampScaling), pulseDuration, -round(amp*ampScaling), pulseDuration)
   paramMat = rbind(paramMat, params)        
 }
 
-ampScaling=5; period=10000;
+ampScaling=500; period=10000;
 for (pulseDuration in pulseDurations){
   params = c(mode0, mode1, period, duration, round(amp*ampScaling), pulseDuration, -round(amp*ampScaling), pulseDuration)
   paramMat = rbind(paramMat, params)        
