@@ -285,8 +285,8 @@ void setup() {
   triggerTargetPTs[0] = -1; // initialize target to -1 so that triggers do nothing
   triggerTargetPTs[1] = -1;
 
-  IT0.priority(1);
-  IT1.priority(1);
+  IT0.priority(64);
+  IT1.priority(64);
   Serial.println("Ready to go!\n\n");
 }
 
