@@ -38,7 +38,7 @@ par2string = function(p){
 }
 
 stringVector = apply(paramMat,1,par2string)
-cat(stringVector, file=paste(projectDirectory,"benchmarking/paramStringFile.txt", sep=''))
+cat(stringVector, file=paste(projectDirectory,"benchmarking/paramStringFile.txt", sep=''), sep='')
 write.csv(paramMat, paste(projectDirectory,"benchmarking/paramMat.csv", sep=''),row.names = FALSE)
 
 

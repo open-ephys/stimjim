@@ -182,12 +182,15 @@ ex3 = sapply(dataFiles[seq(81,61,length.out=6)], function(f){
 
 matplot(1e3/fs*1:nrow(ex3), dendRites::offset(ex3,15), col=1, type='l', lty=1, bty='n', yaxt='n', ylab='', xlab='time (ms)'); 
 
-
-plot(paramMat[61:90,5], sapply(res[seq(121,180,by=2)], function(x) x$sh.median*1e3), 
-  log='', main='amplitude vs target', xlab='Target amplitude (mV)', ylab='measured amplitude (mV)', cex=0.75)
+x = c(paramMat[61:90,5], -paramMat[61:90,5])
+y = t(sapply(res[seq(121,180,by=2)], function(x) c(x$sh.median,x$sl.median))*1e3)
+plot(x,y, main='Voltage accuracy', xlab='Target amplitude (mV)', ylab='measured amplitude (mV)', cex=0.75)
 abline(a=0,b=1.0)
-points(paramMat[61:90,5], sapply(res[seq(122,180,by=2)], function(x) x$sh.median*1e3),
-  col='red', cex=0.75)
+
+x = c(paramMat[61:90,6], -paramMat[61:90,6])
+y = t(sapply(res[seq(122,180,by=2)], function(x) c(x$sh.median,x$sl.median))/9750*1e6)
+plot(x,y, main='Current accuracy', xlab='Target amplitude (uA)', ylab='measured amplitude (uA)', cex=0.75, col='red')
+abline(a=0,b=1)
 
 @
 
