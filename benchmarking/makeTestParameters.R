@@ -13,7 +13,7 @@ mode1 = 1
 amp = c(10,1)
 periods = round(exp(seq(log(250), log(4e5), length.out=30)))
 pulseDurations = round(exp(seq(log(20),log(5000), length.out=30)))
-ampScalings = seq(0,1000,length.out=30)
+ampScalings = seq(20,1000,length.out=30)
 
 ampScaling=500; pulseDuration=100
 for (period in periods){
