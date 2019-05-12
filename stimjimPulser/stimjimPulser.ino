@@ -300,6 +300,7 @@ void loop() {
 
     if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - means we've recvd a full command!
       unsigned int ptIndex = 0;
+      comBuf[bytesRecvd-1] ='\0'; // make sure we dont accidentally read into the rest of the string!
 
       if (comBuf[0] == 'S') {
         sscanf(comBuf + 1, "%u,", &ptIndex);
@@ -308,7 +309,7 @@ void loop() {
           bytesRecvd = 0;
           return;
         }
-
+        
         int m = sscanf(comBuf + 1, "%*d,%u,%u,%u,%lu;",
                        &(PTs[ptIndex].mode[0]),
                        &(PTs[ptIndex].mode[1]),
