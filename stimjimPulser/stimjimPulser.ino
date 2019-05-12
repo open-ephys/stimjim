@@ -65,13 +65,12 @@ int pulse (volatile PulseTrain* PT) {
     PT->nPulses++;
     return 1;
   }
-  if (PT->mode[0] < 2)   setOutputMode(0, PT->mode[0]);
-  if (PT->mode[1] < 2)   setOutputMode(1, PT->mode[1]);
+
 
   int dac0val, dac1val;
-  float adcReadTime = 3.5 * (PT->mode[0] < 2) + 3.5 * (PT->mode[1] < 2);   //16 bits at 5MHz
-  float dacWriteTime = 3 * (PT->mode[0] < 2) + 3 * (PT->mode[1] < 2); //24 bits at 10MHz, with delay, should take 2.5us
-
+  float adcReadTime = 6.9 * (PT->mode[0] < 2) + 6.9 * (PT->mode[1] < 2);   //16 bits at 5MHz, calibrated time is 6.9us
+  float dacWriteTime = 4.8 * (PT->mode[0] < 2) + 4.8 * (PT->mode[1] < 2);  //24 bits at 10MHz, calibrated time is 4.8us
+  
   dac0val = PT->amplitude[0][0] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]);
   dac1val = PT->amplitude[1][0] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
 
@@ -82,16 +81,17 @@ int pulse (volatile PulseTrain* PT) {
   } else if (PT->mode[1] < 2) {
     writeToDac(1, dac1val);
   }
-
+  if (PT->mode[0] < 2)   setOutputMode(0, PT->mode[0]);
+  if (PT->mode[1] < 2)   setOutputMode(1, PT->mode[1]);
   for (int i = 0; i < PT->nStages; i++) {
-    delayMicroseconds(PT->stageDuration[i] - dacWriteTime - adcReadTime);
+    delayMicroseconds(PT->stageDuration[i] - dacWriteTime - adcReadTime - 1.5); // empirically calibrated!
 
     // read ADCs
     if (PT->mode[0] < 2)
       PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
     if (PT->mode[1] < 2)
       PT->measuredAmplitude[1][i] += readADC(1, PT->mode[1] > 0) * ((PT->mode[1]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
-
+  
     if ( i + 1 < PT->nStages) {
       dac0val = PT->amplitude[0][i + 1] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]);
       dac1val = PT->amplitude[1][i + 1] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
@@ -285,6 +285,8 @@ void setup() {
   triggerTargetPTs[0] = -1; // initialize target to -1 so that triggers do nothing
   triggerTargetPTs[1] = -1;
 
+  IT0.priority(1);
+  IT1.priority(1);
   Serial.println("Ready to go!\n\n");
 }
 

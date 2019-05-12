@@ -17,8 +17,8 @@ volatile bool adcSelectedInput[2];
 
 void setOutputMode(byte channel, byte mode) {
   // mode 0-3 are: VOLTAGE, CURRENT, HIGH-Z, GROUND
-  digitalWrite((channel) ? OE0_1 : OE0_0, (0b00000001 & mode) ? HIGH : LOW);
-  digitalWrite((channel) ? OE1_1 : OE1_0, (0b00000010 & mode) ? HIGH : LOW);
+  digitalWriteFast((channel) ? OE0_1 : OE0_0, (0b00000001 & mode) ? HIGH : LOW);
+  digitalWriteFast((channel) ? OE1_1 : OE1_0, (0b00000010 & mode) ? HIGH : LOW);
 }
 
 

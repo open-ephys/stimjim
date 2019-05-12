@@ -71,6 +71,8 @@ getPulseParams = function(f, thresh=25, fs, vpau){
 
 cl = makeCluster(detectCores()-1)
 res = parLapply(cl, dataFiles, getPulseParams, fs=fs, vpau=vpau)
+#res = list(); for (i in 1:length(dataFiles)) res[[i]] = getPulseParams(dataFiles[i], fs=fs, vpau=vpau)
+
 res = unlist(res, recursive = FALSE)
 stopCluster(cl)
 @
@@ -86,21 +88,23 @@ In contrast, there has been a recent push within the scientific community to pro
 
 \begin{table}
 \small{
-\begin{tabular}{|l|c|c|c|c|}
+\begin{tabular}{|l|c|c|c|c|c|}
 \hline
-                                & Stimjim     & PulsePal     & STG400x (Multichannel Systems)    & PHM-15x (Med associates) \\
+                                &             &              & STG400x                           & PHM-15x                  &  \\
+                                & Stimjim     & PulsePal     & (Multichannel Systems)            & (Med associates)         & ISO-O1B (NPI) \\
 \hline
- Number of output channels      & 2           & 4            &  2-8                              & 2                        \\
- Current output mode            & X           &              &  X                                & X                        \\
- Voltage output mode            & X           & X            &  X                                &                          \\
- Outputs are electrically isolated           & X           &              &  X                                & X                        \\
- Onboard measurement            & X           &              &                                   & Optional                 \\
- Compliance voltage             & $\pm$ 13.7V & $\pm$ 15V    & $\pm$ 120V                        & $\pm$ 45V                \\
- Fastest pulse                  & 50us        & 10us         & 20us                              & 60us                     \\
- Cost (USD)                     & \$194       & \$200        & \$4131 (2 channels)               &  \$6211 (plus \$4438     \\
-                                &             &              & \$7462  (4 channels)              &  for necessary software) \\
-                                &             &              & \$10327 (8 channels)              &                          \\
- Open source                    & X           & X            &                                   &                          \\
+ Number of output channels      & 2           & 4            &  2-8                              & 2                        & 1             \\ 
+ Stimulus generator included?   & X           & X            &  X                                & X                        &               \\  
+ Current output mode            & X           &              &  X                                & X                        & X                        \\
+ Voltage output mode            & X           & X            &  X                                &                          & X                        \\
+ Outputs electrically isolated  & X           &              &  X                                & X                        & X                        \\
+ Onboard measurement            & X           &              &                                   & Optional                 & X (compliance warning)   \\
+ Compliance voltage             & $\pm$ 13.7V & $\pm$ 15V    & $\pm$ 120V                        & $\pm$ 45V                & $\pm$ 100V     \\
+ Fastest pulse                  & 50us        & 10us         & 20us                              & 60us                     & 10us           \\
+ Cost (USD)                     & \$194       & \$200        & \$4131 (2 channels)               &  \$6211 (plus \$4438     & \$1708         \\
+                                &             &              & \$7462  (4 channels)              &  for necessary software) &                \\
+                                &             &              & \$10327 (8 channels)              &                          &                \\
+ Open source                    & X           & X            &                                   &                          &                \\
  \hline
 \end{tabular}
 }
@@ -177,7 +181,7 @@ points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) diff(x$PW.su
 ex3 = sapply(dataFiles[seq(81,61,length.out=6)], function(f){
   dat = matrix(readBin(f, what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
   fp = min(which(dat[,1] > 10))
-  dat[fp + (-300:700),1]*vpau
+  dat[fp + (-200:700),1]*vpau
 })
 
 matplot(1e3/fs*1:nrow(ex3), dendRites::offset(ex3,15), col=1, type='l', lty=1, bty='n', yaxt='n', ylab='', xlab='time (ms)'); 
