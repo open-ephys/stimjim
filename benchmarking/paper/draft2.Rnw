@@ -187,10 +187,16 @@ y = t(sapply(res[seq(121,180,by=2)], function(x) c(x$sh.median,x$sl.median))*1e3
 plot(x,y, main='Voltage accuracy', xlab='Target amplitude (mV)', ylab='measured amplitude (mV)', cex=0.75)
 abline(a=0,b=1.0)
 
-x = c(paramMat[61:90,6], -paramMat[61:90,6])
-y = t(sapply(res[seq(122,180,by=2)], function(x) c(x$sh.median,x$sl.median))/9750*1e6)
-plot(x,y, main='Current accuracy', xlab='Target amplitude (uA)', ylab='measured amplitude (uA)', cex=0.75, col='red')
+x2 = c(paramMat[61:90,6], -paramMat[61:90,6])
+y2 = t(sapply(res[seq(122,180,by=2)], function(x) c(x$sh.median,x$sl.median))/9750*1e6)
+plot(x2,y2, main='Current accuracy', xlab='Target amplitude (uA)', ylab='measured amplitude (uA)', cex=0.75, col='red')
 abline(a=0,b=1)
+
+plot(x, as.vector(y)-x, pch=16, xlab='', ylab='')
+par(new=TRUE)
+plot(x2, as.vector(y2)-x2, pch=16, axes=F, col='red', xlab='',ylab='')
+axis(1, col='red',line=2); 
+axis(4, col='red')
 
 @
 

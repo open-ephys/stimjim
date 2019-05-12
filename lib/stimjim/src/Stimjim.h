@@ -13,7 +13,7 @@
 
 #define MICROAMPS_PER_DAC 0.1017            // 20V * (1/(3000 V/A)) / 2^16 = 0.1uA / DAC unit
 #define MICROAMPS_PER_ADC 0.85              //  (1/(100*(1+49.9k/1.8k) V/A)) * 20V / 2^13 = 0.85
-#define MILLIVOLTS_PER_DAC 0.442            // 20V / 2^16 * gain of 1.45 ~= 0.44 mV / DAC unit
+#define MILLIVOLTS_PER_DAC 0.458             // 20V / 2^16 * gain of 1.5 ~= 0.44 mV / DAC unit
 #define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
 
 #define OE0_0 6
