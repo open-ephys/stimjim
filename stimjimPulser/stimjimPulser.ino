@@ -70,49 +70,49 @@ int pulse (volatile PulseTrain* PT) {
   int dac0val, dac1val;
   float adcReadTime = 6.9 * (PT->mode[0] < 2) + 6.9 * (PT->mode[1] < 2);   //16 bits at 5MHz, calibrated time is 6.9us
   float dacWriteTime = 4.8 * (PT->mode[0] < 2) + 4.8 * (PT->mode[1] < 2);  //24 bits at 10MHz, calibrated time is 4.8us
-  
-  dac0val = PT->amplitude[0][0] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]);
-  dac1val = PT->amplitude[1][0] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
+
+  dac0val = PT->amplitude[0][0] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? Stimjim.currentOffsets[0] : Stimjim.voltageOffsets[0]);
+  dac1val = PT->amplitude[1][0] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? Stimjim.currentOffsets[1] : Stimjim.voltageOffsets[1]);
 
   if (PT->mode[0] < 2 && PT->mode[1] < 2) {
-    writeToDacs(dac0val, dac1val);
+    Stimjim.writeToDacs(dac0val, dac1val);
   } else if (PT->mode[0] < 2) {
-    writeToDac(0, dac0val);
+    Stimjim.writeToDac(0, dac0val);
   } else if (PT->mode[1] < 2) {
-    writeToDac(1, dac1val);
+    Stimjim.writeToDac(1, dac1val);
   }
-  if (PT->mode[0] < 2)   setOutputMode(0, PT->mode[0]);
-  if (PT->mode[1] < 2)   setOutputMode(1, PT->mode[1]);
+  if (PT->mode[0] < 2)   Stimjim.setOutputMode(0, PT->mode[0]);
+  if (PT->mode[1] < 2)   Stimjim.setOutputMode(1, PT->mode[1]);
   for (int i = 0; i < PT->nStages; i++) {
     delayMicroseconds(PT->stageDuration[i] - dacWriteTime - adcReadTime - 1.5); // empirically calibrated!
 
     // read ADCs
     if (PT->mode[0] < 2)
-      PT->measuredAmplitude[0][i] += readADC(0, PT->mode[0] > 0) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
+      PT->measuredAmplitude[0][i] += Stimjim.readADC(0, PT->mode[0] > 0) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
     if (PT->mode[1] < 2)
-      PT->measuredAmplitude[1][i] += readADC(1, PT->mode[1] > 0) * ((PT->mode[1]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
-  
+      PT->measuredAmplitude[1][i] += Stimjim.readADC(1, PT->mode[1] > 0) * ((PT->mode[1]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
+
     if ( i + 1 < PT->nStages) {
-      dac0val = PT->amplitude[0][i + 1] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0]);
-      dac1val = PT->amplitude[1][i + 1] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1]);
+      dac0val = PT->amplitude[0][i + 1] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? Stimjim.currentOffsets[0] : Stimjim.voltageOffsets[0]);
+      dac1val = PT->amplitude[1][i + 1] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? Stimjim.currentOffsets[1] : Stimjim.voltageOffsets[1]);
     } else { // we're in the last stage, set DACs back to zero
-      dac0val = (PT->mode[0]) ? currentOffsets[0] : voltageOffsets[0];
-      dac1val = (PT->mode[1]) ? currentOffsets[1] : voltageOffsets[1];
+      dac0val = (PT->mode[0]) ? Stimjim.currentOffsets[0] : Stimjim.voltageOffsets[0];
+      dac1val = (PT->mode[1]) ? Stimjim.currentOffsets[1] : Stimjim.voltageOffsets[1];
     }
     // write to dacs
     if (PT->mode[0] < 2 && PT->mode[1] < 2) {
-      writeToDacs(dac0val, dac1val);
+      Stimjim.writeToDacs(dac0val, dac1val);
     } else if (PT->mode[0] < 2) {
-      writeToDac(0, dac0val);
+      Stimjim.writeToDac(0, dac0val);
     } else if (PT->mode[1] < 2) {
-      writeToDac(1, dac1val);
+      Stimjim.writeToDac(1, dac1val);
     }
 
   }
 
   // switch outputs to ground
-  if (PT->mode[0] < 2)     setOutputMode(0, 3);
-  if (PT->mode[1] < 2)     setOutputMode(1, 3);
+  if (PT->mode[0] < 2)     Stimjim.setOutputMode(0, 3);
+  if (PT->mode[1] < 2)     Stimjim.setOutputMode(1, 3);
 
   PT->nPulses++;
   return 1;
@@ -226,37 +226,13 @@ volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT) {
 
 
 void setup() {
-  pinMode(LED0, OUTPUT);
-  pinMode(LED1, OUTPUT);
-  digitalWrite(LED0, HIGH);
-  digitalWrite(LED1, HIGH);
-  delay(1000);
-
   Serial.begin(112500);
   bytesRecvd = 0;
   delay(1000);
+
   Serial.println("Booting StimJim on Teensy 3.5!");
 
-  Serial.println("Initializing pins...");
-  int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
-  for (int i = 0; i < 12; i++) {
-    pinMode(pins[i], OUTPUT);
-    digitalWrite(pins[i], HIGH);
-  }
-  digitalWrite(LED0, LOW);
-  digitalWrite(LED1, LOW);
-
-  Serial.println("Initializing SPI...");
-  SPI.begin();
-
-  Serial.println("Initializing DACs and ADCs...");
-  setADCrange(10);
-  setupDACs();
-
-
-  Serial.println("Measuring DC offsets...");
-  getCurrentOffsets();
-  getVoltageOffsets();
+  Stimjim.begin();
 
   for (int i = 0; i < PT_ARRAY_LENGTH; i++) {
     PTs[i].mode[0] = 0;
@@ -287,6 +263,7 @@ void setup() {
 
   IT0.priority(64);
   IT1.priority(64);
+  Serial.flush();
   Serial.println("Ready to go!\n\n");
 }
 
@@ -302,8 +279,8 @@ void loop() {
 
     if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - means we've recvd a full command!
       unsigned int ptIndex = 0;
-      comBuf[bytesRecvd-1] ='\0'; // make sure we dont accidentally read into the rest of the string!
-
+      comBuf[bytesRecvd - 1] = '\0'; // make sure we dont accidentally read into the rest of the string!
+      
       if (comBuf[0] == 'S') {
         sscanf(comBuf + 1, "%u,", &ptIndex);
         if (ptIndex >= PT_ARRAY_LENGTH) {
@@ -311,7 +288,7 @@ void loop() {
           bytesRecvd = 0;
           return;
         }
-        
+
         int m = sscanf(comBuf + 1, "%*d,%u,%u,%u,%lu;",
                        &(PTs[ptIndex].mode[0]),
                        &(PTs[ptIndex].mode[1]),
@@ -353,13 +330,13 @@ void loop() {
       else if (comBuf[0] == 'D') {
         char str[100];
         sprintf(str, "current offsets: %d, %d\nvoltage offsets: %d, %d\n",
-                currentOffsets[0], currentOffsets[1], voltageOffsets[0], voltageOffsets[1]);
+                Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1]);
         Serial.println(str);
       }
 
       else if (comBuf[0] == 'C') {
-        getCurrentOffsets();
-        getVoltageOffsets();
+        Stimjim.getCurrentOffsets();
+        Stimjim.getVoltageOffsets();
       }
 
       else if (comBuf[0] == 'R') {
@@ -386,19 +363,19 @@ void loop() {
       else if (comBuf[0] == 'M') {
         int channel = 0, mode = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &mode );
-        setOutputMode(channel, mode);
+        Stimjim.setOutputMode(channel, mode);
         Serial.print("Set channel "); Serial.print(channel); Serial.print(" to mode "); Serial.println(mode);
       }
       else if (comBuf[0] == 'A') {
         int channel = 0, amp = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &amp );
-        writeToDac(channel, amp);
+        Stimjim.writeToDac(channel, amp);
         Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.println(amp);
       }
       else if (comBuf[0] == 'E') {
         int channel = 0, line = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &line );
-        int val = readADC(channel, line);
+        int val = Stimjim.readADC(channel, line);
         Serial.print("Read value: "); Serial.println(val);
       }
 

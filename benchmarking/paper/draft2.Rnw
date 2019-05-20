@@ -1,4 +1,5 @@
 \documentclass[twocolumn]{article}
+%\documentclass{article}
 \usepackage[margin=2cm]{geometry}
 %\usepackage[superscript,biblabel]{cite}
 \usepackage[super]{natbib}
@@ -78,18 +79,16 @@ stopCluster(cl)
 @
 
 \section*{Abstract}
-Electrical stimulation is a powerful tool to perturb and understand the function of neurons and neural circuits. Despite this, electronics that can provide precise current or voltage stimulation are expensive and closed-source. Here, we introduce stimjim, precise yet inexpensive (\$200) open-source hardware for electrical stimulation that combines both function generation and isolation. Stimjim provides microsecond temporal resolution with microampere or millivolt level precision on two isolated output channels. To show the utility of Stimjim, we demonstrate training of mice to perform intracranial self-stimulation (ICSS) for brain stimulation reward (BSR) in a novel head-fixed paradigm, and that interest in the reward can be tuned by adjusting either stimulation frequency or amplitude. 
+Electrical stimulation is a powerful tool to perturb and understand the function of neurons and neural circuits. Despite this, electronics that can provide precise current or voltage stimulation are expensive and closed-source. Here, we introduce Stimjim, a precise yet inexpensive (\$200) open-source instrument for electrical stimulation that combines both function generation and isolation. Stimjim provides microsecond temporal resolution with microampere or millivolt level precision on two isolated output channels. To show the utility of Stimjim, we demonstrate training of mice to perform intracranial self-stimulation (ICSS) for brain stimulation reward (BSR) in a novel head-fixed paradigm, and that interest in the reward can be tuned by adjusting either stimulation frequency or amplitude. 
 
 
 \section*{Introduction}
 Electrical stimulation of neural tissue is an invaluable research tool. Over the past 150 years, it has enabled an understanding of the function of various brain regions by directly causing neurons in those regions to fire \cite{hitzig_uber_1870,ferrier_functions_1876,penfield_somatic_1937}. More recently, it has also found important clinicial applications in neurological disorders including Parkinson's disease\cite{deuschl_randomized_2006} and depression\cite{mayberg_deep_2005}. However, to date, the hardware enabling precise control over current and voltage stimulation remains generally expensive and closed source. 
 
-In contrast, there has been a recent push within the scientific community to produce open labware - open source hardware and software replacements for a variety of common laboratory tasks. Examples include Open Ephys\cite{siegle_open_2017}, Cyclops\cite{newman_optogenetic_2015}, OpenPCR\cite{noauthor_openpcr_nodate}, FlyPi\cite{chagas_100_2017}, Openspritzer\cite{forman_openspritzer:_2017}, and Audiomoth\cite{hill_audiomoth:_2018}. Many of these designs have been enabled by developments fueling the rapid growth of the maker community at large, including Arduino, Raspberry Pi, Teensy, openMV, pixyCam, open-source 3d printers like reprap.  
-
-
+In contrast, there has been a recent push within the scientific community to produce open labware - open source hardware and software replacements for a variety of common laboratory tasks. Examples include Open Ephys\cite{siegle_open_2017}, Cyclops\cite{newman_optogenetic_2015}, OpenPCR\cite{noauthor_openpcr_nodate}, FlyPi\cite{chagas_100_2017}, Openspritzer\cite{forman_openspritzer:_2017}, and Audiomoth\cite{hill_audiomoth:_2018}. We now add Stimjim to this growing body of open hardware. Stimjim can replace an in vivo neural stimulator at a fraction of the cost, without compromising on quality. Furthermore, due to its entirely open design and software, Stimjim can be modified by end users to fit their specific needs. 
 
 \section*{Results}
-\textbf{Design.} We developed Stimjim to be an precision stimulus generator and isolator in a single package. Stimjim is based on the Teensy 3.5 microcontroller, which utilizes a 32-bit Arm Cortex-M4 processor running at 120MHz. Each stimulating channel includes a current source based on an improved Howland current pump, and a voltage source (an op-amp), driven by a 16-bit digital-to-analog converter (DAC). The final output of each channel is selected by a 4-way switch, such that either channel can be configured as a current output, voltage output, grounded, or disconnected (high-Z). To ensure the output is connected to a load and not either an open or short circuit, each channel also has a analog-to-digital converter able to read either the output voltage or the output current (via a sense resistor in series with the current output). Our design was made in Kicad, an open-source PCB CAD package. Schematic, layout, bill of materials, and build instructions are included as supplemental materials and are also available in a git repository (https://bitbucket.org/natecermak/stimjim).
+\textbf{Design.} We developed Stimjim to be an precision stimulus generator and isolator in a single package. Stimjim is based on the Teensy 3.5 microcontroller, which utilizes a 32-bit Arm Cortex-M4 processor running at 120MHz. Each stimulating channel includes a current source based on an improved Howland current pump, and a voltage source (an op-amp), driven by a 16-bit digital-to-analog converter (DAC). The final output of each channel is selected by a 4-way switch, such that either channel can be configured as a current output, voltage output, grounded, or disconnected. To ensure the stimulator is properly connected and not driving either an open or short circuit, each channel also has a analog-to-digital converter (ADC) able to read either the output voltage or the output current (via a sense resistor in series with the current output). Our circuit design was made in Kicad, an open-source printed circuit board (PCB) design program. Schematic, layout, bill of materials, and build instructions are included as supplemental materials and are also available in a git repository (https://bitbucket.org/natecermak/stimjim).
 
 
 \begin{figure}[h]
@@ -101,10 +100,11 @@ In contrast, there has been a recent push within the scientific community to pro
 \end{figure}
 
 
-Stimjim's design is significantly less expensive than other commercial alternatives (Table 1). Its specifications are otherwise similar or better, with the notable exception that its compliance voltage is lower than other stimulators. This limits the load resistance that Stimjim can drive (for a given resistance R, Stimjim cannot output a current larger than $\frac{13.7V}{R}$). While this may be a problem for electrodes with very high impedances (e.g. sharp intracellular or patch electrodes), it is unlikely to be a problem for implanted stimulating electrodes.
+Stimjim's design is significantly less expensive than other commercial alternatives (Table 1). Its specifications are otherwise similar or better, with the exception that its compliance voltage is lower than other stimulators. This limits the load resistance that Stimjim can drive (for a given resistance $R$, Stimjim cannot output a current larger than $\frac{13.7V}{R}$). While this may be a problem for electrodes with very large impedances (for example, sharp intracellular or patch electrodes), it is unlikely to be a problem for implanted stimulating electrodes.
 
+Stimjim's software is written in C++ and is compatible with the Arduino programming environment. We provide both a library consisting of low-level functions (writing registers in the DACs or ADCs, or setting the channel mode), as well as a default program designed to output pulse trains. While end users are unlikely to need to adjust the library functions, they can use these functions to create new programs to run on the Stimjim - for example, generation of random pulse trains, or custom waveform outputs stored on the onboard SD card. 
 
-\begin{table*}[t]
+\begin{table*}[h]
 \small{
 \begin{tabular}{|l|c|c|c|c|c|}
 \hline
@@ -133,9 +133,9 @@ Stimjim's design is significantly less expensive than other commercial alternati
 
 \textbf{Benchmarking.} To benchmark Stimjim, we varied the pulse frequency (from \Sexpr{round(1e6/max(paramMat$period),2)} to \Sexpr{round(1e6/min(paramMat$period),2)} Hz), duration (from \Sexpr{min(paramMat$dur0)} to \Sexpr{max(paramMat$dur0)} $\mu$s), and amplitude while simultaneously recording from both output channels on a National Instruments PCI-6110 card (12-bit ADC, sampling each channel at 2MHz). We set one channel to voltage mode and the other channel to current mode with a 9.75 k$\Omega$ resistor connected to the output.
 
-Stimjim proved exceptionally accurate, providing microsecond temporal resolution and millivolt- and microampere- amplitude resolution. Across the tested range of stimulation frequencies, Stimjim provided accurate and highly consistent inter-pulse intervals (IPIs; Fig. XA-C). The standard deviation of interpulse intervals within a 1-second pulse train was always below one microsecond. Stimjim also produced pulse widths that were accurate and minimally variable (Fig XD-F). Finally, we found Stimjim produced accurate voltage and current amplitudes. 
+Stimjim proved exceptionally accurate, providing microsecond temporal resolution and millivolt- and microampere- amplitude resolution. Across the tested range of stimulation frequencies, Stimjim provided accurate and highly consistent inter-pulse intervals (IPIs; Fig. \ref{fig:benchmarking}A-C). The standard deviation of interpulse intervals within a 1-second pulse train was always below one microsecond. Stimjim also produced pulse widths that were accurate and minimally variable (Fig \ref{fig:benchmarking}D-F). Finally, we found Stimjim produced accurate voltage and current amplitudes. 
 
-<<benchmarkFigure, echo=FALSE,fig.height=5.5,fig.width=5,fig.cap="\\label{fig:benchmarking} \\textbf{Electrical benchmarks show Stimjim provides microsecond temporal precision and millivolt- and microampere-scale amplitude precision.}", fig.align='center', out.width='1.1\\linewidth', fig.env="figure">>=
+<<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=5,fig.cap="\\label{fig:benchmarking} \\textbf{Electrical benchmarks show Stimjim provides microsecond temporal precision and millivolt- and microampere-scale amplitude precision.}", fig.align='center', out.width='1\\linewidth', fig.env="figure">>=
 
 options(scipen=999)
 
@@ -145,23 +145,27 @@ ex1 = sapply(dataFiles[seq(15,1,length.out = 6)], function(f){
   dat[fp + (-1e3:3e4),1]*vpau
 })
 
-layout(matrix(1:9,3,3,byrow=TRUE), widths=c(0.8,1,1))
-par(mar=c(4,1,2,1), mgp=c(2,0.3,0), cex.main=1.05, tck=-0.01)
+padj=-6
+layout(matrix(1:12,4,3,byrow=TRUE), widths=c(0.8,1,1))
+par(mar=c(4,1,2,1), mgp=c(2,0.3,0), cex.main=1.05, tck=-0.01,cex.axis=0.9)
 matplot(1e3/fs*1:nrow(ex1), dendRites::offset(ex1,15), col=1, type='l', lty=1, bty='n', yaxt='n', ylab='', xlab='time (ms)',
         main = "Varying frequency\n(Inter-pulse interval, IPI)"); 
-par(mar=c(4,4,2,1))
+mtext("A",side=2, padj=padj-0.5,las=2, line=0)
+par(mar=c(4,3,2,1))
 plot(paramMat[1:30,3]/1e3, sapply(res[seq(1,60,by=2)], function(x) x$IPI.summary[3])*1e3, yaxt='n',
   log='xy', main='', cex=0.75, xlab='Target IPI (ms)', ylab='Measured IPI (ms)')
 axis(2,las=2)
 points(paramMat[1:30,3]/1e3, sapply(res[seq(2,60,by=2)], function(x) x$IPI.summary[3])*1e3, 
   col='red', cex=0.75)
 abline(a=0,b=1)
+mtext("B",side=2, padj=padj,las=2)
 
 plot(paramMat[1:30,3]/1e3, sapply(res[seq(1,60,by=2)], function(x) x$IPI.sd)*1e6, yaxt='n',
   log='x', main='', cex=0.75, xlab='Target IPI (ms)', ylab='IPI standard deviation (us)')
 points(paramMat[1:30,3]/1e3, sapply(res[seq(2,60,by=2)], function(x) x$IPI.sd)*1e6,
   col='red', cex=0.75)
 axis(2,las=2)
+mtext("C",side=2, padj=padj,las=2)
 # 
 # plot(paramMat[1:30,3], sapply(res[seq(1,60,by=2)], function(x) diff(x$IPI.summary[c(1,6)]))*1e6, 
 #   log='x', main='IPI range', cex=0.75, xlab='Target IPI', ylab='Range of measured IPIs')
@@ -178,19 +182,23 @@ ex2 = sapply(dataFiles[seq(52,31,length.out=6)], function(f){
 par(mar=c(4,1,2,1))
 matplot(1e3/fs*1:nrow(ex2), dendRites::offset(ex2,15), col=1, type='l', lty=1, bty='n', yaxt='n', ylab='', xlab='time (ms)',
                 main = "Varying pulse width (PW)"); 
-par(mar=c(4,4,2,1))
+mtext("D",side=2, padj=padj-1,las=2)
+
+par(mar=c(4,3,2,1))
 plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) x$PW.summary[3])*1e6/2,  yaxt='n',
   log='xy', main='', xlab='Target PW (us)', ylab='Measured PW (us)', cex=0.75)
 points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) x$PW.summary[3])*1e6/2,
   col='red', cex=0.75)
 abline(a=0,b=1)
 axis(2,las=2)
+mtext("E",side=2, padj=padj,las=2)
 
 plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) x$PW.sd)*1e6/2, yaxt='n',
   log='x', main='', xlab='Target PW (us)', ylab='PW standard deviation (us)', cex=0.75)
 points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) x$PW.sd)*1e6/2,
   col='red', cex=0.75)
 axis(2,las=2)
+mtext("F",side=2, padj=padj,las=2)
 # plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) diff(x$PW.summary[c(1,6)]))*1e6/2, 
 #   log='x', main='PW range', ylab='PW range', cex=0.75)
 # points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) diff(x$PW.summary[c(1,6)]))*1e6/2,
@@ -204,32 +212,54 @@ ex3 = sapply(dataFiles[seq(81,61,length.out=6)], function(f){
 par(mar=c(4,1,2,1))
 matplot(1e3/fs*1:nrow(ex3), dendRites::offset(ex3,15), col=1, type='l', lty=1, bty='n', yaxt='n', ylab='', xlab='time (ms)',
                 main = "Varying amplitude");
-par(mar=c(4,4,2,1))
+mtext("G",side=2, padj=padj,las=2)
+par(mar=c(4,3,2,1))
 x = c(paramMat[61:89,5], -paramMat[61:89,5])
 y = t(sapply(res[seq(121,178,by=2)], function(x) c(x$sh.median,x$sl.median))*1e3)
 plot(x/1000,y-x, main='Voltage accuracy', xlab='Target amplitude (V)', ylab='Measured error (mV)', cex=0.75, yaxt='n', ylim=c(-30,30))
 axis(2,las=2)
+mtext("H",side=2, padj=padj,las=2)
 
 x2 = c(paramMat[61:90,6], -paramMat[61:90,6])
 y2 = t(sapply(res[seq(122,180,by=2)], function(x) c(x$sh.median,x$sl.median))/9750*1e6)
 plot(x2/1000,y2-x2, main='Current accuracy', xlab='Target amplitude (mA)', ylab='Measured error (uA)', cex=0.75, col='red', yaxt='n',ylim=c(-5,5))
 axis(2,las=2)
-
+mtext("I",side=2, padj=padj,las=2)
 # plot(x, as.vector(y)-x, pch=16, xlab='', ylab='')
 # par(new=TRUE)
 # plot(x2, as.vector(y2)-x2, pch=16, axes=F, col='red', xlab='',ylab='')
 # axis(1, col='red',line=2); 
 # axis(4, col='red')
+par(mar=c(4,2,2,1), mgp=c(1,0.3,0))
+dat = matrix(readBin(dataFiles[32], what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
+fp = min(which(dat[,1] > 100))
+ex4 = dat[fp + (-1e2:2e2),]*vpau
+matplot(1:nrow(ex4)/fs*1e6-50,ex4, main = 'Example short pulse', type='l', lty=1, xlab='Time (us)', ylab='Amplitude (V)', yaxt='n')
+axis(2,las=2)
+mtext("J",side=2, padj=padj,las=2, line=1)
 
+par(mar=c(4,3,2,1), mgp=c(2,0.3,0))
+dat = matrix(readBin(dataFiles[61], what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
+fp = min(which(dat[,1] > 10))
+ex5 = dat[fp + (-1e2:5e2),]*vpau
+matplot(1:nrow(ex5)/fs*1e6-50, ex5, main = 'Example small pulse', type='l', lty=1, xlab='Time (us)', ylab='Amplitude (V)', yaxt='n')
+axis(2,las=2)
+mtext("K",side=2, padj=padj,las=2)
+
+y = ex4[163:220,2]
+x=1:length(y)/2
+plot(x,y)
+mod = nls(y~a*(1-exp(-x/t))+b, start=list(a=-10,t=10,b=5))
+lines(x,predict(mod))
 @
 
 
 
 \textbf{In vivo stimulation.} To demonstrate the utility of Stimjim, we used it to train mice in a classical paradigm known as intra-cranial self stimulation (ICSS)\cite{olds_positive_1954}. In this assay, animals are implanted with electrodes (or more recently optical fibers) enabling activation of a pleasure/reward-related brain region\cite{carlezon_intracranial_2007}. Animals are then placed in a training paradigm in which they learn that a simple motor action (typically spinning a wheel or pressing a lever) causes direct activation of this brain region. Animals quickly learn the required action and are willing to repeat it for extended periods of time. 
 
-Here, we trained two mice in a head-fixed variant of ICSS, in which animals could lick a sensor in order to obtain brain stimulation reward (BSR). After animals had learned the licking behavior (usually within their first hour session), we varied the stimulation frequency and amplitude and assessed how it affected licking behavior. Both animals showed clear frequency- and amplitude-dependent responses, in which animals ceased licking when the rewarding stimulation was insufficiently intense (Fig. \ref{fig:icss}).
+Here, we trained two mice in a head-fixed variant of ICSS, in which animals could lick a sensor in order to obtain brain stimulation reward (BSR). We used a capacitive sensor attached to a small metal pole to detect licking, and every lick triggered a stimulus pulse train (0.5 seconds, initially 150 Hz and the minimal current at which animals would respond). To initially encourage licking, we placed a small amount of peanut butter on the metal sensor. After initial licking was reinforced by BSR, animals would continue licking long after the peanut butter was gone, including during the next session in which no peanut butter was offered. After animals had learned the licking behavior (usually within their first hour session), we varied the stimulation frequency and amplitude and assessed how it affected licking behavior. Both animals showed clear frequency- and amplitude-dependent responses, in which animals ceased licking when the rewarding stimulation was insufficiently intense (Fig. \ref{fig:icss}).
 
-<<icssAnalysis, echo=FALSE, fig.cap="\\label{fig:icss}\\textbf{Stimjim enables measuring frequency- and amplitude-dependent responses in an intracranial self-stimulation paradigm.} Mice decreased their licking rates when the frequency and amplitude of the rewarding stimulation decreased. For each animal, three frequency sweeps (highest to lowest frequency, 1 minute per frequency) were performed in a 45-minute session. Amplitude sweeps were performed in the same way.", cache=TRUE, fig.height=5, fig.width=5, fig.align='center'>>=
+<<icssAnalysis, echo=FALSE, fig.cap="\\label{fig:icss}\\textbf{Stimjim enables measuring frequency- and amplitude-dependent responses in an intracranial self-stimulation paradigm.} Mice decreased their licking rates when the frequency and amplitude of the rewarding stimulation decreased. For each animal, three frequency sweeps (highest to lowest frequency, 1 minute per frequency) were performed in a 45-minute session. Amplitude sweeps were performed in the same way. Each dot indicates a single 1-minute trial, and the solid black line shows the mean of all three trials at that frequency or amplitude.", cache=TRUE, fig.height=5, fig.width=5, fig.align='center'>>=
 
 
 icss.files = c("/home/x/Desktop/stimjim/benchmarking/2019-04-04_4309/20190404_115638.txt",

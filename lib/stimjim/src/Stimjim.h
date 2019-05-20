@@ -32,28 +32,32 @@
 #define LED1 20
 #define MISO_0 8
 #define MISO_1 12
+ 
 
 
 
+class StimJim {
 
+  public:
+    void begin();
+    void setOutputMode(byte channel, byte mode);
+    void setADCrange(float range);
+    void writeToDacs(int16_t amp0, int16_t amp1);
+    void writeToDac(byte channel, int16_t amp);
+    int readADC(byte channel, byte line);
+    void getCurrentOffsets();
+    void getVoltageOffsets();
 
-// ------------ Function prototypes --------------------------- //
-void setOutputMode(byte channel, byte mode);
-void setADCrange(float range);
-void setupDACs();
-void writeToDacs(int16_t amp0, int16_t amp1);
-void writeToDac(byte channel, int16_t amp);
-int readADC(byte channel, byte line);
-void getCurrentOffsets();
-void getVoltageOffsets();
+    int currentOffsets[2]; //  Compensation for various DC offsets
+    int voltageOffsets[2];
 
+  private:
+    void setupDACs();
+    volatile bool adcSelectedInput[2]; // --------- States of ADCs (set to read current or voltage?) ---//
+    SPISettings SpiSettingsDAC, SpiSettingsADC;
 
-// ------------- Compensation for various DC offsets ---------- //
-extern int currentOffsets[2];
-extern int voltageOffsets[2];
+};
 
-// --------- States of ADCs (set to read current or voltage?) ---//
-extern volatile bool adcSelectedInput[2];
-
+extern StimJim Stimjim;
 
 #endif /* ! defined __STIMJIM_H__ */

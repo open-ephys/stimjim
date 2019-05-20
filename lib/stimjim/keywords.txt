@@ -7,30 +7,31 @@
 # Datatypes (KEYWORD1)
 #######################################
 
+Stimjim		KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setOutputMode KEYWORD1
-setADCrange KEYWORD1
-setupDACs KEYWORD1
-writeToDacs KEYWORD1
-writeToDac KEYWORD1
-readADC KEYWORD1
-getCurrentOffsets KEYWORD1
-getVoltageOffsets KEYWORD1
+setOutputMode	KEYWORD2
+setADCrange		KEYWORD2
+setupDACs		KEYWORD2
+writeToDacs		KEYWORD2
+writeToDac		KEYWORD2
+readADC			KEYWORD2
+getCurrentOffsets	KEYWORD2
+getVoltageOffsets	KEYWORD2
 
 
 #######################################
 # Instances (KEYWORD2)
 #######################################
 
-SpiSettingsDAC KEYWORD1
-SpiSettingsADC KEYWORD1
-currentOffsets KEYWORD1
-voltageOffsets KEYWORD1
-adcSelectedInput KEYWORD1
+SpiSettingsDAC		KEYWORD2
+SpiSettingsADC		KEYWORD2
+currentOffsets		KEYWORD2
+voltageOffsets		KEYWORD2
+adcSelectedInput	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

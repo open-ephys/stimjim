@@ -1,21 +1,42 @@
 #include "Stimjim.h"
 
-// ------------- SPI setup ------------------------------------- //
-//AD5752 DAC runs at max 30MHz, SPI mode 1 or 2
-SPISettings SpiSettingsDAC(10000000, MSBFIRST, SPI_MODE1); // Does not seem to work at 20MHz!
-//AD7321 settings - clock starts high, data latch on falling edge
-SPISettings SpiSettingsADC(5000000, MSBFIRST, SPI_MODE2);  // Can't run SPI clock faster than 1MHz without errors
+void StimJim::begin(){
+
+  // ------------- SPI setup ------------------------------------- //
+  SPI.begin();
+
+  //AD5752 DAC runs at max 30MHz, SPI mode 1 or 2
+  SpiSettingsDAC = SPISettings(10000000, MSBFIRST, SPI_MODE1); 
+  //AD7321 settings - clock starts high, data latch on falling edge
+  SpiSettingsADC = SPISettings(5000000, MSBFIRST, SPI_MODE2);  
 
 
-// ------------- Compensation for various DC offsets ---------- //
-int currentOffsets[2];
-int voltageOffsets[2];
+  // ------------- Turn on LEDS ----------------------------------- //
+  pinMode(LED0, OUTPUT);
+  pinMode(LED1, OUTPUT);
+  digitalWrite(LED0, HIGH);
+  digitalWrite(LED1, HIGH);
 
-// --------- States of ADCs (set to read current or voltage?) ---//
-volatile bool adcSelectedInput[2];
+
+  // ------------- Setup output pins ------------------------------------ //
+  int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
+  for (int i = 0; i < 12; i++) {
+    pinMode(pins[i], OUTPUT);
+    digitalWrite(pins[i], HIGH);
+  }
 
 
-void setOutputMode(byte channel, byte mode) {
+  setADCrange(10);
+  setupDACs();
+
+  getCurrentOffsets();
+  getVoltageOffsets();
+  delay(1000);
+  digitalWrite(LED0, LOW);
+  digitalWrite(LED1, LOW);
+}
+
+void StimJim::setOutputMode(byte channel, byte mode) {
   // mode 0-3 are: VOLTAGE, CURRENT, HIGH-Z, GROUND
   digitalWriteFast((channel) ? OE0_1 : OE0_0, (0b00000001 & mode) ? HIGH : LOW);
   digitalWriteFast((channel) ? OE1_1 : OE1_0, (0b00000010 & mode) ? HIGH : LOW);
@@ -23,7 +44,7 @@ void setOutputMode(byte channel, byte mode) {
 
 
 
-void setADCrange(float range) {
+void StimJim::setADCrange(float range) {
   SPI.beginTransaction(SpiSettingsADC);
   for (int i = 0; i < 2; i++) {
     int cs = (i == 0) ? CS1_0 : CS1_1; //CS1_x is ADC for channel x
@@ -40,7 +61,7 @@ void setADCrange(float range) {
   SPI.endTransaction();
 }
 
-void setupDACs() {
+void StimJim::setupDACs() {
   SPI.beginTransaction(SpiSettingsDAC);
   for (int i = 0; i < 2; i++) {
     int cs = (i == 0) ? CS0_0 : CS0_1; //CS0_x is DAC for channel x
@@ -60,10 +81,10 @@ void setupDACs() {
 }
 
 
-void writeToDacs(int16_t amp0, int16_t amp1) {
+void StimJim::writeToDacs(int16_t amp0, int16_t amp1) {
   /* The input shift register is 24 bits wide, MSB first. The input register consists of
      a read/write bit, three register select bits, three DAC address bits, and 16 data bits.
-     Stimjim's AD5752 uses two's complement. */
+     StimJim's AD5752 uses two's complement. */
   SPI.beginTransaction(SpiSettingsDAC);
   digitalWrite(CS0_0, LOW);
   SPI.transfer(0);
@@ -82,7 +103,7 @@ void writeToDacs(int16_t amp0, int16_t amp1) {
 }
 
 
-void writeToDac(byte channel, int16_t amp) {
+void StimJim::writeToDac(byte channel, int16_t amp) {
   SPI.beginTransaction(SpiSettingsDAC);
   digitalWrite((channel) ? CS0_1 : CS0_0, LOW);
   SPI.transfer(0);     // write to AD5752 is 24-bit, first 8 low means output 0
@@ -96,7 +117,7 @@ void writeToDac(byte channel, int16_t amp) {
 
 
 
-int readADC(byte channel, byte line) {
+int StimJim::readADC(byte channel, byte line) {
 
   int cs = (channel) ? CS1_1 : CS1_0;
 
@@ -119,7 +140,7 @@ int readADC(byte channel, byte line) {
 }
 
 
-void getCurrentOffsets() {
+void StimJim::getCurrentOffsets() {
   int adcReadSum[2];
   int bestDcVal[2] = {10000, 10000};
 
@@ -145,15 +166,15 @@ void getCurrentOffsets() {
   }
   writeToDacs(currentOffsets[0], currentOffsets[1]);
   setADCrange(10);
-  char str[40];
-  sprintf(str, "Best current offsets: %d, %d\n", currentOffsets[0], currentOffsets[1]);
-  Serial.print(str);
+  //char str[40];
+  //sprintf(str, "Best current offsets: %d, %d\n", currentOffsets[0], currentOffsets[1]);
+  //Serial.print(str);
 }
 
 
-void getVoltageOffsets() {
+void StimJim::getVoltageOffsets() {
   int adcReadSum[2];
-  int bestDcVal[2] = {10000, 10000};
+  int bestDcVal[2] = {10000, 10000}; 
 
   setOutputMode(0, 0); // VOLTAGE OUTPUT - DANGEROUS
   setOutputMode(1, 0); // VOLTAGE OUTPUT - DANGEROUS
@@ -180,9 +201,12 @@ void getVoltageOffsets() {
   setOutputMode(0, 3);
   setOutputMode(1, 3);
   setADCrange(10);
-  char str[40];
-  sprintf(str, "Best voltage offsets: %d, %d\n", voltageOffsets[0], voltageOffsets[1]);
-  Serial.print(str);
+  //char str[40];
+  //sprintf(str, "Best voltage offsets: %d, %d\n", voltageOffsets[0], voltageOffsets[1]);
+  //Serial.print(str);
 }
+
+StimJim Stimjim;
+
 
 
