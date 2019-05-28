@@ -15,7 +15,7 @@
 <<loadBenchmarkData, echo=FALSE, cache=TRUE>>=
 library(parallel) 
 
-projectDirectory = '/home/x/Desktop/stimjim/benchmarking/'
+projectDirectory = '/home/x/Dropbox (Technion Dropbox)/stimjim/benchmarking/'
 setwd(projectDirectory)
 
 BOM=openxlsx::read.xlsx("../stimjim_BOM.xlsx")
@@ -57,10 +57,12 @@ getPulseParams = function(f, thresh=25, fs, vpau){
     PW.summary = summary(PW)
     PW.sd = sd(PW)
     
-    sh.median = median(x[which(isStageHigh>0)])*vpau
-    sh.sd = sd(x[which(mmand::erode(isStageHigh, rep(1,13))>0)])*vpau
-    sl.median = median(x[which(isStageLow>0)])*vpau
-    sl.sd = sd(x[which(mmand::erode(isStageLow, rep(1,13))>0)])*vpau
+    ishe = which(mmand::erode(isStageHigh>0, rep(1,31)) > 0)
+    isle = which(mmand::erode(isStageLow>0, rep(1,31)) > 0 )
+    sh.median = median(x[ishe])*vpau
+    sh.sd = sd(x[ishe])*vpau
+    sl.median = median(x[isle])*vpau
+    sl.sd = sd(x[isle])*vpau
     
     pulseMat = sapply(pulseStartIndices, function(j) x[j+(-100:1000)])
     list(IPI.summary=IPI.summary, IPI.sd=IPI.sd, PW.summary=PW.summary, 
@@ -246,11 +248,11 @@ matplot(1:nrow(ex5)/fs*1e6-50, ex5, main = 'Example small pulse', type='l', lty=
 axis(2,las=2)
 mtext("K",side=2, padj=padj,las=2)
 
-y = ex4[163:220,2]
-x=1:length(y)/2
-plot(x,y)
-mod = nls(y~a*(1-exp(-x/t))+b, start=list(a=-10,t=10,b=5))
-lines(x,predict(mod))
+#y = ex4[163:220,2]
+#x=1:length(y)/2
+#plot(x,y)
+#mod = nls(y~a*(1-exp(-x/t))+b, start=list(a=-10,t=10,b=5))
+#lines(x,predict(mod))
 @
 
 
