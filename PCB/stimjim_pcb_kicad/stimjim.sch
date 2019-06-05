@@ -285,7 +285,7 @@ SCK_1i
 Text GLabel 8300 2650 0    50   Input ~ 0
 NLDAC_1i
 Text GLabel 8300 2550 0    50   Input ~ 0
-MOSI_0i
+MOSI_1i
 Text GLabel 8300 2350 0    50   Input ~ 0
 CS0_1i
 Wire Wire Line
@@ -588,13 +588,13 @@ Wire Wire Line
 Wire Wire Line
 	5800 4200 6050 4200
 Text GLabel 7000 3900 2    50   Input ~ 0
-MOSI_0i
+MOSI_1i
 Text GLabel 7000 4200 2    50   Input ~ 0
 MISO_1i
 Wire Wire Line
 	7000 4200 6900 4200
 Text GLabel 8350 3650 0    50   Input ~ 0
-MOSI_0i
+MOSI_1i
 Wire Wire Line
 	8350 3650 8450 3650
 Text GLabel 8350 3550 0    50   Input ~ 0
@@ -1995,7 +1995,7 @@ SCK_0i
 Text GLabel 8450 7500 0    50   Input ~ 0
 NLDAC_0i
 Text GLabel 8450 7400 0    50   Input ~ 0
-MOSI_1i
+MOSI_0i
 Text GLabel 8450 7200 0    50   Input ~ 0
 CS0_0i
 Wire Wire Line
@@ -2206,13 +2206,13 @@ Wire Wire Line
 Wire Wire Line
 	5950 9050 6200 9050
 Text GLabel 7150 8750 2    50   Input ~ 0
-MOSI_1i
+MOSI_0i
 Text GLabel 7150 9050 2    50   Input ~ 0
 MISO_0i
 Wire Wire Line
 	7150 9050 7050 9050
 Text GLabel 8500 8500 0    50   Input ~ 0
-MOSI_1i
+MOSI_0i
 Wire Wire Line
 	8500 8500 8600 8500
 Text GLabel 8500 8400 0    50   Input ~ 0

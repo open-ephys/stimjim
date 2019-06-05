@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source "/home/x/Dropbox (Technion Dropbox)/stimjim/PCB/stimjim_pcb_kicad/stimjim.sch")
-    (date "Wed 05 Jun 2019 12:58:28 PM EEST")
+    (date "Wed 05 Jun 2019 02:15:52 PM EEST")
     (tool "Eeschema 5.0.2-bee76a0~70~ubuntu18.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -1234,7 +1234,7 @@
     (library (logical teensy)
       (uri "/home/x/Dropbox (Technion Dropbox)/stimjim/PCB/stimjim_pcb_kicad/teensy.lib")))
   (nets
-    (net (code 1) (name MOSI_1i)
+    (net (code 1) (name MOSI_0i)
       (node (ref U18) (pin 2))
       (node (ref U17) (pin 9))
       (node (ref U15) (pin 14)))
@@ -1630,7 +1630,7 @@
       (node (ref U7) (pin 7))
       (node (ref J6) (pin 1))
       (node (ref U12) (pin 9)))
-    (net (code 65) (name MOSI_0i)
+    (net (code 65) (name MOSI_1i)
       (node (ref U7) (pin 2))
       (node (ref U6) (pin 9))
       (node (ref U4) (pin 14)))
