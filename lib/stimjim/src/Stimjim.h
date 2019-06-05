@@ -16,22 +16,22 @@
 #define MILLIVOLTS_PER_DAC 0.4593            // 20V / 2^16 * gain of 1.505 ~= 0.44 mV / DAC unit
 #define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
 
-#define OE0_0 6
-#define OE1_0 5
-#define OE0_1 1
-#define OE1_1 0
-#define CS0_0 9
-#define CS1_0 7
-#define CS0_1 3
-#define CS1_1 2
-#define NLDAC_1 4
-#define NLDAC_0 10
+#define OE0_1 6
+#define OE1_1 5
+#define OE0_0 1
+#define OE1_0 0
+#define CS0_1 9
+#define CS1_1 7
+#define CS0_0 3
+#define CS1_0 2
+#define NLDAC_0 4
+#define NLDAC_1 10
 #define IN0 22
 #define IN1 23
 #define LED0 21
 #define LED1 20
-#define MISO_0 8
-#define MISO_1 12
+#define MISO_1 8
+#define MISO_0 12
  
 
 
