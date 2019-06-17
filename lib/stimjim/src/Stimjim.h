@@ -13,7 +13,7 @@
 
 #define MICROAMPS_PER_DAC 0.1017            // 20V * (1/(3000 V/A)) / 2^16 = 0.1uA / DAC unit
 #define MICROAMPS_PER_ADC 0.85              //  (1/(100*(1+49.9k/1.8k) V/A)) * 20V / 2^13 = 0.85
-#define MILLIVOLTS_PER_DAC 0.4593            // 20V / 2^16 * gain of 1.505 ~= 0.44 mV / DAC unit
+#define MILLIVOLTS_PER_DAC 0.4593           // 20V / 2^16 * gain of 1.505 ~= 0.44 mV / DAC unit
 #define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
 
 #define OE0_1 6
@@ -39,21 +39,48 @@
 class StimJim {
 
   public:
+	// begin() should be run before using any other StimJim methods. 
+	// It initializes the SPI, creates appropriate SPISettings objects for DACs and ADCs,
+	// sets all necessary pins to outputs, sets ADC range to +-10V, and measures current offsets.
     void begin();
+	
+	// setOutputMode() sets the output mode for the selected channel (0/1).
+	// mode 0-3 are: VOLTAGE, CURRENT, HIGH-Z, GROUND.
     void setOutputMode(byte channel, byte mode);
+	
+	// Sets ADC range on both channels to +-2.5V, +-5V, or +-10V (use range=2.5, 5 
+	// or 10 to select, respectively).
     void setADCrange(float range);
+	
+	// Write a 16-bit signed int value to each channel. Outputs will be nearly 
+	// synchronously updated (sub-microsecond). 
     void writeToDacs(int16_t amp0, int16_t amp1);
+	
+	// Write a 16-bit signed int value to a single channel.     
     void writeToDac(byte channel, int16_t amp);
+	
+	// read the ADC on for a channel. line=0 means measure voltage at output,
+	// line=1 means read the value from the current sense instrument amplifier.
     int readADC(byte channel, byte line);
+	
+    // getCurrentOffsets() sweeps through a range of DAC values while measuring the
+	// current shunted through a 1k resistor (output remains grounded). This enables
+	// compensation for imperfect resistor matching and subsequent DC offset in the 
+	// Howland current pump.
     void getCurrentOffsets();
+
+    // getVoltageOffsets() sweeps through a range of DAC values while measuring the 
+	// output voltage. 
+	// Caution!! Anything connected to the output will see a voltage ramp!
+	// This enables compensation for any DC offset in the DAC or amplifier.
     void getVoltageOffsets();
 
-    int currentOffsets[2]; //  Compensation for various DC offsets
-    int voltageOffsets[2];
+    int currentOffsets[2];  // These store the compensation for various DC offsets from 
+    int voltageOffsets[2];  // getVoltageOffsets() and getCurrentOffsets()
 
   private:
     void setupDACs();
-    volatile bool adcSelectedInput[2]; // --------- States of ADCs (set to read current or voltage?) ---//
+    volatile bool adcSelectedInput[2]; // states of ADCs (are they set to read current or voltage?)
     SPISettings SpiSettingsDAC, SpiSettingsADC;
 
 };
