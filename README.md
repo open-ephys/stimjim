@@ -2,7 +2,8 @@ Stimjim - a flexible, precise, and inexpensive open-source stimulator
 -------------------------------
 Stimjim is a current and voltage stimulator for stimulating neural tissue (as with stimulating electrodes). 
 
-![Stimjim picture](photo.png)
+
+<img src="./photo.png" width="50%" height="50%">
 
 # Specifications:
 
@@ -20,7 +21,7 @@ Stimjim is a current and voltage stimulator for stimulating neural tissue (as wi
 
 Here are the steps to build your very own Stimjim box. 
 
-1. Order [printed circuit boards (PCBs)](./PCB/stimjim_fabricationFiles.zip)  (from [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
+1. Order [printed circuit boards (PCBs)](./PCB/stimjim_fabricationFiles.zip)  (from [JLCPCB](https://jlcpcb.com/), [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
 2. Order [components](./stimjim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
 3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering ability.
 4. Compile and download the [firmware](./stimjimPulser/) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!). Before compiling stimjimPulser.ino, You will need to install the Stimjim library by copying the "lib" folder to the appropriate arduino "libraries" folder on your computer.
