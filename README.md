@@ -2,8 +2,7 @@ Stimjim - a flexible, precise, and inexpensive open-source stimulator
 -------------------------------
 Stimjim is a current and voltage stimulator for stimulating neural tissue (as with stimulating electrodes). 
 
-
-<img src="./photo.png" width="50%" height="50%">
+![Stimjim picture](photo.png)
 
 # Specifications:
 
