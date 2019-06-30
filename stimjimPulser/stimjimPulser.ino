@@ -2,7 +2,7 @@
 
 #include <Stimjim.h>
 
-#define PT_ARRAY_LENGTH 10
+#define PT_ARRAY_LENGTH 100
 #define MAX_NUM_STAGES 10
 
 
@@ -54,9 +54,6 @@ volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT);
 
 
 int pulse (volatile PulseTrain* PT) {
-  if (PT->nPulses == 0)
-    PT->trainStartTime = micros();
-
   //check if the pulseTrain is finished; if so, exit
   if (micros() - PT->trainStartTime >= PT->duration)
     return 0;
@@ -65,7 +62,6 @@ int pulse (volatile PulseTrain* PT) {
     PT->nPulses++;
     return 1;
   }
-
 
   int dac0val, dac1val;
   float adcReadTime = 6.9 * (PT->mode[0] < 2) + 6.9 * (PT->mode[1] < 2);   //16 bits at 5MHz, calibrated time is 6.9us
@@ -137,8 +133,8 @@ void pulse0() {
   if (!pulse(activePT0)) {
     IT0.end();
     printTrainResultSummary(activePT0);
-    if (activePT0->mode[0] < 2)  digitalWrite(LED0, LOW);
-    if (activePT0->mode[1] < 2)  digitalWrite(LED1, LOW);
+    if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, LOW);
+    if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, LOW);
   }
 }
 
@@ -146,8 +142,8 @@ void pulse1() {
   if (!pulse(activePT1)) {
     IT1.end();
     printTrainResultSummary(activePT1);
-    if (activePT1->mode[0] < 2)  digitalWrite(LED0, LOW);
-    if (activePT1->mode[1] < 2)  digitalWrite(LED1, LOW);
+    if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, LOW);
+    if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, LOW);
   }
 }
 
@@ -158,12 +154,14 @@ void startIT0ViaInputTrigger() {
 
 void startIT0(int ptIndex) {
   activePT0 = clearPulseTrainHistory(&PTs[ptIndex]);
-  Serial.print("\nStarting T train with parameters of PulseTrain "); Serial.println(ptIndex);
-  if (activePT0->mode[0] < 2)  digitalWrite(LED0, HIGH);
-  if (activePT0->mode[1] < 2)  digitalWrite(LED1, HIGH);
+  activePT0->trainStartTime = micros();
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
   pulse0(); //intervalTimer starts with delay - we want to start with pulse!
+  
+  Serial.print("\nStarted T train with parameters of PulseTrain "); Serial.println(ptIndex);
+  if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
+  if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
 }
 
 void startIT1ViaInputTrigger() {
@@ -173,13 +171,14 @@ void startIT1ViaInputTrigger() {
 
 void startIT1(int ptIndex) {
   activePT1 = clearPulseTrainHistory(&PTs[ptIndex]);
-  Serial.print("\nStarting U train with parameters of PulseTrain "); Serial.println(ptIndex);
-  if (activePT1->mode[0] < 2)  digitalWrite(LED0, HIGH);
-  if (activePT1->mode[1] < 2)  digitalWrite(LED1, HIGH);
-
+  activePT1->trainStartTime = micros();
   if (!IT1.begin(pulse1, activePT1->period))
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
   pulse1(); //intervalTimer starts with delay - we want to start with pulse!
+  
+  Serial.print("\nStarted U train with parameters of PulseTrain "); Serial.println(ptIndex);
+  if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
+  if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
 }
 
 
@@ -195,7 +194,7 @@ void printPulseTrainParameters(int i) {
   sprintf(str, "Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
           i, PTs[i].mode[0], modeStrings[PTs[i].mode[0]], PTs[i].mode[1], modeStrings[PTs[i].mode[1]]);
   Serial.print(str);
-  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration: %lu usec (%0.3f sec)\n",
+  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration:  %lu usec (%0.3f sec)\n",
           PTs[i].period, 0.000001 * PTs[i].period, 1000000.0 / PTs[i].period, PTs[i].duration, 0.000001 * PTs[i].duration);
   Serial.print(str);
   Serial.println("\n  stage    duration     output0   output1");
@@ -211,9 +210,7 @@ void printPulseTrainParameters(int i) {
 
 volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT) {
   PT->nPulses = 0;
-  for (int i = 0; i < PT->nStages; i++)
-    for (int j = 0; j < 4; j++)
-      PT->measuredAmplitude[j][i] = 0;
+  memset((void *) PT->measuredAmplitude, 0, 4*MAX_NUM_STAGES*sizeof(int));
   return (PT);
 }
 

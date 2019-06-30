@@ -14,15 +14,15 @@ void StimJim::begin(){
   // ------------- Turn on LEDS ----------------------------------- //
   pinMode(LED0, OUTPUT);
   pinMode(LED1, OUTPUT);
-  digitalWrite(LED0, HIGH);
-  digitalWrite(LED1, HIGH);
+  digitalWriteFast(LED0, HIGH);
+  digitalWriteFast(LED1, HIGH);
 
 
   // ------------- Setup output pins ------------------------------------ //
   int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
   for (int i = 0; i < 12; i++) {
     pinMode(pins[i], OUTPUT);
-    digitalWrite(pins[i], HIGH);
+    digitalWriteFast(pins[i], HIGH);
   }
 
 
@@ -32,8 +32,8 @@ void StimJim::begin(){
   getCurrentOffsets();
   getVoltageOffsets();
   delay(1000);
-  digitalWrite(LED0, LOW);
-  digitalWrite(LED1, LOW);
+  digitalWriteFast(LED0, LOW);
+  digitalWriteFast(LED1, LOW);
 }
 
 void StimJim::setOutputMode(byte channel, byte mode) {

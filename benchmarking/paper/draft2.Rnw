@@ -5,31 +5,35 @@
 \usepackage[super]{natbib}
 \usepackage[font={small}]{caption}
 
+%\addtolength{\textfloatsep}{-0.2in}
+%\addtolength{\dblfloatsep}{-0.2in}
+
 \newenvironment{itemize*}%
   {\begin{itemize}%
     \setlength{\itemsep}{0pt}%
     \setlength{\parskip}{0pt}}%
   {\end{itemize}}
 
-
 \begin{document}
 %\SweaveOpts{concordance=TRUE}
 
 
 
-\title{Stimjim is open source hardware for precise electrical stimulation}
+\title{Stimjim: open source hardware for precise electrical stimulation}
 \author{}
 \date{}
 \maketitle
 
-<<loadBenchmarkData, echo=FALSE, cache=TRUE>>=
+<<loadBenchmarkData, echo=FALSE, cache=TRUE,message=FALSE>>=
 library(parallel)
+library(readxl)
+library(gplots)
 
 projectDirectory = '/home/x/Dropbox (Technion Dropbox)/stimjim/benchmarking/'
 setwd(projectDirectory)
 
-BOM=openxlsx::read.xlsx("../stimjim_BOM.xlsx")
-stimjimCost = ceiling(sum(BOM$Unit.cost*BOM$Quantity, na.rm=TRUE))
+BOM=readxl::read_excel("../stimjim_BOM.xlsx")
+stimjimCost = ceiling(sum(BOM[, 'Unit cost']*BOM$Quantity, na.rm=TRUE))
 
 paramMat = read.csv(paste(projectDirectory,"paramMat.csv", sep=''))
 colnames(paramMat) = c('mode0','mode1','period','duration','ch0amp0','ch1amp0','dur0', 'ch0amp1','ch1amp1','dur1')
@@ -93,38 +97,38 @@ stopCluster(cl)
 @
 
 \section*{Abstract}
-Electrical stimulation is a simple and powerful tool to perturb and understand the function of neurons and neural circuits. Despite this, devices that can provide precise current or voltage stimulation are expensive and closed-source. Here, we introduce Stimjim, a capable and inexpensive (\$200) open-source instrument for electrical stimulation that combines both function generation and electrical isolation. Stimjim provides microsecond temporal resolution with microampere or millivolt level precision on two electrically isolated output channels. To show the utility of Stimjim, we use it to train mice to perform intracranial self-stimulation (ICSS) for brain stimulation reward (BSR) in a novel head-fixed paradigm. By varying either the output frequency or amplitude, Stimjim enables the experimenter to smoothly tune the strength of reward-seeking behavior. 
+Electrical stimulation is a simple and powerful tool to perturb and evoke neuronal activity in order to understand the function of neurons and neural circuits. Despite this, devices that can provide precise current or voltage stimulation are expensive and closed-source. Here, we introduce Stimjim, a capable and inexpensive (\$200) open-source instrument for electrical stimulation that combines both function generation and electrical isolation. Stimjim provides microsecond temporal resolution with microampere or millivolt level precision on two electrically isolated output channels. To show the utility of Stimjim, we use it to train mice to perform intracranial self-stimulation (ICSS) for brain stimulation reward (BSR) in a novel head-fixed paradigm. By varying either the output frequency or amplitude, Stimjim enables the experimenter to smoothly tune the strength of reward-seeking behavior. 
 
 
 \section*{Introduction}
-Electrical stimulation of neural tissue is an invaluable and ubiquitous research tool. Over the past 150 years, it has enabled an understanding of the function of various brain regions by directly causing neurons in those regions to fire \cite{hitzig_uber_1870,ferrier_functions_1876,penfield_somatic_1937}. More recently, it has also found important clinical applications in neurological disorders including Parkinson's disease\cite{deuschl_randomized_2006} and depression\cite{mayberg_deep_2005}. However, to date, the hardware enabling precise control over current and voltage stimulation generally remains expensive and closed source. 
+Electrical stimulation of neural tissue is an invaluable and ubiquitous research tool. Over the past 150 years, it has helped researchers understand the  function of various brain regions by directly inducing neurons in those regions to fire \cite{hitzig_uber_1870,ferrier_functions_1876,penfield_somatic_1937}. More recently, it has also found important clinical applications in neurological disorders including Parkinson's disease\cite{deuschl_randomized_2006} and depression\cite{mayberg_deep_2005}. However, to date, the hardware for performing precise current- and voltage-based electrical stimulation generally remains expensive and closed source. 
 
-In contrast, there has been a recent push within the scientific community to produce open labware - open source hardware and software replacements for a variety of common laboratory tasks\cite{pearce_open-source_2013,baden_open_2015}. Examples in life sciences include software and hardware for:
+In contrast, there has been a recent push within the scientific community to produce open labware - open source hardware and software replacements for a variety of common laboratory tasks\cite{pearce_open-source_2013,baden_open_2015;siegle_neural_2015}. Examples in life sciences include software and hardware for:
 \begin{itemize*}
-\item recording or stimulating neurons (e.g. Open Ephys\cite{siegle_open_2017,buccino_open_2018}, Cyclops\cite{newman_optogenetic_2015}, Neurorighter\cite{newman_closed-loop_2013}, Bonsai\cite{lopes_bonsai:_2015})
+\item recording or stimulating neurons (e.g. Open Ephys\cite{siegle_open_2017,buccino_open_2018}, Cyclops\cite{newman_optogenetic_2015}, Neurorighter\cite{newman_closed-loop_2013})
 \item amplifying DNA (e.g., OpenPCR\cite{noauthor_openpcr_nodate}) or preparing single cells for DNA sequencing \cite{booeshaghi_design_2019}
 \item imaging microscopic samples (e.g., FlyPi\cite{chagas_100_2017})
 \item quantifying chemical reactions or microbial growth in 96-well plates\cite{szymula_open-source_2019}
 \item growing and evolving bacteria\cite{takahashi_low_2015} 
 \item ecological monitoring (e.g., Audiomoth\cite{hill_audiomoth:_2018})
 \end{itemize*}
-We now add Stimjim to this growing body of open hardware. Stimjim replaces commercial \textit{in vivo} neural stimulators at a fraction of the cost, without compromising on quality. Furthermore, due to its entirely open design and software, Stimjim can be modified by end users to fit their specific needs. 
-
-\section*{Results}
-\textbf{Design.} We developed Stimjim to be a precise, isolated stimulus generator. Stimjim is based on the Teensy 3.5 microcontroller, which utilizes a 32-bit Arm Cortex-M4 processor running at 120MHz. Each stimulating channel includes a current source based on an improved Howland current pump\cite{texas_instruments_-1515_2008}, and a voltage source (an op-amp), driven by a 16-bit digital-to-analog converter (DAC). The final output of each channel is selected by a 4-way switch, such that either channel can be configured as a current output, voltage output, grounded, or disconnected. To ensure the stimulator is properly connected (a common issue with experiments in freely moving animals) and to verify required stimulus current or voltage amplitudes, each channel also has a analog-to-digital converter (ADC) able to read either the output voltage or the output current (via a low-value sense resistor in series with the current output). Our circuit design was made in Kicad, an open-source printed circuit board (PCB) design program. Schematic, layout, bill of materials, and build instructions are included as supplemental materials and are also available in a git repository (https://bitbucket.org/natecermak/stimjim).
+We now add Stimjim to this growing body of open hardware. Stimjim replaces commercial \textit{in vivo} neural stimulators at a fraction of the cost, with improved programmability. Furthermore, due to its entirely open design and software, Stimjim can be modified by end users to fit their specific needs. 
 
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[width=0.85\linewidth]{../../photo.png}
+\includegraphics[width=0.75\linewidth]{../../photo.png}
 \caption{\textbf{Stimjim is a compact, configurable, and precise stimulator.}}
 \label{fig:picture}
 \end{centering}
 \end{figure}
 
-Stimjim's design compares well against alternatives (Table 1). It is order-of-magnitude less expensive than most commercial alternatives. In comparison with commercial stimulators, its only drawback is that its compliance voltage is lower. This limits the load resistance that Stimjim can drive - for a given resistance $R$, Stimjim cannot output a current larger than $\frac{13.7~V}{R}$. Stimjim's cost is most similar to PulsePal 2, an open-source programmable pulse generator \cite{sanders_low-cost_2014}. However, it expands on PulsePal's capabilities by including electrical isolation, current output mode, and on-board monitoring of output currents/voltages.  Further electrical characteristics of Stimjim are given in Table 2.
+\section*{Results}
+\textbf{Design.} We developed Stimjim to be a precise, electrically isolated stimulus generator. Stimjim is based on the Teensy 3.5 microcontroller, which utilizes a 32-bit Arm Cortex-M4 processor running at 120MHz. Each stimulating channel includes a current source based on an improved Howland current pump\cite{texas_instruments_-1515_2008}, and a voltage source (an op-amp), driven by a 16-bit digital-to-analog converter (DAC). The final output of each channel is selected by a 4-way switch, such that either channel can be configured as a current output, voltage output, grounded, or disconnected. To ensure the stimulator is properly connected (a common issue with experiments in freely moving animals) and to verify required stimulus current or voltage amplitudes, each channel also has a analog-to-digital converter (ADC) able to read either the output voltage or the output current (via a low-value sense resistor in series with the current output). Our circuit board design was made using Kicad, an open-source printed circuit board (PCB) design program. Schematic, layout, bill of materials, and build instructions are included as supplemental materials and are also available in the Stimjim git repository (https://bitbucket.org/natecermak/stimjim).
 
-Stimjim's software is written in the Arduino language (C++) and is compatible with the Arduino programming environment. We provide an Arduino library consisting of low-level functions (writing registers in the DACs or ADCs, or setting the channel mode). Library functions enable users to create new programs to run on the Stimjim - for example, generation of custom waveform outputs stored on the onboard SD card. We also provide a default program designed to output pulse trains. Pulse trains are parameterized based on their output mode (current or voltage), frequency, duration, and the amplitude of each phase of the pulse itself. 
+Stimjim's design compares favorably against alternatives (Table 1). It is an order of magnitude less expensive than most commercial alternatives. In comparison with commercial stimulators, its only drawback is that its compliance voltage is lower. This limits the load resistance that Stimjim can drive - for a given resistance $R$, Stimjim cannot output a current larger than $\frac{\mbox{13.7~V}}{R}$. Thus, Stimjim is not suitable for high-impedance electrodes such as pulled glass electrodes. Stimjim's cost is most similar to PulsePal 2, an open-source programmable pulse generator \cite{sanders_low-cost_2014}. However, it expands on PulsePal's capabilities by including electrical isolation, current output mode, and on-board monitoring of output currents/voltages.  Further electrical characteristics of Stimjim are given in Table 2.
+
+Stimjim's software is written in C++ using the the Arduino development environment. We provide an Arduino-compatible Stimjim library permitting low-level device control (writing registers in the DACs or ADCs, or setting the stimulation control mode). Library functions enable users to create new programs to run on the Stimjim - for example, generation of custom waveform outputs stored on the onboard SD card. We also provide a default program that can generate user-defined pulse train sequences. Users set the parameters for pulse trains, including output mode (current or voltage), frequency, duration, and the amplitude of each phase of the pulse itself. Stimjim can store definitions for 100 pulse trains concurrently, and users can select and initiate particular pulse trains on the fly.
 
 \begin{table*}[h]
 \small{
@@ -141,7 +145,7 @@ Stimjim's software is written in the Arduino language (C++) and is compatible wi
  Onboard measurement            & Y             & N                &  N                                & Optional                 & Y*             \\
  Compliance voltage             & $\pm$15~V (voltage) & $\pm$10~V  & $\pm$120~V                        & $\pm$45~V                & $\pm$100~V     \\
                                 & $\pm$13.7~V (current)    &       &                                   &                          &                \\
- Fastest pulse                  & 30~$\mu$s      & 100~$\mu$s       & 20~$\mu$s                         & 60~$\mu$s               & 10~$\mu$s      \\
+ Fastest pulse                  & $\approx$30~$\mu$s      & 100~$\mu$s       & 20~$\mu$s                         & 60~$\mu$s               & 10~$\mu$s      \\
  Cost (USD)                     & \$194 (parts) & \$264 (parts)    & \$4131 (2 channels)               &  \$6211 (+ \$4438     & \$1708         \\
                                 &               & \$695 (assembled,& \$7462  (4 channels)              &  for software)           &                \\
                                 &               & from Sanworks)   & \$10327 (8 channels)              &                          &                \\
@@ -153,12 +157,7 @@ Stimjim's software is written in the Arduino language (C++) and is compatible wi
 \end{table*}
 
 
-
-\textbf{Benchmarking.} To benchmark Stimjim, we generated a series of one-second biphasic pulse trains in which we varied the pulse frequency (from \Sexpr{round(1e6/max(paramMat$period),2)}~Hz to \Sexpr{round(1e6/min(paramMat$period),2)}~Hz), duration (from \Sexpr{min(paramMat$dur0)}~$\mu$s to \Sexpr{max(paramMat$dur0)}~$\mu$s), and amplitude. We simultaneously recording from both of Stimjim's output channels using a National Instruments PCI-6110 card (2~MHz sampling rate per channel, 4.9~mV resolution). One Stimjim channel was set to voltage mode and the other channel to current mode with a 9.75 k$\Omega$ resistor connected to the output.
-
-Stimjim proved exceedingly accurate, providing microsecond temporal resolution and millivolt- and microampere- amplitude resolution. Across the tested range of stimulation frequencies, Stimjim provided accurate and highly consistent inter-pulse intervals (IPIs; Fig. \ref{fig:benchmarking}A-C). The standard deviation of interpulse intervals within a one-second pulse train was always below one microsecond. Stimjim also produced pulse widths that were accurate and minimally variable (Fig \ref{fig:benchmarking}D-F). We then assessed pulse amplitudes across a range of settings to ensure negligible DC offsets and proper gains. From -10V to +10V (the range of our test equipment), Stimjim produced accurate voltage and current amplitudes, with maximal errors of less than 10~mV and 3~$\mu$A (Fig \ref{fig:benchmarking}G-I). 
-
-<<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=5,fig.cap="\\label{fig:benchmarking} \\textbf{Electrical benchmarks show Stimjim provides microsecond temporal precision and millivolt- and microampere-scale amplitude precision.}  (A) Example pulse trains with varying inter-pulse interval (IPI).  (B) Median IPI in a one-second pulse train measured on a high-speed data acquisition device, plotted against target IPI. Red dots show current output, black dots show voltage output. Solid line shows equality.  (C) Boxplot of IPI errors measured in a 1-second pulse train. Note that the due to the 2~MHz sampling rate of our test equipment, the box representing the interquartile range often has zero height. Whiskers are drawn to most extreme values, irrespective of interquartile range. (D) Example pulse trains with varying pulse width (PW). (E) Median measured PW vs target PW. Red dots show current output, black dots show voltage output. Solid line shows equality. (F) Boxplots of pulse width errors over 100 pulses. Conventions are the same as for (C). (G) Example pulses with varying amplitude. (H) Error in amplitude of voltage pulses (100~$\\mu$s, 1~kHz) vs target amplitude. (I) same as (H) but for current pulses. (J) Example of a fast biphasic (30~$\\mu$s/phase) pulse. Red line is a 500~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 5~V pulse. (K) Example of a small-amplitude pulse. Red line is a 20~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 0.2~V pulse.", fig.align='center', out.width='1\\linewidth', fig.env="figure">>=
+<<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=5,warning=FALSE,message=FALSE,fig.cap="\\label{fig:benchmarking} \\textbf{Electrical benchmarks show Stimjim provides microsecond temporal precision and millivolt- and microampere-scale amplitude precision.}  (A) Example pulse trains with varying inter-pulse interval (IPI).  (B) Median IPI in a one-second pulse train measured on a high-speed data acquisition device, plotted against target IPI. Red dots show current output, black dots show voltage output. Solid line shows equality.  (C) Boxplot of IPI errors measured in a 1-second pulse train. Note that the due to the 2~MHz sampling rate of our test equipment, the box representing the interquartile range often has zero height. Whiskers are drawn to most extreme values, irrespective of interquartile range. (D) Example pulse trains with varying pulse width (PW). (E) Median measured PW vs target PW. Red dots show current output, black dots show voltage output. Solid line shows equality. (F) Boxplots of pulse width errors over 100 pulses. Conventions are the same as for (C). (G) Example pulses with varying amplitude. (H) Error in amplitude of voltage pulses (100~$\\mu$s, 1~kHz) vs target amplitude. (I) same as (H) but for current pulses. (J) Example of a fast biphasic (30~$\\mu$s/phase) pulse. Red line is a 500~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 5~V pulse. (K) Example of a small-amplitude pulse. Red line is a 20~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 0.2~V pulse.", fig.align='center', out.width='1\\linewidth', fig.env="figure">>=
 
 
 options(scipen=999)
@@ -166,7 +165,7 @@ options(scipen=999)
 ex1 = sapply(dataFiles[seq(15,1,length.out = 6)], function(f){
   dat = matrix(readBin(f, what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
   fp = min(which(dat[,1] > 100))
-  dat[fp + (-1e3:3e4),1]*vpau
+  dat[fp + (-1e3:2.9e4),1]*vpau
 })
 
 padj=-6
@@ -185,10 +184,13 @@ abline(a=0,b=1)
 mtext("B",side=2, padj=padj,las=2)
 legend('topleft', col=1:2, pch=1, legend=c("voltage","current"), bty='n')
 
-boxplot(lapply(seq(1,60), function(i) res[[i]]$IPI*1e6 - paramMat[(i+1)/2,3]), axes=FALSE, range=0, lty=1, staplewex=0,
-  log='', main='', cex=0.75, xlab='Target IPI (ms)', ylab='IPI error (us)', col=1:2, border=1:2, ylim=c(-4,4))
+
+x = rep(paramMat[1:30,3]/1e3, each=2)
+y = sapply(seq(1,60), function(i) quantile(res[[i]]$IPI*1e6 - paramMat[(i+1)/2,3], c(0,0.5,1)))
+
+gplots::plotCI(x,y[2,], li=y[1,], ui=y[3,], yaxt='n', lty=1, gap=0, sfrac=0,
+  log='x', main='', cex=0.75, xlab='Target IPI (ms)', ylab='IPI error (us)', col=1:2, ylim=c(-4,4))
 axis(2,las=2)
-axis(1,las=2, at=seq(1.5,60,by=2), labels=signif(paramMat[1:30,3]/1e3, 3))
 mtext("C",side=2, padj=padj,las=2)
 
 
@@ -203,20 +205,20 @@ matplot(1e3/fs*1:nrow(ex2), dendRites::offset(ex2,15), col=1, type='l', lty=1, b
 mtext("D",side=2, padj=padj-1,las=2)
 
 par(mar=c(4,3,2,1))
-plot(paramMat[31:59,7], sapply(res[seq(61,118,by=2)], function(x) x$PW.summary[3])*1e6/2,  yaxt='n',
-  log='xy', main='', xlab='Target PW (us)', ylab='Measured PW (us)', cex=0.75)
-points(paramMat[31:59,7], sapply(res[seq(62,118,by=2)], function(x) x$PW.summary[3])*1e6/2,
+plot(paramMat[31:59,7]/1e3, sapply(res[seq(61,118,by=2)], function(x) x$PW.summary[3])*1e3/2,  yaxt='n',
+  log='xy', main='', xlab='Target PW (ms)', ylab='Measured PW (us)', cex=0.75)
+points(paramMat[31:59,7]/1e3, sapply(res[seq(62,118,by=2)], function(x) x$PW.summary[3])*1e3/2,
   col='red', cex=0.75)
 abline(a=0,b=1)
 axis(2,las=2)
 mtext("E",side=2, padj=padj,las=2)
 legend('topleft', col=1:2, pch=1, legend=c("voltage","current"), bty='n')
 
-
-boxplot(lapply(seq(61,118), function(i) res[[i]]$PW*1e6/2 - paramMat[(i+1)/2,7]), axes=FALSE, range=0, lty=1, staplewex=0,
-  log='', main='', cex=0.75, xlab='Target PW (ms)', ylab='PW error (us)', col=1:2, border=1:2)
+x = rep(paramMat[31:60,7]/1e3, each=2)
+y = sapply(seq(61,120), function(i) quantile(res[[i]]$PW*1e6/2 - paramMat[(i+1)/2,7], c(0,0.5,1)))
+gplots::plotCI(x,y[1,], li=y[1,], ui=y[3,], yaxt='n', range=0, lty=1, gap=0, sfrac=0,
+  log='x', main='', cex=0.75, xlab='Target PW (ms)', ylab='PW error (us)', col=1:2)
 axis(2,las=2)
-axis(1,las=2, at=seq(1.5,60,by=2), labels=signif(paramMat[1:30,3]/1e3, 3))
 mtext("F",side=2, padj=padj,las=2)
 
 
@@ -224,7 +226,7 @@ mtext("F",side=2, padj=padj,las=2)
 ex3 = sapply(dataFiles[seq(81,61,length.out=6)], function(f){
   dat = matrix(readBin(f, what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
   fp = min(which(dat[,1] > 10))
-  dat[fp + (-200:700),1]*vpau
+  dat[fp + (-200:600),1]*vpau
 })
 par(mar=c(4,1,2,1))
 matplot(1e3/fs*1:nrow(ex3), dendRites::offset(ex3,15), col=1, type='l', lty=1, bty='n', yaxt='n', ylab='', xlab='time (ms)',
@@ -244,39 +246,82 @@ plot(x2/1000,y2-x2, main='Current accuracy', xlab='Target amplitude (mA)', ylab=
 axis(2,las=2)
 mtext("I",side=2, padj=padj,las=2)
 
-par(mar=c(4,3,2,1), mgp=c(2,0.3,0))
+par(mar=c(4,3,2,4), mgp=c(2,0.3,0))
 dat = matrix(readBin(dataFiles[32], what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
 fp = min(which(dat[,1] > 100))
 ex4 = dat[fp + (-60:160),]*vpau
-matplot(1:nrow(ex4)/fs*1e6-30, ex4, main = 'Example fast pulse', type='l', lty=1, xlab='Time (us)', ylab='Amplitude (V)', yaxt='n', bty='l')
+matplot(1:nrow(ex4)/fs*1e6-30, ex4, main = 'Example fast pulse', type='l', lty=1, xlab='Time (us)', ylab='Amplitude (V)', yaxt='n')
 axis(2,las=2)
 mtext("J",side=2, padj=padj,las=2, line=1)
 legend('bottomleft', col=1:2, lty=1, legend=c("voltage","current"), bty='n')
+currentLabels = seq(-500,500,by=100)
+axis(4, las=2, at = currentLabels/1e6*9750, labels = currentLabels, col='red', col.axis='red'); 
+corners = par("usr"); par(xpd = TRUE);
+text(x = corners[2]+25.5, y = mean(corners[3:4]), 'Amplitude (uA)', srt = 270, col='red')
 
-par(mar=c(4,3,2,1), mgp=c(2,0.3,0))
+par(mar=c(4,3,2,4), mgp=c(2,0.3,0))
 dat = matrix(readBin(dataFiles[61], what='integer', n=1e7, size=2, endian = 'big'),ncol=2,byrow=TRUE)
 fp = min(which(dat[,1] > 10))
 ex5 = dat[fp + (-1e2:5e2),]*vpau
-matplot(1:nrow(ex5)/fs*1e6-50, ex5, main = 'Example small pulse', type='l', lty=1, xlab='Time (us)', ylab='Amplitude (V)', yaxt='n', bty='l')
+matplot(1:nrow(ex5)/fs*1e6-50, ex5, main = 'Example small pulse', type='l', lty=1, xlab='Time (us)', ylab='Amplitude (V)', yaxt='n')
 axis(2,las=2)
 mtext("K",side=2, padj=padj,las=2)
 legend('bottomleft', col=1:2, lty=1, legend=c("voltage","current"), bty='n')
+currentLabels = seq(-20,20,by=5)
+axis(4, las=2, at = currentLabels/1e6*9750, labels = currentLabels, col='red', col.axis='red'); 
+corners = par("usr"); par(xpd = TRUE);
+text(x = corners[2]+55.5, y = mean(corners[3:4]), 'Amplitude (uA)', srt = 270, col='red')
 
 @
 
 
 
+\textbf{Benchmarking.} To benchmark Stimjim, we generated a series of one-second biphasic pulse trains in which we varied the pulse frequency (from \Sexpr{round(1e6/max(paramMat$period),2)}~Hz to \Sexpr{round(1e6/min(paramMat$period),2)}~Hz), duration (from \Sexpr{min(paramMat$dur0)}~$\mu$s to \Sexpr{max(paramMat$dur0)}~$\mu$s), and amplitude. We simultaneously recording from both of Stimjim's output channels using a National Instruments PCI-6110 card (2~MHz sampling rate per channel, 4.9~mV resolution). One Stimjim channel was set to voltage mode and the other channel to current mode with a 9.75 k$\Omega$ resistor connected to the output.
+
+Stimjim proved capable of providing microsecond temporal resolution and millivolt- and microampere- amplitude resolution. Across the tested range of stimulation frequencies, Stimjim generated accurate and highly consistent inter-pulse intervals (IPIs; Fig. \ref{fig:benchmarking}A-C). The standard deviation of inter-pulse intervals within a one-second pulse train was always below one microsecond. Stimjim also produced pulse widths that were accurate and minimally variable (Fig \ref{fig:benchmarking}D-F). For both inter-pulse interval and pulse width, the error in their durations increased as the duration itself increased (Fig. \ref{fig:benchmarking}C,F), but remained below 0.0004\% (IPI error) and 0.002\% (PW error). We then assessed pulse amplitudes across a range of settings to ensure negligible DC offsets and proper gains. From -10V to +10V (the range of our test equipment), Stimjim produced accurate voltage and current amplitudes, with maximal errors of less than 10~mV and 3~$\mu$A (Fig \ref{fig:benchmarking}G-I). 
+
+
 \textbf{In vivo stimulation.} To demonstrate the utility of Stimjim, we used it to train mice in a classical paradigm known as intra-cranial self stimulation (ICSS)\cite{olds_positive_1954}. In this assay, animals are implanted with electrodes (or more recently optical fibers) enabling activation of a pleasure/reward-related brain region\cite{carlezon_intracranial_2007}. Animals are then placed in a training paradigm in which they learn that a simple motor action (typically spinning a wheel or pressing a lever) causes direct activation of this brain region. Animals quickly learn the required action and are willing to repeat it for extended periods of time. 
 
-Here, we trained two mice in a head-fixed variant of ICSS, in which animals could lick a sensor in order to obtain brain stimulation reward (BSR). We used a capacitive sensor attached to a small metal pole to detect licking, and every lick triggered a stimulus pulse train (0.5 seconds, initially 150~Hz and the minimal current at which animals would respond). To initially encourage licking, we placed a small amount of peanut butter on the metal sensor. After initial licking was reinforced by BSR, animals would continue licking long after the peanut butter was gone, including during the next session in which no peanut butter was offered. After animals had learned the licking behavior (usually within their first hour session), we varied the stimulation frequency and amplitude and assessed how it affected licking behavior. Both animals showed clear frequency- and amplitude-dependent responses, in which animals ceased licking when the rewarding stimulation was insufficiently intense (Fig. \ref{fig:icss}).
+Here, we trained two mice in a head-fixed variant of ICSS, in which animals could lick a sensor in order to obtain brain stimulation reward (BSR). We used a capacitive sensor attached to a small metal pole to detect licking, and every lick triggered a stimulus pulse train (0.5 seconds, initially 150~Hz and the minimal current at which animals would respond). To initially encourage licking, we placed a small amount of peanut butter on the metal sensor. After initial licking was reinforced by BSR, animals would continue licking long after the peanut butter was gone, including during the next session in which no peanut buwtter was offered. After animals had learned the licking behavior (usually within their first hour session), we varied the stimulation frequency and amplitude and assessed how it affected licking behavior. Both animals showed clear frequency- and amplitude-dependent responses, in which animals ceased licking when the rewarding stimulation was insufficiently intense (Fig. \ref{fig:icss}).
 
 We observed clear differences between the two animals studied here. Mouse 1 shows a rather linear response to either increasing frequency or increasing amplitude, whereas mouse 2 had a more "digital" response akin to passing an activation threshold. However, maximal licking rates were comparable between the two animals. Such differences are likely due to electrode placement, although they may also reflect intrinsically different personalities between the two animals. Stimjim provides a precise and cost-effective means to scan the space of stimulation patterns, which could be useful to ensure all animals are given stimuli yielding the same response level. 
 
 
 
+\begin{table}
+\small{
+\begin{tabular}{|l|c|c|}
+\hline
+                                            & Value     & Units     \\
+\hline
+ Slew rate (voltage mode)                    & 4.1         & V$\cdot\mu$s$^{-1}$     \\
+ Slew rate (current mode)                    & 0.8         & V$\cdot\mu$s$^{-1}$     \\
+ Output voltage noise (voltage mode)$^a$     & 1           & mV~rms    \\
+                                             & 5           & mV~p-p      \\
+ Output voltage noise (current mode)$^a$     & 0.6         & mV~rms     \\
+                                             & 3           & mV~p-p      \\
+ Min. voltage increment$^b$                  & 0.45        & mV         \\
+ Min. current increment$^b$                  & 0.1         & $\mu$A        \\ 
+ Output impedance (voltage mode)$^c$         & 180         & $\Omega$ \\ 
+ Trigger latency                             & 14          & $\mu$s        \\
+ \hline
+\end{tabular}
+}
+\caption{\label{tab:stimjimSpecs} \textbf{Stimjim electrical characteristics.} $^a$Measured on Tektronix TDS210 digital oscilloscope, full bandwidth (60MHz), calculated for 25~ms segments. Note that this is the noise only when the pulse is delivered; at all other times the output is directly connected to ground. Voltage noise in current mode was measured with a 9.75 k$\Omega$ resistive load. $^b$Calculated as output range divided by resolution of output DAC (16 bit). $^c$value from from datasheet for Vishay DG509B (output switch). } 
+\end{table}
 
 
-<<icssAnalysis, echo=FALSE, fig.cap="\\label{fig:icss}\\textbf{Stimjim enables measuring frequency- and amplitude-dependent responses in an intracranial self-stimulation paradigm.} Mice decreased their licking rates when the frequency and amplitude of the rewarding stimulation decreased. For each animal, three frequency sweeps (highest to lowest frequency, one minute per frequency) were performed in a 45-minute session. Amplitude sweeps were performed in the same way. Each dot indicates a single one-minute trial, and the solid black line shows the mean of all three trials at that frequency or amplitude.", cache=TRUE, fig.height=5, fig.width=5, fig.align='center'>>=
+
+
+\section*{Conclusion}
+We have introduced Stimjim, an inexpensive yet precise open-source stimulator for neuroscience.  At a cost of roughly \$200 USD for parts, Stimjim is order of magnitude less expensive than commercial, proprietary alternatives. It offers microsecond temporal control of current and voltage with millivolt/microampere precision. 
+
+Stimjim's low cost opens up many potential applications, such as learning paradigms that involve direct electrical stimulation.  Stimjim's open source nature makes it straightforward for researchers to customize the stimulation parameters and use Stimjim in closed loop experiments. Furthermore, researchers who were previously limited to training only one animal at a time due to possessing only a single stimulator could now train 10 animals simultaneously for comparable cost.
+
+
+
+<<icssAnalysis, echo=FALSE, fig.cap="\\label{fig:icss}\\textbf{Stimjim enables measuring frequency- and amplitude-dependent responses in an intracranial self-stimulation paradigm.} Mice decreased their licking rates when the frequency and amplitude of the rewarding stimulation decreased. For each animal, three frequency sweeps (highest to lowest frequency, one minute per frequency) were performed in a 45-minute session. Amplitude sweeps were performed in the same way. Each dot indicates a single one-minute trial, and the solid black line shows the mean of all three trials at that frequency or amplitude.", cache=TRUE, fig.height=5, fig.width=5, fig.align='center', fig.env="figure">>=
 
 icss.files = c("/home/x/Dropbox (Technion Dropbox)/stimjim/benchmarking/2019-04-04_4309/20190404_115638.txt",
                "/home/x/Dropbox (Technion Dropbox)/stimjim/benchmarking/2019-04-04_4309/20190404_143910.txt",
@@ -316,44 +361,18 @@ mtext("Amplitude Sweep", 3, adj=0.85,  outer=TRUE, cex=1)
 @
 
 
-\begin{table}
-\small{
-\begin{tabular}{|l|c|c|}
-\hline
-                                            & Value     & Units     \\
-\hline
- Slew rate (voltage mode)                    & 4.1         & V$\cdot\mu$s$^{-1}$     \\
- Slew rate (current mode)                    & 0.8         & V$\cdot\mu$s$^{-1}$     \\
- Output voltage noise (voltage mode)$^a$     & 1           & mV~rms    \\
-                                             & 5           & mV~p-p      \\
- Output voltage noise (current mode)$^a$     & 0.6         & mV~rms     \\
-                                             & 3           & mV~p-p      \\
- Min. voltage increment$^b$                  & 0.45        & V         \\
- Min. current increment$^b$                  & 0.1         & $\mu$A        \\ 
- Output impedance (voltage mode)$^c$         & 180         & $\Omega$ \\ 
- Trigger latency                             & 23          & $\mu$s        \\
- \hline
-\end{tabular}
-}
-\caption{\label{tab:stimjimSpecs} \textbf{Stimjim electrical characteristics.} $^a$Measured on Tektronix TDS210 digital oscilloscope, full bandwidth (60MHz), calculated for 25~ms segments. Note that this is the noise only when the pulse is delivered; at all other times the output is directly connected to ground. Voltage noise in current mode was measured with a 9.75 k$\Omega$ resistive load. $^b$Calculated as output range divided by resolution of output DAC (16 bit). $^c$value from from datasheet for Vishay DG509B (output switch). } 
-\end{table}
-
-
-
-
-\section*{Conclusion}
-We have introduced Stimjim, an inexpensive yet precise open-source stimulator for neuroscience.  At a cost of roughly \$200 USD for parts, Stimjim is order of magnitude less expensive than commercial, proprietary alternatives. It offers microsecond temporal control of current and voltage with millivolt/microampere precision. 
-
-Stimjim's low cost opens up many potential applications, such as learning paradigms that involve direct electrical stimulation.  Stimjim's open source nature makes it straightforward for researchers to customize the stimulation parameters and use Stimjim in closed loop experiments. Furthermore, researchers who were previously limited to training only one animal at a time due to possessing only a single stimulator could now train 10 animals simultaneously for comparable cost.
-
 \section*{Acknowledgments}
 We thank the Schiller lab for discussions and help with preliminary testing. This work was supported in part by the Zuckerman STEM Leadership Program (NC). 
 
 \section*{Methods}
-\textbf{Electrode implantation and ICSS}. Monopolar electrodes (Plastics1, MS303/2-AIU/SPC, coated stainless steel, 200~$\mu$m diameter) were implanted above the medial forebrain bundle according to the protocol in reference \cite{carlezon_intracranial_2007}. The ground was implanted in the contralateral cortex. Additionally, a 3D-printed headpost was affixed to the animal's skull by dental cement to enable head fixation. Typical resistance between connector pins after implantation was 20-30~k$\Omega$. All animal procedures were in accordance with guidelines established by the NIH on the care and use of animals in research and were confirmed by the Technion Institutional Animal Care and Use Committee (IL-012-01-18, valid until 10/4/2022).
- 
+
 \textbf{Stimjim fabrication and benchmarking}. PCBs for Stimjim were ordered from SeeedStudio and components were ordered from Digikey. Components were manually soldered to the PCB using solder paste and a soldering iron. After soldering, the pulse control program was downloaded to the Teensy using the Arduino IDE and Teensyduino. From that point on, Stimjim's settings were controlled via serial communication over USB. We used a custom NI LabView program to set Stimjim's pulse parameters (frequency, amplitude, duration, etc.), initiate a one-second pulse train, and record both Stimjim channels using a National Instruments PCI-6110 card via a breakout box.  
- 
+
+\textbf{Electrode implantation and ICSS}. Monopolar electrodes (Plastics1, #MS303/2-AIU/SPC, coated stainless steel, 200~$\mu$m diameter) were implanted above the medial forebrain bundle according to the protocol in reference \cite{carlezon_intracranial_2007}. The ground was implanted in the contralateral cortex. Additionally, a 3D-printed headpost was affixed to the animal's skull by dental cement to enable head fixation. Typical resistance between connector pins after implantation was 20-30~k$\Omega$. All animal procedures were in accordance with guidelines established by the NIH on the care and use of animals in research and were confirmed by the Technion Institutional Animal Care and Use Committee (IL-012-01-18, valid until 10/4/2022).
+
+
+\textbf{Field stimulation experiments}. Platinum-iridium electrodes (Alpha Omega, #387-102S01-11, 250~$\mu$m diameter, Parylene C and Polyamide coated, 0.1~M$\Omega$) were placed.
+  
 \section*{Supplemental materials}
 In case of future modifications, the most up-to-date details regarding Stimjim will be available at https://bitbucket.org/natecermak/stimjim. The following are included as supplemental materials for the version of Stimjim documented here (v0.17).
 \begin{itemize*}
@@ -367,5 +386,32 @@ In case of future modifications, the most up-to-date details regarding Stimjim w
 \bibliographystyle{unsrt}
 \bibliography{stimjimBibliography}
 
+  
+<<sliceExpt, eval=FALSE>>=
+if (!require(readABF)){
+  install.packages("devtools")
+  devtools::install_github("Zabolekar/abfReader")
+}
+
+sliceDat = readABF::readABF("./slice2/27_06_19_0016.abf")$data[[1]][,1]
+
+
+i = which(diff(sliceDat)>55)
+i = i[diff(c(i,1e9)) > 1]
+
+plot(sliceDat[1:5e5], type='l')
+abline(v=i[1:20], col='red')
+
+m = sapply(i, function(j) sliceDat[j+(-50:500)])
+image(m, zlim=c(-100,50))
+
+matplot(1:nrow(m)/10-5, dendRites::offset(m,10), type='l', lty=1, col=1, xlab='time (ms)', ylab='Membrane potential (mV)', yaxt='n',bty='n')
+
+aps = sapply(i, function(j) {
+  x = sliceDat[j+50:500]
+  length(getLocalMaxima(x,threshold=0))
+})
+aps = colSums(matrix(aps,nrow=5))
+@
   
 \end{document}
