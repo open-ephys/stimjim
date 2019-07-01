@@ -107,7 +107,7 @@ In contrast, there has been a recent push within the scientific community to pro
 \begin{itemize*}
 \item recording or stimulating neurons (e.g. Open Ephys\cite{siegle_open_2017,buccino_open_2018}, Cyclops\cite{newman_optogenetic_2015}, Neurorighter\cite{newman_closed-loop_2013})
 \item amplifying DNA (e.g., OpenPCR\cite{noauthor_openpcr_nodate}) or preparing single cells for DNA sequencing \cite{booeshaghi_design_2019}
-\item imaging microscopic samples (e.g., FlyPi\cite{chagas_100_2017})
+\item imaging microscopic samples (e.g., FlyPi\cite{chagas_100_2017}, Octopi\cite{li_octopi:_2019})
 \item quantifying chemical reactions or microbial growth in 96-well plates\cite{szymula_open-source_2019}
 \item growing and evolving bacteria\cite{takahashi_low_2015} 
 \item ecological monitoring (e.g., Audiomoth\cite{hill_audiomoth:_2018})
@@ -145,7 +145,7 @@ Stimjim's software is written in C++ using the the Arduino development environme
  Onboard measurement            & Y             & N                &  N                                & Optional                 & Y*             \\
  Compliance voltage             & $\pm$15~V (voltage) & $\pm$10~V  & $\pm$120~V                        & $\pm$45~V                & $\pm$100~V     \\
                                 & $\pm$13.7~V (current)    &       &                                   &                          &                \\
- Fastest pulse                  & $\approx$30~$\mu$s      & 100~$\mu$s       & 20~$\mu$s                         & 60~$\mu$s               & 10~$\mu$s      \\
+ Fastest pulse                  & $\sim$30~$\mu$s      & 100~$\mu$s       & 20~$\mu$s                         & 60~$\mu$s               & 10~$\mu$s      \\
  Cost (USD)                     & \$194 (parts) & \$264 (parts)    & \$4131 (2 channels)               &  \$6211 (+ \$4438     & \$1708         \\
                                 &               & \$695 (assembled,& \$7462  (4 channels)              &  for software)           &                \\
                                 &               & from Sanworks)   & \$10327 (8 channels)              &                          &                \\
@@ -157,7 +157,7 @@ Stimjim's software is written in C++ using the the Arduino development environme
 \end{table*}
 
 
-<<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=5,warning=FALSE,message=FALSE,fig.cap="\\label{fig:benchmarking} \\textbf{Electrical benchmarks show Stimjim provides microsecond temporal precision and millivolt- and microampere-scale amplitude precision.}  (A) Example pulse trains with varying inter-pulse interval (IPI).  (B) Median IPI in a one-second pulse train measured on a high-speed data acquisition device, plotted against target IPI. Red dots show current output, black dots show voltage output. Solid line shows equality.  (C) Boxplot of IPI errors measured in a 1-second pulse train. Note that the due to the 2~MHz sampling rate of our test equipment, the box representing the interquartile range often has zero height. Whiskers are drawn to most extreme values, irrespective of interquartile range. (D) Example pulse trains with varying pulse width (PW). (E) Median measured PW vs target PW. Red dots show current output, black dots show voltage output. Solid line shows equality. (F) Boxplots of pulse width errors over 100 pulses. Conventions are the same as for (C). (G) Example pulses with varying amplitude. (H) Error in amplitude of voltage pulses (100~$\\mu$s, 1~kHz) vs target amplitude. (I) same as (H) but for current pulses. (J) Example of a fast biphasic (30~$\\mu$s/phase) pulse. Red line is a 500~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 5~V pulse. (K) Example of a small-amplitude pulse. Red line is a 20~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 0.2~V pulse.", fig.align='center', out.width='1\\linewidth', fig.env="figure">>=
+<<benchmarkFigure, echo=FALSE,fig.height=8,fig.width=5,warning=FALSE,message=FALSE,fig.cap="\\label{fig:benchmarking} \\textbf{Electrical benchmarks show Stimjim provides microsecond temporal precision and millivolt- and microampere-scale amplitude precision.}  (A) Example pulse trains with varying inter-pulse interval (IPI).  (B) Median IPI in a one-second pulse train measured on a high-speed data acquisition device, plotted against target IPI. Red dots show current output, black dots show voltage output. Solid line shows equality.  (C) Plot of IPI errors measured in a 1-second pulse train. Points show median error, error bars indicate worst-case errors. (D) Example pulse trains with varying pulse width (PW). (E) Median measured PW vs target PW. Red dots show current output, black dots show voltage output. Solid line shows equality. (F) Plots of pulse width errors over 100 pulses. Conventions are the same as for (C). (G) Example pulses with varying amplitude. (H) Error in amplitude of voltage pulses (100~$\\mu$s, 1~kHz) vs target amplitude. (I) same as (H) but for current pulses. (J) Example of a fast biphasic (30~$\\mu$s/phase) pulse. Red line is a 500~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 5~V pulse. (K) Example of a small-amplitude pulse. Red line is a 20~$\\mu$A current pulse (with a 9.75 k$\\Omega$ resistive load), black line is a 0.2~V pulse.", fig.align='center', out.width='1\\linewidth', fig.env="figure">>=
 
 
 options(scipen=999)
@@ -175,9 +175,10 @@ matplot(1e3/fs*1:nrow(ex1), dendRites::offset(ex1,15), col=1, type='l', lty=1, b
         main = "Varying frequency\n(Inter-pulse interval, IPI)"); 
 mtext("A",side=2, padj=padj-0.2,las=2, line=0)
 par(mar=c(4,3,2,1))
-plot(paramMat[1:30,3]/1e3, sapply(res[seq(1,60,by=2)], function(x) x$IPI.summary[3])*1e3, yaxt='n',
+plot(paramMat[1:30,3]/1e3, sapply(res[seq(1,60,by=2)], function(x) x$IPI.summary[3])*1e3, xaxt='n',yaxt='n',
   log='xy', main='', cex=0.75, xlab='Target IPI (ms)', ylab='Measured IPI (ms)')
 axis(2,las=2)
+axis(1, las=2)
 points(paramMat[1:30,3]/1e3, sapply(res[seq(2,60,by=2)], function(x) x$IPI.summary[3])*1e3, 
   col='red', cex=0.75)
 abline(a=0,b=1)
@@ -188,8 +189,9 @@ legend('topleft', col=1:2, pch=1, legend=c("voltage","current"), bty='n')
 x = rep(paramMat[1:30,3]/1e3, each=2)
 y = sapply(seq(1,60), function(i) quantile(res[[i]]$IPI*1e6 - paramMat[(i+1)/2,3], c(0,0.5,1)))
 
-gplots::plotCI(x,y[2,], li=y[1,], ui=y[3,], yaxt='n', lty=1, gap=0, sfrac=0,
+gplots::plotCI(x,y[2,], li=y[1,], ui=y[3,], lty=1, gap=0, sfrac=0,  xaxt='n',yaxt='n',
   log='x', main='', cex=0.75, xlab='Target IPI (ms)', ylab='IPI error (us)', col=1:2, ylim=c(-4,4))
+axis(1,las=2)
 axis(2,las=2)
 mtext("C",side=2, padj=padj,las=2)
 
@@ -205,19 +207,21 @@ matplot(1e3/fs*1:nrow(ex2), dendRites::offset(ex2,15), col=1, type='l', lty=1, b
 mtext("D",side=2, padj=padj-1,las=2)
 
 par(mar=c(4,3,2,1))
-plot(paramMat[31:59,7]/1e3, sapply(res[seq(61,118,by=2)], function(x) x$PW.summary[3])*1e3/2,  yaxt='n',
+plot(paramMat[31:59,7]/1e3, sapply(res[seq(61,118,by=2)], function(x) x$PW.summary[3])*1e3/2, xaxt='n',yaxt='n',
   log='xy', main='', xlab='Target PW (ms)', ylab='Measured PW (us)', cex=0.75)
 points(paramMat[31:59,7]/1e3, sapply(res[seq(62,118,by=2)], function(x) x$PW.summary[3])*1e3/2,
   col='red', cex=0.75)
 abline(a=0,b=1)
+axis(1,las=2)
 axis(2,las=2)
 mtext("E",side=2, padj=padj,las=2)
 legend('topleft', col=1:2, pch=1, legend=c("voltage","current"), bty='n')
 
 x = rep(paramMat[31:60,7]/1e3, each=2)
 y = sapply(seq(61,120), function(i) quantile(res[[i]]$PW*1e6/2 - paramMat[(i+1)/2,7], c(0,0.5,1)))
-gplots::plotCI(x,y[1,], li=y[1,], ui=y[3,], yaxt='n', range=0, lty=1, gap=0, sfrac=0,
+gplots::plotCI(x,y[1,], li=y[1,], ui=y[3,], lty=1, gap=0, sfrac=0,  xaxt='n',yaxt='n',
   log='x', main='', cex=0.75, xlab='Target PW (ms)', ylab='PW error (us)', col=1:2)
+axis(1,las=2)
 axis(2,las=2)
 mtext("F",side=2, padj=padj,las=2)
 
@@ -368,10 +372,10 @@ We thank the Schiller lab for discussions and help with preliminary testing. Thi
 
 \textbf{Stimjim fabrication and benchmarking}. PCBs for Stimjim were ordered from SeeedStudio and components were ordered from Digikey. Components were manually soldered to the PCB using solder paste and a soldering iron. After soldering, the pulse control program was downloaded to the Teensy using the Arduino IDE and Teensyduino. From that point on, Stimjim's settings were controlled via serial communication over USB. We used a custom NI LabView program to set Stimjim's pulse parameters (frequency, amplitude, duration, etc.), initiate a one-second pulse train, and record both Stimjim channels using a National Instruments PCI-6110 card via a breakout box.  
 
-\textbf{Electrode implantation and ICSS}. Monopolar electrodes (Plastics1, #MS303/2-AIU/SPC, coated stainless steel, 200~$\mu$m diameter) were implanted above the medial forebrain bundle according to the protocol in reference \cite{carlezon_intracranial_2007}. The ground was implanted in the contralateral cortex. Additionally, a 3D-printed headpost was affixed to the animal's skull by dental cement to enable head fixation. Typical resistance between connector pins after implantation was 20-30~k$\Omega$. All animal procedures were in accordance with guidelines established by the NIH on the care and use of animals in research and were confirmed by the Technion Institutional Animal Care and Use Committee (IL-012-01-18, valid until 10/4/2022).
+\textbf{Electrode implantation and ICSS}. Monopolar electrodes (Plastics1, \#MS303/2-AIU/SPC, coated stainless steel, 200~$\mu$m diameter) were implanted above the medial forebrain bundle according to the protocol in reference \cite{carlezon_intracranial_2007}. The ground was implanted in the contralateral cortex. Additionally, a 3D-printed headpost was affixed to the animal's skull by dental cement to enable head fixation. Typical resistance between connector pins after implantation was 20-30~k$\Omega$. All animal procedures were in accordance with guidelines established by the NIH on the care and use of animals in research and were confirmed by the Technion Institutional Animal Care and Use Committee (IL-012-01-18, valid until 10/4/2022).
 
 
-\textbf{Field stimulation experiments}. Platinum-iridium electrodes (Alpha Omega, #387-102S01-11, 250~$\mu$m diameter, Parylene C and Polyamide coated, 0.1~M$\Omega$) were placed.
+\textbf{Field stimulation experiments}. Platinum-iridium electrodes (Alpha Omega, \#387-102S01-11, 250~$\mu$m diameter, Parylene C and Polyamide coated, 0.1~M$\Omega$) were placed.
   
 \section*{Supplemental materials}
 In case of future modifications, the most up-to-date details regarding Stimjim will be available at https://bitbucket.org/natecermak/stimjim. The following are included as supplemental materials for the version of Stimjim documented here (v0.17).
@@ -387,31 +391,31 @@ In case of future modifications, the most up-to-date details regarding Stimjim w
 \bibliography{stimjimBibliography}
 
   
-<<sliceExpt, eval=FALSE>>=
+<<sliceExpt, eval=TRUE,echo=FALSE,message=FALSE>>=
 if (!require(readABF)){
   install.packages("devtools")
   devtools::install_github("Zabolekar/abfReader")
 }
 
-sliceDat = readABF::readABF("./slice2/27_06_19_0016.abf")$data[[1]][,1]
+sliceDat = readABF::readABF(paste(projectDirectory,"slice2/27_06_19_0016.abf",sep=''))$data[[1]][,1]
 
 
 i = which(diff(sliceDat)>55)
 i = i[diff(c(i,1e9)) > 1]
 
-plot(sliceDat[1:5e5], type='l')
-abline(v=i[1:20], col='red')
+#plot(sliceDat[1:5e5], type='l')
+#abline(v=i[1:20], col='red')
 
 m = sapply(i, function(j) sliceDat[j+(-50:500)])
-image(m, zlim=c(-100,50))
+image(x=1:551/10, z=m, zlim=c(-100,50),xlab='time (ms)')
 
-matplot(1:nrow(m)/10-5, dendRites::offset(m,10), type='l', lty=1, col=1, xlab='time (ms)', ylab='Membrane potential (mV)', yaxt='n',bty='n')
+#matplot(1:nrow(m)/10-5, dendRites::offset(m,10), type='l', lty=1, col=1, xlab='time (ms)', ylab='Membrane potential (mV)', yaxt='n',bty='n')
 
-aps = sapply(i, function(j) {
-  x = sliceDat[j+50:500]
-  length(getLocalMaxima(x,threshold=0))
-})
-aps = colSums(matrix(aps,nrow=5))
+#aps = sapply(i, function(j) {
+#  x = sliceDat[j+50:500]
+#  length(dendRites::getLocalMaxima(x,threshold=0))
+#})
+#aps = colSums(matrix(aps,nrow=5))
 @
   
 \end{document}
