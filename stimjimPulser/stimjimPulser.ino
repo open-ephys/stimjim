@@ -84,9 +84,9 @@ int pulse (volatile PulseTrain* PT) {
 
     // read ADCs
     if (PT->mode[0] < 2)
-      PT->measuredAmplitude[0][i] += Stimjim.readADC(0, PT->mode[0] > 0) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
+      PT->measuredAmplitude[0][i] += Stimjim.readAdc(0, PT->mode[0] > 0) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
     if (PT->mode[1] < 2)
-      PT->measuredAmplitude[1][i] += Stimjim.readADC(1, PT->mode[1] > 0) * ((PT->mode[1]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
+      PT->measuredAmplitude[1][i] += Stimjim.readAdc(1, PT->mode[1] > 0) * ((PT->mode[1]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
 
     if ( i + 1 < PT->nStages) {
       dac0val = PT->amplitude[0][i + 1] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? Stimjim.currentOffsets[0] : Stimjim.voltageOffsets[0]);
@@ -262,6 +262,17 @@ void setup() {
   IT1.priority(64);
   Serial.flush();
   Serial.println("Ready to go!\n\n");
+
+
+  Serial.print("Stimjim adcOffset25 = ");
+  Serial.print(Stimjim.adcOffset25[0]); Serial.print(" , ");
+  Serial.println(Stimjim.adcOffset25[1]);
+
+  Serial.print("Stimjim adcOffset10 = ");
+  Serial.print(Stimjim.adcOffset10[0]); Serial.print(" , ");
+  Serial.println(Stimjim.adcOffset10[1]);
+  
+
 }
 
 
@@ -372,7 +383,7 @@ void loop() {
       else if (comBuf[0] == 'E') {
         int channel = 0, line = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &line );
-        int val = Stimjim.readADC(channel, line);
+        int val = Stimjim.readAdc(channel, line);
         Serial.print("Read value: "); Serial.println(val);
       }
 

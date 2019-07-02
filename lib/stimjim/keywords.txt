@@ -14,11 +14,11 @@ Stimjim		KEYWORD1
 #######################################
 
 setOutputMode	KEYWORD2
-setADCrange		KEYWORD2
-setupDACs		KEYWORD2
+setAdcRange		KEYWORD2
+setupDacs		KEYWORD2
 writeToDacs		KEYWORD2
 writeToDac		KEYWORD2
-readADC			KEYWORD2
+readAdc			KEYWORD2
 getCurrentOffsets	KEYWORD2
 getVoltageOffsets	KEYWORD2
 
@@ -27,11 +27,13 @@ getVoltageOffsets	KEYWORD2
 # Instances (KEYWORD2)
 #######################################
 
-SpiSettingsDAC		KEYWORD2
-SpiSettingsADC		KEYWORD2
+SpiSettingsDac		KEYWORD2
+SpiSettingsAdc		KEYWORD2
 currentOffsets		KEYWORD2
 voltageOffsets		KEYWORD2
 adcSelectedInput	KEYWORD2
+adcOffset25		KEYWORD2
+adcOffset10		KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

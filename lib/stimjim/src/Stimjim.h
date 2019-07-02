@@ -12,7 +12,7 @@
 #include <SPI.h>
 
 #define MICROAMPS_PER_DAC 0.1017            // 20V * (1/(3000 V/A)) / 2^16 = 0.1uA / DAC unit
-#define MICROAMPS_PER_ADC 0.85              //  (1/(100*(1+49.9k/1.8k) V/A)) * 20V / 2^13 = 0.85
+#define MICROAMPS_PER_ADC 0.85              // (1/(100*(1+49.9k/1.8k) V/A)) * 20V / 2^13 = 0.85
 #define MILLIVOLTS_PER_DAC 0.4593           // 20V / 2^16 * gain of 1.505 ~= 0.44 mV / DAC unit
 #define MILLIVOLTS_PER_ADC 2.44             // 20V / 2^13 = 2.44 mV / ADC unit
 
@@ -50,7 +50,7 @@ class StimJim {
 	
 	// Sets ADC range on both channels to +-2.5V, +-5V, or +-10V (use range=2.5, 5 
 	// or 10 to select, respectively).
-    void setADCrange(float range);
+    void setAdcRange(float range);
 	
 	// Write a 16-bit signed int value to each channel. Outputs will be nearly 
 	// synchronously updated (sub-microsecond). 
@@ -61,7 +61,12 @@ class StimJim {
 	
 	// read the ADC on for a channel. line=0 means measure voltage at output,
 	// line=1 means read the value from the current sense instrument amplifier.
-    int readADC(byte channel, byte line);
+    int readAdc(byte channel, byte line);
+	
+	// get ADC readings from ground (OUT_0 or OUT_1), when OUT_0 or OUT_1 is grounded. 
+	// this accounts for intrinsic "bipolar zero error" in AD7321 ADC.
+	void getAdcOffsets();
+	
 	
     // getCurrentOffsets() sweeps through a range of DAC values while measuring the
 	// current shunted through a 1k resistor (output remains grounded). This enables
@@ -74,14 +79,16 @@ class StimJim {
 	// Caution!! Anything connected to the output will see a voltage ramp!
 	// This enables compensation for any DC offset in the DAC or amplifier.
     void getVoltageOffsets();
+	float adcOffset25[2];   // read voltage on both channels at 2.5V range
+	float adcOffset10[2];    // read voltage on both channels at 10V range
 
     int currentOffsets[2];  // These store the compensation for various DC offsets from 
     int voltageOffsets[2];  // getVoltageOffsets() and getCurrentOffsets()
 
   private:
-    void setupDACs();
+    void setupDacs();
     volatile bool adcSelectedInput[2]; // states of ADCs (are they set to read current or voltage?)
-    SPISettings SpiSettingsDAC, SpiSettingsADC;
+    SPISettings SpiSettingsDac, SpiSettingsAdc;
 
 };
 
