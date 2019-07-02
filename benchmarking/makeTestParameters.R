@@ -5,6 +5,7 @@
 
 projectDirectory = 'C:/Users/Jackie/Desktop/cermak/stimjim/'
 projectDirectory = '/home/x/Desktop/stimjim/'
+projectDirectory = 'D:/Dropbox (Technion Dropbox)/stimjim/'
 
 duration = 1e6
 paramMat = NULL
@@ -13,7 +14,7 @@ mode1 = 1
 amp = c(10,1)
 periods = round(exp(seq(log(250), log(5e5), length.out=30)))
 pulseDurations = round(exp(seq(log(25),log(4000), length.out=30)))
-ampScalings = seq(20,1000,length.out=30)
+ampScalings = seq(5,1000,length.out=30)
 
 ampScaling=500; pulseDuration=100
 for (period in periods){
