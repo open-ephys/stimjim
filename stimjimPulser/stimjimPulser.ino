@@ -326,14 +326,18 @@ void loop() {
 
       else if (comBuf[0] == 'D') {
         char str[100];
-        sprintf(str, "current offsets: %d, %d\nvoltage offsets: %d, %d\n",
-                Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1]);
+        sprintf(str, "current offsets: %d, %d\nvoltage offsets: %d, %d\n, adc offsets: %f, %f\n",
+                Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1],
+                Stimjim.adcOffset10[0],Stimjim.adcOffset10[1]);
         Serial.println(str);
       }
 
       else if (comBuf[0] == 'C') {
         Stimjim.getCurrentOffsets();
         Stimjim.getVoltageOffsets();
+      }
+      else if (comBuf[0] == 'B') {
+        Stimjim.getAdcOffsets();
       }
 
       else if (comBuf[0] == 'R') {

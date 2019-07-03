@@ -25,7 +25,7 @@ void StimJim::begin(){
 
 
   getCurrentOffsets();
-  getVoltageOffsets();
+  //getVoltageOffsets();
   delay(1000);
   digitalWriteFast(LED0, LOW);
   digitalWriteFast(LED1, LOW);
