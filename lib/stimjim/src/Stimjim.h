@@ -48,16 +48,18 @@ class StimJim {
 	// mode 0-3 are: VOLTAGE, CURRENT, HIGH-Z, GROUND.
     void setOutputMode(byte channel, byte mode);
 	
-	// Sets ADC range on both channels to +-2.5V, +-5V, or +-10V (use range=2.5, 5 
-	// or 10 to select, respectively).
-    void setAdcRange(float range);
-	
 	// Write a 16-bit signed int value to each channel. Outputs will be nearly 
 	// synchronously updated (sub-microsecond). 
     void writeToDacs(int16_t amp0, int16_t amp1);
 	
 	// Write a 16-bit signed int value to a single channel.     
     void writeToDac(byte channel, int16_t amp);
+
+	// Sets ADC range on both channels to +-2.5V, +-5V, or +-10V (use range=2.5, 5 
+	// or 10 to select, respectively).
+    void setAdcRange(float range);
+	
+	void setAdcLine(byte channel, byte line);
 	
 	// read the ADC on for a channel. line=0 means measure voltage at output,
 	// line=1 means read the value from the current sense instrument amplifier.

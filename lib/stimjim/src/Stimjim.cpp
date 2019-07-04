@@ -20,13 +20,14 @@ void StimJim::begin(){
 
   setupDacs();
 
+  setAdcLine(0,0);
+  setAdcLine(1,0);
+  
   getAdcOffsets();
-
-
-
   getCurrentOffsets();
   //getVoltageOffsets();
-  delay(1000);
+
+  delay(300);
   digitalWriteFast(LED0, LOW);
   digitalWriteFast(LED1, LOW);
 }
@@ -38,22 +39,6 @@ void StimJim::setOutputMode(byte channel, byte mode) {
 }
 
 
-void StimJim::setAdcRange(float range) {
-  SPI.beginTransaction(SpiSettingsAdc);
-  for (int i = 0; i < 2; i++) {
-    int cs = (i == 0) ? CS1_0 : CS1_1; //CS1_x is ADC for channel x
-    digitalWrite(cs, LOW); //[15] = write, [13] = range register
-    if (range == 2.5) {
-      SPI.transfer16(0b1011000100000000); // write range register +-2.5V on both channels
-    } else if (range == 5) {
-      SPI.transfer16(0b1010100010000000); // write range register +-5V on both channels)
-    } else {
-      SPI.transfer16(32768 + 8192);       // write range register, +-10V on both channels
-    }
-    digitalWrite(cs, HIGH);
-  }
-  SPI.endTransaction();
-}
 
 void StimJim::setupDacs() {
   SPI.beginTransaction(SpiSettingsDac);
@@ -109,6 +94,34 @@ void StimJim::writeToDac(byte channel, int16_t amp) {
   digitalWrite((channel) ? NLDAC_1 : NLDAC_0, HIGH);
 }
 
+
+
+void StimJim::setAdcRange(float range) {
+  SPI.beginTransaction(SpiSettingsAdc);
+  for (int i = 0; i < 2; i++) {
+    int cs = (i == 0) ? CS1_0 : CS1_1; //CS1_x is ADC for channel x
+    digitalWrite(cs, LOW); //[15] = write, [13] = range register
+    if (range == 2.5) {
+      SPI.transfer16(0b1011000100000000); // write range register +-2.5V on both channels
+    } else if (range == 5) {
+      SPI.transfer16(0b1010100010000000); // write range register +-5V on both channels)
+    } else {
+      SPI.transfer16(32768 + 8192);       // write range register, +-10V on both channels
+    }
+    digitalWrite(cs, HIGH);
+  }
+  SPI.endTransaction();
+}
+
+
+void StimJim::setAdcLine(byte channel, byte line) {
+  int cs = (channel) ? CS1_1 : CS1_0;
+  SPI.beginTransaction(SpiSettingsAdc);
+  digitalWrite(cs, LOW);
+  SPI.transfer16(32768 + 1024 * line + 16); //[15-13] = 100 means write control reg; [10] = ADD0; [4] = use internal ref;
+  digitalWrite(cs, HIGH);  
+  SPI.endTransaction();
+}
 
 
 int StimJim::readAdc(byte channel, byte line) {
