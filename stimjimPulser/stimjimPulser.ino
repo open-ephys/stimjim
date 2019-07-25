@@ -261,6 +261,14 @@ void setup() {
   IT0.priority(24);
   IT1.priority(24);
   Serial.flush();
+
+  // print offset values for user reference
+  char str[100];
+  sprintf(str, "ADC offsets (+-2.5V): %f, %f\nADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
+          Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
+          Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
+  Serial.println(str);
+  
   Serial.println("Ready to go!\n\n");
 }
 
@@ -325,14 +333,16 @@ void loop() {
       }
 
       else if (comBuf[0] == 'D') {
+        // print offset values for user reference
         char str[100];
-        sprintf(str, "current offsets: %d, %d\nvoltage offsets: %d, %d\n, adc offsets: %f, %f\n",
-                Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1],
-                Stimjim.adcOffset10[0],Stimjim.adcOffset10[1]);
+        sprintf(str, "ADC offsets (+-2.5V): %f, %f\nADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
+                Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
+                Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
         Serial.println(str);
       }
 
       else if (comBuf[0] == 'C') {
+        Stimjim.getAdcOffsets();
         Stimjim.getCurrentOffsets();
         Stimjim.getVoltageOffsets();
       }

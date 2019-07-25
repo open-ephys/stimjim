@@ -157,20 +157,30 @@ void StimJim::getAdcOffsets(){
   adcOffset10[1] = 0;
   
   setAdcRange(2.5);
-  for (int i = 0; i < 100; i++){
-    adcOffset25[0] += readAdc(0,0);
-    adcOffset25[1] += readAdc(1,0);
+  int x0,x1;
+  for (int i = 0; i < 150; i++){
+    x0 = readAdc(0,0);
+    x1 = readAdc(1,0);
+    if (i >= 50) { // sometimes there is an initial transient for first reads - ignore it
+	  adcOffset25[0] += x0; 
+	  adcOffset25[1] += x1;
+    }
   }
   setAdcRange(10);
-  for (int i = 0; i < 100; i++){
-    adcOffset10[0] += readAdc(0,0);
-    adcOffset10[1] += readAdc(1,0);
+  for (int i = 0; i < 150; i++){
+    x0 = readAdc(0,0);
+    x1 = readAdc(1,0);
+    if (i >= 50) { // sometimes there is an initial transient for first reads - ignore it
+	  adcOffset10[0] += x0; 
+	  adcOffset10[1] += x1;
+    }
   }
   adcOffset25[0] /= 100;
   adcOffset25[1] /= 100;
   adcOffset10[0] /= 100;
   adcOffset10[1] /= 100;
 }
+
 
 
 void StimJim::getCurrentOffsets() {
