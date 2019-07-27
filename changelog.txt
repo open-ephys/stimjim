@@ -30,3 +30,7 @@ and make sure animal can slowly discharge)
 Changes in V0.17:
 1) moved MISO lines out of isolators onto different teensy pins so that they don't interfere.
 2) added 10k pulldown resistors to MISO lines (in isolated sections) - not strictly necessary but probably a good idea.
+
+Changes in V0.18:
+1) Board switched from 2-layer to 4-layer (added ground and power planes).
+2) Added many test points throughout board.
