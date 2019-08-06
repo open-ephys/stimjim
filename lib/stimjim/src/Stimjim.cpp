@@ -6,9 +6,9 @@ void StimJim::begin(){
   SPI.begin();
 
   //AD5752 DAC runs at max 30MHz, SPI mode 1 or 2
-  SpiSettingsDac = SPISettings(10000000, MSBFIRST, SPI_MODE1); 
+  SpiSettingsDac = SPISettings(30000000, MSBFIRST, SPI_MODE1); 
   //AD7321 settings - clock starts high, data latch on falling edge
-  SpiSettingsAdc = SPISettings(5000000, MSBFIRST, SPI_MODE2);  
+  SpiSettingsAdc = SPISettings(10000000, MSBFIRST, SPI_MODE2);  
 
   // ------------- Setup output pins, turn on LEDs ------------------------------------ //
   int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};

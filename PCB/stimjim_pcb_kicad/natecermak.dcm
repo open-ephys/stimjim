@@ -43,6 +43,12 @@ $CMP AD7321
 D 500 kSPS, 2-Channel, Software-Selectable, True Bipolar Input, 12 - Bit Plus Sign ADC
 $ENDCMP
 #
+$CMP AMP03
+D Precision, Unity-Gain Differential Amplifier, SOIC-8/MSOP-8
+K difference amplifier
+F https://www.analog.com/media/en/technical-documentation/data-sheets/AMP03.pdf
+$ENDCMP
+#
 $CMP CC3-0512DF-E
 D  DC DC CNVRTR +/-12V TO +/-15V 3W
 $ENDCMP
@@ -55,15 +61,15 @@ $CMP INA826
 D Precision, 200-μA Supply Current, 3-V to 36-V Supply Instrumentation Amplifier with Rail-to-Rail Output
 $ENDCMP
 #
-$CMP ISO7340FC
-D Low Power Quad-Channel 4/0 Digital Isolator, 25Mbps 31ns, Fail-Safe Low, SO16
-K 4Ch Quad Digital Isolator 25Mbps
-F http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340fc&fileType=pdf
+$CMP ISO7741
+D High-Speed, Robust EMC, Reinforced Four-Channel Digital Isolators
+K 4Ch Quad Digital Isolator 100Mbps
+F http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340c&fileType=pdf
 $ENDCMP
 #
 $CMP ISO7760
 D High-Speed, Robust EMC, Reinforced Six-Channel Digital Isolators
-K 4Ch Quad Digital Isolator 25Mbps
+K 4Ch Quad Digital Isolator 100Mbps
 F http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340c&fileType=pdf
 $ENDCMP
 #

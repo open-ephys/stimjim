@@ -34,3 +34,5 @@ Changes in V0.17:
 Changes in V0.18:
 1) Board switched from 2-layer to 4-layer (added ground and power planes).
 2) Added many test points throughout board.
+3) Replaced ISO7341 with ISO7741 to match speed and delay of ISO7760, so SPI can run faster.
+4) Replaced AD8276 with AMP03 for higher bandwidth current stimulation.

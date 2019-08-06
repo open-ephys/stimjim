@@ -526,23 +526,23 @@ VUSB
 Connection ~ 7000 5200
 Wire Wire Line
 	5950 5200 6000 5200
-Text GLabel 5950 8650 0    50   Input ~ 0
+Text GLabel 5950 8400 0    50   Input ~ 0
 MOSI
-Text GLabel 5950 8950 0    50   Input ~ 0
+Text GLabel 5950 8700 0    50   Input ~ 0
 MISO_1
 $Comp
 L power:GND #PWR010
 U 1 1 5C7DC1E3
-P 5950 8250
-F 0 "#PWR010" H 5950 8000 50  0001 C CNN
-F 1 "GND" H 5955 8077 50  0000 C CNN
-F 2 "" H 5950 8250 50  0001 C CNN
-F 3 "" H 5950 8250 50  0001 C CNN
-	1    5950 8250
-	1    0    0    -1  
+P 5950 8300
+F 0 "#PWR010" H 5950 8050 50  0001 C CNN
+F 1 "GND" V 5955 8172 50  0000 R CNN
+F 2 "" H 5950 8300 50  0001 C CNN
+F 3 "" H 5950 8300 50  0001 C CNN
+	1    5950 8300
+	0    1    1    0   
 $EndComp
 Wire Wire Line
-	5950 8250 6200 8250
+	5950 8300 6200 8300
 $Comp
 L power:+3.3V #PWR013
 U 1 1 5C7DC1EA
@@ -584,15 +584,13 @@ Connection ~ 7050 7950
 Wire Wire Line
 	7050 7950 7050 7900
 Wire Wire Line
-	7000 8250 7250 8250
+	7000 8300 7250 8300
 Wire Wire Line
-	5950 8950 6200 8950
-Text GLabel 7150 8650 2    50   Input ~ 0
+	5950 8700 6200 8700
+Text GLabel 7150 8400 2    50   Input ~ 0
 MOSI_1i
-Text GLabel 7150 8950 2    50   Input ~ 0
+Text GLabel 7150 8700 2    50   Input ~ 0
 MISO_1i
-Wire Wire Line
-	7150 8950 7050 8950
 Text GLabel 8500 8400 0    50   Input ~ 0
 MOSI_1i
 Wire Wire Line
@@ -659,33 +657,22 @@ Text GLabel 14500 6550 2    50   Input ~ 0
 ISENSE_1
 Text GLabel 9650 8900 2    50   Input ~ 0
 ISENSE_1
-$Comp
-L Isolator:ISO7341C U4
-U 1 1 5E4DA1FE
-P 6600 8550
-F 0 "U4" H 6600 9217 50  0000 C CNN
-F 1 "ISO7341C" H 6600 9126 50  0000 C CNN
-F 2 "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" H 6600 8000 50  0001 C CIN
-F 3 "http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7341c&fileType=pdf" H 6600 8950 50  0001 C CNN
-	1    6600 8550
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
-	6200 8450 6150 8450
+	6200 8800 6150 8800
 Wire Wire Line
 	6200 8150 6150 8150
 Wire Wire Line
 	6150 8150 6150 7950
 Wire Wire Line
-	6150 8150 6150 8450
+	6150 8150 6150 8800
 Connection ~ 6150 8150
 Connection ~ 6150 7950
 Wire Wire Line
 	6150 7950 6150 7900
 Wire Wire Line
-	7000 8450 7050 8450
+	7000 8800 7050 8800
 Wire Wire Line
-	7050 8450 7050 8150
+	7050 8800 7050 8150
 Connection ~ 7050 8150
 Wire Wire Line
 	8250 8700 8600 8700
@@ -694,7 +681,7 @@ L Device:C_Small C10
 U 1 1 5EB94C86
 P 8250 8600
 F 0 "C10" H 8158 8554 50  0000 R CNN
-F 1 "680nF" H 8158 8645 50  0000 R CNN
+F 1 "1uF" H 8158 8645 50  0000 R CNN
 F 2 "Capacitor_SMD:C_0603_1608Metric" H 8250 8600 50  0001 C CNN
 F 3 "~" H 8250 8600 50  0001 C CNN
 	1    8250 8600
@@ -763,17 +750,6 @@ Wire Wire Line
 	12800 6750 12800 7250
 Wire Wire Line
 	12800 7250 12900 7250
-$Comp
-L Amplifier_Difference:AD8276 U10
-U 1 1 5BC4D9DE
-P 12100 6900
-F 0 "U10" H 12441 6946 50  0000 L CNN
-F 1 "AD8276" H 12441 6855 50  0000 L CNN
-F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 12100 6900 50  0001 C CNN
-F 3 "http://www.analog.com/media/en/technical-documentation/data-sheets/AD8276_8277.pdf" H 12100 6900 50  0001 C CNN
-	1    12100 6900
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	12100 7250 12100 7200
 Wire Wire Line
@@ -1011,17 +987,6 @@ Wire Wire Line
 	13050 2200 13050 2700
 Wire Wire Line
 	13050 2700 13150 2700
-$Comp
-L Amplifier_Difference:AD8276 U21
-U 1 1 5C96819A
-P 12350 2350
-F 0 "U21" H 12691 2396 50  0000 L CNN
-F 1 "AD8276" H 12691 2305 50  0000 L CNN
-F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 12350 2350 50  0001 C CNN
-F 3 "http://www.analog.com/media/en/technical-documentation/data-sheets/AD8276_8277.pdf" H 12350 2350 50  0001 C CNN
-	1    12350 2350
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	12350 2700 12350 2650
 Wire Wire Line
@@ -1394,20 +1359,20 @@ VOUT_0
 Wire Wire Line
 	13050 800  13100 800 
 Connection ~ 13050 800 
-Text GLabel 5950 8850 0    50   Input ~ 0
+Text GLabel 5950 8600 0    50   Input ~ 0
 NLDAC_1
-Text GLabel 5950 8750 0    50   Input ~ 0
+Text GLabel 5950 8500 0    50   Input ~ 0
 SCK
-Text GLabel 7150 8750 2    50   Input ~ 0
+Text GLabel 7150 8500 2    50   Input ~ 0
 SCK_1i
-Text GLabel 7150 8850 2    50   Input ~ 0
+Text GLabel 7150 8600 2    50   Input ~ 0
 NLDAC_1i
 Wire Wire Line
 	6100 6850 6200 6850
 Wire Wire Line
-	7000 8750 7150 8750
+	7000 8500 7150 8500
 Wire Wire Line
-	6200 8750 5950 8750
+	6200 8500 5950 8500
 $Comp
 L Device:C_Small C4
 U 1 1 5CB096F6
@@ -1455,13 +1420,13 @@ OE1_1
 Text GLabel 1100 1200 0    50   Input ~ 0
 OE0_1
 Wire Wire Line
-	7150 8650 7000 8650
+	7150 8400 7000 8400
 Wire Wire Line
-	7000 8850 7150 8850
+	7000 8600 7150 8600
 Wire Wire Line
-	6200 8850 5950 8850
+	6200 8600 5950 8600
 Wire Wire Line
-	5950 8650 6200 8650
+	5950 8400 6200 8400
 Text GLabel 8500 8900 0    50   Input ~ 0
 OUT_1
 Wire Wire Line
@@ -1563,8 +1528,8 @@ Connection ~ 11950 3900
 Wire Wire Line
 	7000 6600 7150 6600
 Wire Wire Line
-	5950 8250 5950 8200
-Connection ~ 5950 8250
+	5950 8300 5950 8200
+Connection ~ 5950 8300
 Wire Wire Line
 	5950 7950 5950 8000
 Wire Wire Line
@@ -1574,7 +1539,7 @@ Wire Wire Line
 Wire Wire Line
 	7050 7950 7250 7950
 Wire Wire Line
-	7250 8200 7250 8250
+	7250 8200 7250 8300
 Wire Wire Line
 	3250 4200 4000 4200
 Wire Wire Line
@@ -2144,23 +2109,19 @@ VUSB
 Connection ~ 7150 650 
 Wire Wire Line
 	6100 650  6150 650 
-Text GLabel 6100 4100 0    50   Input ~ 0
-MOSI
-Text GLabel 6100 4400 0    50   Input ~ 0
-MISO_0
 $Comp
 L power:GND #PWR043
 U 1 1 5D616C60
-P 6100 3700
-F 0 "#PWR043" H 6100 3450 50  0001 C CNN
-F 1 "GND" H 6105 3527 50  0000 C CNN
-F 2 "" H 6100 3700 50  0001 C CNN
-F 3 "" H 6100 3700 50  0001 C CNN
-	1    6100 3700
-	1    0    0    -1  
+P 6100 3750
+F 0 "#PWR043" H 6100 3500 50  0001 C CNN
+F 1 "GND" V 6105 3622 50  0000 R CNN
+F 2 "" H 6100 3750 50  0001 C CNN
+F 3 "" H 6100 3750 50  0001 C CNN
+	1    6100 3750
+	0    1    1    0   
 $EndComp
 Wire Wire Line
-	6100 3700 6350 3700
+	6100 3750 6350 3750
 $Comp
 L power:+3.3V #PWR046
 U 1 1 5D616C67
@@ -2202,15 +2163,11 @@ Connection ~ 7200 3400
 Wire Wire Line
 	7200 3400 7200 3350
 Wire Wire Line
-	7150 3700 7400 3700
-Wire Wire Line
-	6100 4400 6350 4400
-Text GLabel 7300 4100 2    50   Input ~ 0
+	7150 3750 7400 3750
+Text GLabel 7300 3850 2    50   Input ~ 0
 MOSI_0i
-Text GLabel 7300 4400 2    50   Input ~ 0
+Text GLabel 7300 4150 2    50   Input ~ 0
 MISO_0i
-Wire Wire Line
-	7300 4400 7200 4400
 Text GLabel 8650 3850 0    50   Input ~ 0
 MOSI_0i
 Wire Wire Line
@@ -2275,33 +2232,18 @@ Wire Wire Line
 	8750 4050 8750 3950
 Text GLabel 9800 4350 2    50   Input ~ 0
 ISENSE_0
-$Comp
-L Isolator:ISO7341C U15
-U 1 1 5D616CC7
-P 6750 4000
-F 0 "U15" H 6750 4667 50  0000 C CNN
-F 1 "ISO7341C" H 6750 4576 50  0000 C CNN
-F 2 "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" H 6750 3450 50  0001 C CIN
-F 3 "http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7341c&fileType=pdf" H 6750 4400 50  0001 C CNN
-	1    6750 4000
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6350 3900 6300 3900
 Wire Wire Line
 	6350 3600 6300 3600
 Wire Wire Line
 	6300 3600 6300 3400
-Wire Wire Line
-	6300 3600 6300 3900
 Connection ~ 6300 3600
 Connection ~ 6300 3400
 Wire Wire Line
 	6300 3400 6300 3350
 Wire Wire Line
-	7150 3900 7200 3900
+	7150 4250 7200 4250
 Wire Wire Line
-	7200 3900 7200 3600
+	7200 4250 7200 3600
 Connection ~ 7200 3600
 Wire Wire Line
 	8400 4150 8750 4150
@@ -2310,7 +2252,7 @@ L Device:C_Small C36
 U 1 1 5D616CD9
 P 8400 4050
 F 0 "C36" H 8308 4004 50  0000 R CNN
-F 1 "680nF" H 8308 4095 50  0000 R CNN
+F 1 "1uF" H 8308 4095 50  0000 R CNN
 F 2 "Capacitor_SMD:C_0603_1608Metric" H 8400 4050 50  0001 C CNN
 F 3 "~" H 8400 4050 50  0001 C CNN
 	1    8400 4050
@@ -2339,20 +2281,14 @@ Connection ~ 8750 3950
 Connection ~ 9650 4150
 Text GLabel 8600 2350 0    50   Input ~ 0
 DAC_0
-Text GLabel 6100 4300 0    50   Input ~ 0
-NLDAC_0
-Text GLabel 6100 4200 0    50   Input ~ 0
-SCK
-Text GLabel 7300 4200 2    50   Input ~ 0
+Text GLabel 7300 3950 2    50   Input ~ 0
 SCK_0i
-Text GLabel 7300 4300 2    50   Input ~ 0
+Text GLabel 7300 4050 2    50   Input ~ 0
 NLDAC_0i
 Wire Wire Line
 	6250 2300 6350 2300
 Wire Wire Line
-	7150 4200 7300 4200
-Wire Wire Line
-	6350 4200 6100 4200
+	7150 3950 7300 3950
 $Comp
 L Device:C_Small C29
 U 1 1 5D616CF4
@@ -2385,13 +2321,9 @@ Wire Wire Line
 Wire Wire Line
 	7150 900  7650 900 
 Wire Wire Line
-	7300 4100 7150 4100
+	7300 3850 7150 3850
 Wire Wire Line
-	7150 4300 7300 4300
-Wire Wire Line
-	6350 4300 6100 4300
-Wire Wire Line
-	6100 4100 6350 4100
+	7150 4050 7300 4050
 Text GLabel 8650 4350 0    50   Input ~ 0
 OUT_0
 Wire Wire Line
@@ -2411,9 +2343,7 @@ Wire Wire Line
 	10200 3850 10500 3850
 Wire Wire Line
 	7150 2050 7300 2050
-Wire Wire Line
-	6100 3700 6100 3650
-Connection ~ 6100 3700
+Connection ~ 6100 3750
 Wire Wire Line
 	6100 3400 6100 3450
 Wire Wire Line
@@ -2422,8 +2352,6 @@ Wire Wire Line
 	7400 3400 7400 3450
 Wire Wire Line
 	7200 3400 7400 3400
-Wire Wire Line
-	7400 3650 7400 3700
 Wire Wire Line
 	7150 650  7650 650 
 Wire Wire Line
@@ -2757,15 +2685,15 @@ $EndComp
 $Comp
 L natecermak:GND_1 #GND_02
 U 1 1 5C95FC8B
-P 7250 8250
-F 0 "#GND_02" H 7250 8040 50  0001 C CNN
-F 1 "GND_1" H 7250 8077 50  0000 C CNN
-F 2 "" H 7100 7900 50  0001 C CNN
-F 3 "" H 7100 7900 50  0001 C CNN
-	1    7250 8250
-	1    0    0    -1  
+P 7250 8300
+F 0 "#GND_02" H 7250 8090 50  0001 C CNN
+F 1 "GND_1" V 7250 8172 50  0000 R CNN
+F 2 "" H 7100 7950 50  0001 C CNN
+F 3 "" H 7100 7950 50  0001 C CNN
+	1    7250 8300
+	0    -1   -1   0   
 $EndComp
-Connection ~ 7250 8250
+Connection ~ 7250 8300
 $Comp
 L natecermak:GND_1 #GND_04
 U 1 1 5C95FDCC
@@ -3024,15 +2952,15 @@ $EndComp
 $Comp
 L natecermak:GND_0 #GND_016
 U 1 1 5CD40A27
-P 7400 3700
-F 0 "#GND_016" H 7400 3490 50  0001 C CNN
-F 1 "GND_0" H 7400 3527 50  0000 C CNN
-F 2 "" H 7250 3350 50  0001 C CNN
-F 3 "" H 7250 3350 50  0001 C CNN
-	1    7400 3700
-	1    0    0    -1  
+P 7400 3750
+F 0 "#GND_016" H 7400 3540 50  0001 C CNN
+F 1 "GND_0" V 7400 3622 50  0000 R CNN
+F 2 "" H 7250 3400 50  0001 C CNN
+F 3 "" H 7250 3400 50  0001 C CNN
+	1    7400 3750
+	0    -1   -1   0   
 $EndComp
-Connection ~ 7400 3700
+Connection ~ 7400 3750
 $Comp
 L natecermak:GND_0 #GND_018
 U 1 1 5CD40BCF
@@ -3869,64 +3797,50 @@ Wire Wire Line
 $Comp
 L Device:R_US R17
 U 1 1 5CD59864
-P 7300 9100
-F 0 "R17" V 7400 9100 50  0000 C CNN
-F 1 "10k" V 7500 9100 50  0000 C CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 7340 9090 50  0001 C CNN
-F 3 "~" H 7300 9100 50  0001 C CNN
-	1    7300 9100
+P 7300 8850
+F 0 "R17" V 7400 8850 50  0000 C CNN
+F 1 "10k" V 7500 8850 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 7340 8840 50  0001 C CNN
+F 3 "~" H 7300 8850 50  0001 C CNN
+	1    7300 8850
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	7050 8950 7050 9100
-Wire Wire Line
-	7050 9100 7150 9100
-Connection ~ 7050 8950
-Wire Wire Line
-	7050 8950 7000 8950
 $Comp
 L natecermak:GND_1 #GND_037
 U 1 1 5CDB94D6
-P 7550 9100
-F 0 "#GND_037" H 7550 8890 50  0001 C CNN
-F 1 "GND_1" V 7550 8973 50  0000 R CNN
-F 2 "" H 7400 8750 50  0001 C CNN
-F 3 "" H 7400 8750 50  0001 C CNN
-	1    7550 9100
-	0    -1   -1   0   
+P 7550 8850
+F 0 "#GND_037" H 7550 8640 50  0001 C CNN
+F 1 "GND_1" H 7550 8677 50  0000 C CNN
+F 2 "" H 7400 8500 50  0001 C CNN
+F 3 "" H 7400 8500 50  0001 C CNN
+	1    7550 8850
+	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	7550 9100 7450 9100
+	7550 8850 7450 8850
 $Comp
 L Device:R_US R18
 U 1 1 5CE19A21
-P 7450 4550
-F 0 "R18" V 7600 4550 50  0000 C CNN
-F 1 "10k" V 7700 4550 50  0000 C CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 7490 4540 50  0001 C CNN
-F 3 "~" H 7450 4550 50  0001 C CNN
-	1    7450 4550
+P 7450 4300
+F 0 "R18" V 7563 4300 50  0000 C CNN
+F 1 "10k" V 7654 4300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 7490 4290 50  0001 C CNN
+F 3 "~" H 7450 4300 50  0001 C CNN
+	1    7450 4300
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	7200 4400 7200 4550
-Wire Wire Line
-	7200 4550 7300 4550
-Wire Wire Line
-	7700 4550 7600 4550
-Connection ~ 7200 4400
-Wire Wire Line
-	7200 4400 7150 4400
+	7700 4300 7600 4300
 $Comp
 L natecermak:GND_0 #GND_038
 U 1 1 5CF400C1
-P 7700 4550
-F 0 "#GND_038" H 7700 4340 50  0001 C CNN
-F 1 "GND_0" V 7700 4423 50  0000 R CNN
-F 2 "" H 7550 4200 50  0001 C CNN
-F 3 "" H 7550 4200 50  0001 C CNN
-	1    7700 4550
-	0    -1   -1   0   
+P 7700 4300
+F 0 "#GND_038" H 7700 4090 50  0001 C CNN
+F 1 "GND_0" H 7700 4127 50  0000 C CNN
+F 2 "" H 7550 3950 50  0001 C CNN
+F 3 "" H 7550 3950 50  0001 C CNN
+	1    7700 4300
+	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint TP25
@@ -4375,332 +4289,332 @@ Wire Wire Line
 $Comp
 L Connector:TestPoint TP34
 U 1 1 5ED490EE
-P 14700 500
-F 0 "TP34" V 14654 688 50  0000 L CNN
-F 1 "TestPoint" V 14745 688 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 500 50  0001 C CNN
-F 3 "~" H 14900 500 50  0001 C CNN
-	1    14700 500 
+P 14500 500
+F 0 "TP34" V 14500 700 50  0000 L CNN
+F 1 "TestPoint" V 14500 900 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 500 50  0001 C CNN
+F 3 "~" H 14700 500 50  0001 C CNN
+	1    14500 500 
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP37
 U 1 1 5ED49571
-P 14700 600
-F 0 "TP37" V 14654 788 50  0000 L CNN
-F 1 "TestPoint" V 14745 788 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 600 50  0001 C CNN
-F 3 "~" H 14900 600 50  0001 C CNN
-	1    14700 600 
+P 14500 600
+F 0 "TP37" V 14500 800 50  0000 L CNN
+F 1 "TestPoint" V 14500 1000 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 600 50  0001 C CNN
+F 3 "~" H 14700 600 50  0001 C CNN
+	1    14500 600 
 	0    1    1    0   
 $EndComp
-Text GLabel 14550 600  0    50   Input ~ 0
+Text GLabel 14350 600  0    50   Input ~ 0
 MOSI_0i
-Text GLabel 14550 500  0    50   Input ~ 0
+Text GLabel 14350 500  0    50   Input ~ 0
 MISO_0i
 Wire Wire Line
-	14550 600  14700 600 
+	14350 600  14500 600 
 $Comp
 L natecermak:GND_0 #GND_041
 U 1 1 5EE2984A
-P 14600 400
-F 0 "#GND_041" H 14600 190 50  0001 C CNN
-F 1 "GND_0" V 14600 273 50  0000 R CNN
-F 2 "" H 14450 50  50  0001 C CNN
-F 3 "" H 14450 50  50  0001 C CNN
-	1    14600 400 
+P 14400 400
+F 0 "#GND_041" H 14400 190 50  0001 C CNN
+F 1 "GND_0" V 14400 273 50  0000 R CNN
+F 2 "" H 14250 50  50  0001 C CNN
+F 3 "" H 14250 50  50  0001 C CNN
+	1    14400 400 
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14550 500  14700 500 
+	14350 500  14500 500 
 $Comp
 L Connector:TestPoint TP33
 U 1 1 5F0CACDD
-P 14700 400
-F 0 "TP33" V 14654 588 50  0000 L CNN
-F 1 "TestPoint" V 14745 588 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 400 50  0001 C CNN
-F 3 "~" H 14900 400 50  0001 C CNN
-	1    14700 400 
+P 14500 400
+F 0 "TP33" V 14500 600 50  0000 L CNN
+F 1 "TestPoint" V 14500 800 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 400 50  0001 C CNN
+F 3 "~" H 14700 400 50  0001 C CNN
+	1    14500 400 
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 400  14600 400 
+	14500 400  14400 400 
 $Comp
 L natecermak:GND_0 #GND_039
 U 1 1 5F21C18B
-P 14600 200
-F 0 "#GND_039" H 14600 -10 50  0001 C CNN
-F 1 "GND_0" V 14600 73  50  0000 R CNN
-F 2 "" H 14450 -150 50  0001 C CNN
-F 3 "" H 14450 -150 50  0001 C CNN
-	1    14600 200 
+P 14400 200
+F 0 "#GND_039" H 14400 -10 50  0001 C CNN
+F 1 "GND_0" V 14400 73  50  0000 R CNN
+F 2 "" H 14250 -150 50  0001 C CNN
+F 3 "" H 14250 -150 50  0001 C CNN
+	1    14400 200 
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP31
 U 1 1 5F21C191
-P 14700 200
-F 0 "TP31" V 14654 388 50  0000 L CNN
-F 1 "TestPoint" V 14745 388 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 200 50  0001 C CNN
-F 3 "~" H 14900 200 50  0001 C CNN
-	1    14700 200 
+P 14500 200
+F 0 "TP31" V 14500 400 50  0000 L CNN
+F 1 "TestPoint" V 14500 600 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 200 50  0001 C CNN
+F 3 "~" H 14700 200 50  0001 C CNN
+	1    14500 200 
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 200  14600 200 
+	14500 200  14400 200 
 $Comp
 L natecermak:GND_0 #GND_040
 U 1 1 5F2FDA41
-P 14600 300
-F 0 "#GND_040" H 14600 90  50  0001 C CNN
-F 1 "GND_0" V 14600 173 50  0000 R CNN
-F 2 "" H 14450 -50 50  0001 C CNN
-F 3 "" H 14450 -50 50  0001 C CNN
-	1    14600 300 
+P 14400 300
+F 0 "#GND_040" H 14400 90  50  0001 C CNN
+F 1 "GND_0" V 14400 173 50  0000 R CNN
+F 2 "" H 14250 -50 50  0001 C CNN
+F 3 "" H 14250 -50 50  0001 C CNN
+	1    14400 300 
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP32
 U 1 1 5F2FDA47
-P 14700 300
-F 0 "TP32" V 14654 488 50  0000 L CNN
-F 1 "TestPoint" V 14745 488 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 300 50  0001 C CNN
-F 3 "~" H 14900 300 50  0001 C CNN
-	1    14700 300 
+P 14500 300
+F 0 "TP32" V 14500 500 50  0000 L CNN
+F 1 "TestPoint" V 14500 700 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 300 50  0001 C CNN
+F 3 "~" H 14700 300 50  0001 C CNN
+	1    14500 300 
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 300  14600 300 
-Text GLabel 14550 700  0    50   Input ~ 0
+	14500 300  14400 300 
+Text GLabel 14350 700  0    50   Input ~ 0
 OE1_0i
-Text GLabel 14550 800  0    50   Input ~ 0
+Text GLabel 14350 800  0    50   Input ~ 0
 OE0_0i
-Text GLabel 14550 1000 0    50   Input ~ 0
+Text GLabel 14350 1000 0    50   Input ~ 0
 CS0_0i
-Text GLabel 14550 900  0    50   Input ~ 0
+Text GLabel 14350 900  0    50   Input ~ 0
 CS1_0i
 $Comp
 L Connector:TestPoint TP38
 U 1 1 5F53387A
-P 14700 700
-F 0 "TP38" V 14654 888 50  0000 L CNN
-F 1 "TestPoint" V 14745 888 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 700 50  0001 C CNN
-F 3 "~" H 14900 700 50  0001 C CNN
-	1    14700 700 
+P 14500 700
+F 0 "TP38" V 14500 900 50  0000 L CNN
+F 1 "TestPoint" V 14500 1100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 700 50  0001 C CNN
+F 3 "~" H 14700 700 50  0001 C CNN
+	1    14500 700 
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP39
 U 1 1 5F533881
-P 14700 800
-F 0 "TP39" V 14654 988 50  0000 L CNN
-F 1 "TestPoint" V 14745 988 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 800 50  0001 C CNN
-F 3 "~" H 14900 800 50  0001 C CNN
-	1    14700 800 
+P 14500 800
+F 0 "TP39" V 14500 1000 50  0000 L CNN
+F 1 "TestPoint" V 14500 1200 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 800 50  0001 C CNN
+F 3 "~" H 14700 800 50  0001 C CNN
+	1    14500 800 
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP40
 U 1 1 5F533888
-P 14700 900
-F 0 "TP40" V 14654 1088 50  0000 L CNN
-F 1 "TestPoint" V 14745 1088 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 900 50  0001 C CNN
-F 3 "~" H 14900 900 50  0001 C CNN
-	1    14700 900 
+P 14500 900
+F 0 "TP40" V 14500 1100 50  0000 L CNN
+F 1 "TestPoint" V 14500 1300 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 900 50  0001 C CNN
+F 3 "~" H 14700 900 50  0001 C CNN
+	1    14500 900 
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP41
 U 1 1 5F53388F
-P 14700 1000
-F 0 "TP41" V 14654 1188 50  0000 L CNN
-F 1 "TestPoint" V 14745 1188 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 1000 50  0001 C CNN
-F 3 "~" H 14900 1000 50  0001 C CNN
-	1    14700 1000
+P 14500 1000
+F 0 "TP41" V 14500 1200 50  0000 L CNN
+F 1 "TestPoint" V 14500 1400 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 1000 50  0001 C CNN
+F 3 "~" H 14700 1000 50  0001 C CNN
+	1    14500 1000
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 900  14550 900 
+	14500 900  14350 900 
 Wire Wire Line
-	14550 1000 14700 1000
+	14350 1000 14500 1000
 Wire Wire Line
-	14700 800  14550 800 
+	14500 800  14350 800 
 Wire Wire Line
-	14550 700  14700 700 
+	14350 700  14500 700 
 $Comp
 L Connector:TestPoint TP45
 U 1 1 5F5A728C
-P 14700 5200
-F 0 "TP45" V 14654 5388 50  0000 L CNN
-F 1 "TestPoint" V 14745 5388 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5200 50  0001 C CNN
-F 3 "~" H 14900 5200 50  0001 C CNN
-	1    14700 5200
+P 14500 5200
+F 0 "TP45" V 14500 5400 50  0000 L CNN
+F 1 "TestPoint" V 14500 5600 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5200 50  0001 C CNN
+F 3 "~" H 14700 5200 50  0001 C CNN
+	1    14500 5200
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP48
 U 1 1 5F5A72A1
-P 14700 5300
-F 0 "TP48" V 14654 5488 50  0000 L CNN
-F 1 "TestPoint" V 14745 5488 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5300 50  0001 C CNN
-F 3 "~" H 14900 5300 50  0001 C CNN
-	1    14700 5300
+P 14500 5300
+F 0 "TP48" V 14500 5500 50  0000 L CNN
+F 1 "TestPoint" V 14500 5700 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5300 50  0001 C CNN
+F 3 "~" H 14700 5300 50  0001 C CNN
+	1    14500 5300
 	0    1    1    0   
 $EndComp
-Text GLabel 14550 5300 0    50   Input ~ 0
+Text GLabel 14350 5300 0    50   Input ~ 0
 MOSI_1i
-Text GLabel 14550 5200 0    50   Input ~ 0
+Text GLabel 14350 5200 0    50   Input ~ 0
 MISO_1i
 Wire Wire Line
-	14550 5300 14700 5300
+	14350 5300 14500 5300
 Wire Wire Line
-	14550 5200 14700 5200
+	14350 5200 14500 5200
 $Comp
 L Connector:TestPoint TP44
 U 1 1 5F5A72B6
-P 14700 5100
-F 0 "TP44" V 14654 5288 50  0000 L CNN
-F 1 "TestPoint" V 14745 5288 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5100 50  0001 C CNN
-F 3 "~" H 14900 5100 50  0001 C CNN
-	1    14700 5100
+P 14500 5100
+F 0 "TP44" V 14500 5300 50  0000 L CNN
+F 1 "TestPoint" V 14500 5500 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5100 50  0001 C CNN
+F 3 "~" H 14700 5100 50  0001 C CNN
+	1    14500 5100
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 5100 14600 5100
+	14500 5100 14400 5100
 $Comp
 L Connector:TestPoint TP42
 U 1 1 5F5A72C4
-P 14700 4900
-F 0 "TP42" V 14654 5088 50  0000 L CNN
-F 1 "TestPoint" V 14745 5088 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 4900 50  0001 C CNN
-F 3 "~" H 14900 4900 50  0001 C CNN
-	1    14700 4900
+P 14500 4900
+F 0 "TP42" V 14500 5100 50  0000 L CNN
+F 1 "TestPoint" V 14500 5300 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 4900 50  0001 C CNN
+F 3 "~" H 14700 4900 50  0001 C CNN
+	1    14500 4900
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 4900 14600 4900
+	14500 4900 14400 4900
 $Comp
 L Connector:TestPoint TP43
 U 1 1 5F5A72D2
-P 14700 5000
-F 0 "TP43" V 14654 5188 50  0000 L CNN
-F 1 "TestPoint" V 14745 5188 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5000 50  0001 C CNN
-F 3 "~" H 14900 5000 50  0001 C CNN
-	1    14700 5000
+P 14500 5000
+F 0 "TP43" V 14500 5200 50  0000 L CNN
+F 1 "TestPoint" V 14500 5400 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5000 50  0001 C CNN
+F 3 "~" H 14700 5000 50  0001 C CNN
+	1    14500 5000
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 5000 14600 5000
-Text GLabel 14550 5400 0    50   Input ~ 0
+	14500 5000 14400 5000
+Text GLabel 14350 5400 0    50   Input ~ 0
 OE1_1i
-Text GLabel 14550 5500 0    50   Input ~ 0
+Text GLabel 14350 5500 0    50   Input ~ 0
 OE0_1i
-Text GLabel 14550 5700 0    50   Input ~ 0
+Text GLabel 14350 5700 0    50   Input ~ 0
 CS0_1i
-Text GLabel 14550 5600 0    50   Input ~ 0
+Text GLabel 14350 5600 0    50   Input ~ 0
 CS1_1i
 $Comp
 L Connector:TestPoint TP49
 U 1 1 5F5A72DE
-P 14700 5400
-F 0 "TP49" V 14654 5588 50  0000 L CNN
-F 1 "TestPoint" V 14745 5588 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5400 50  0001 C CNN
-F 3 "~" H 14900 5400 50  0001 C CNN
-	1    14700 5400
+P 14500 5400
+F 0 "TP49" V 14500 5600 50  0000 L CNN
+F 1 "TestPoint" V 14500 5800 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5400 50  0001 C CNN
+F 3 "~" H 14700 5400 50  0001 C CNN
+	1    14500 5400
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP50
 U 1 1 5F5A72E5
-P 14700 5500
-F 0 "TP50" V 14654 5688 50  0000 L CNN
-F 1 "TestPoint" V 14745 5688 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5500 50  0001 C CNN
-F 3 "~" H 14900 5500 50  0001 C CNN
-	1    14700 5500
+P 14500 5500
+F 0 "TP50" V 14500 5700 50  0000 L CNN
+F 1 "TestPoint" V 14500 5900 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5500 50  0001 C CNN
+F 3 "~" H 14700 5500 50  0001 C CNN
+	1    14500 5500
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP51
 U 1 1 5F5A72EC
-P 14700 5600
-F 0 "TP51" V 14654 5788 50  0000 L CNN
-F 1 "TestPoint" V 14745 5788 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5600 50  0001 C CNN
-F 3 "~" H 14900 5600 50  0001 C CNN
-	1    14700 5600
+P 14500 5600
+F 0 "TP51" V 14500 5800 50  0000 L CNN
+F 1 "TestPoint" V 14500 6000 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5600 50  0001 C CNN
+F 3 "~" H 14700 5600 50  0001 C CNN
+	1    14500 5600
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint TP52
 U 1 1 5F5A72F3
-P 14700 5700
-F 0 "TP52" V 14654 5888 50  0000 L CNN
-F 1 "TestPoint" V 14745 5888 50  0000 L CNN
-F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14900 5700 50  0001 C CNN
-F 3 "~" H 14900 5700 50  0001 C CNN
-	1    14700 5700
+P 14500 5700
+F 0 "TP52" V 14500 5900 50  0000 L CNN
+F 1 "TestPoint" V 14500 6100 50  0000 L CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 14700 5700 50  0001 C CNN
+F 3 "~" H 14700 5700 50  0001 C CNN
+	1    14500 5700
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	14700 5600 14550 5600
+	14500 5600 14350 5600
 Wire Wire Line
-	14550 5700 14700 5700
+	14350 5700 14500 5700
 Wire Wire Line
-	14700 5500 14550 5500
+	14500 5500 14350 5500
 Wire Wire Line
-	14550 5400 14700 5400
+	14350 5400 14500 5400
 $Comp
 L natecermak:GND_1 #GND_042
 U 1 1 5F692455
-P 14600 4900
-F 0 "#GND_042" H 14600 4690 50  0001 C CNN
-F 1 "GND_1" V 14600 4772 50  0000 R CNN
-F 2 "" H 14450 4550 50  0001 C CNN
-F 3 "" H 14450 4550 50  0001 C CNN
-	1    14600 4900
+P 14400 4900
+F 0 "#GND_042" H 14400 4690 50  0001 C CNN
+F 1 "GND_1" V 14400 4772 50  0000 R CNN
+F 2 "" H 14250 4550 50  0001 C CNN
+F 3 "" H 14250 4550 50  0001 C CNN
+	1    14400 4900
 	0    1    1    0   
 $EndComp
 $Comp
 L natecermak:GND_1 #GND_043
 U 1 1 5F77E1E6
-P 14600 5000
-F 0 "#GND_043" H 14600 4790 50  0001 C CNN
-F 1 "GND_1" V 14600 4872 50  0000 R CNN
-F 2 "" H 14450 4650 50  0001 C CNN
-F 3 "" H 14450 4650 50  0001 C CNN
-	1    14600 5000
+P 14400 5000
+F 0 "#GND_043" H 14400 4790 50  0001 C CNN
+F 1 "GND_1" V 14400 4872 50  0000 R CNN
+F 2 "" H 14250 4650 50  0001 C CNN
+F 3 "" H 14250 4650 50  0001 C CNN
+	1    14400 5000
 	0    1    1    0   
 $EndComp
 $Comp
 L natecermak:GND_1 #GND_044
 U 1 1 5F77E337
-P 14600 5100
-F 0 "#GND_044" H 14600 4890 50  0001 C CNN
-F 1 "GND_1" V 14600 4972 50  0000 R CNN
-F 2 "" H 14450 4750 50  0001 C CNN
-F 3 "" H 14450 4750 50  0001 C CNN
-	1    14600 5100
+P 14400 5100
+F 0 "#GND_044" H 14400 4890 50  0001 C CNN
+F 1 "GND_1" V 14400 4972 50  0000 R CNN
+F 2 "" H 14250 4750 50  0001 C CNN
+F 3 "" H 14250 4750 50  0001 C CNN
+	1    14400 5100
 	0    1    1    0   
 $EndComp
 $Comp
-L power:GND #PWR?
+L power:GND #PWR025
 U 1 1 5F9CC804
 P 1700 7000
-F 0 "#PWR?" H 1700 6750 50  0001 C CNN
+F 0 "#PWR025" H 1700 6750 50  0001 C CNN
 F 1 "GND" V 1705 6872 50  0000 R CNN
 F 2 "" H 1700 7000 50  0001 C CNN
 F 3 "" H 1700 7000 50  0001 C CNN
@@ -4710,10 +4624,10 @@ $EndComp
 Text GLabel 1650 7300 0    50   Input ~ 0
 VUSB
 $Comp
-L Connector:TestPoint TP?
+L Connector:TestPoint TP35
 U 1 1 5F9CCDBE
 P 1800 7000
-F 0 "TP?" V 1754 7188 50  0000 L CNN
+F 0 "TP35" V 1754 7188 50  0000 L CNN
 F 1 "TestPoint" V 1845 7188 50  0000 L CNN
 F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2000 7000 50  0001 C CNN
 F 3 "~" H 2000 7000 50  0001 C CNN
@@ -4723,10 +4637,10 @@ $EndComp
 Wire Wire Line
 	1700 7000 1800 7000
 $Comp
-L power:GND #PWR?
+L power:GND #PWR026
 U 1 1 5FAB66AC
 P 1700 7100
-F 0 "#PWR?" H 1700 6850 50  0001 C CNN
+F 0 "#PWR026" H 1700 6850 50  0001 C CNN
 F 1 "GND" V 1705 6972 50  0000 R CNN
 F 2 "" H 1700 7100 50  0001 C CNN
 F 3 "" H 1700 7100 50  0001 C CNN
@@ -4734,10 +4648,10 @@ F 3 "" H 1700 7100 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L Connector:TestPoint TP?
+L Connector:TestPoint TP36
 U 1 1 5FAB66B2
 P 1800 7100
-F 0 "TP?" V 1754 7288 50  0000 L CNN
+F 0 "TP36" V 1754 7288 50  0000 L CNN
 F 1 "TestPoint" V 1845 7288 50  0000 L CNN
 F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2000 7100 50  0001 C CNN
 F 3 "~" H 2000 7100 50  0001 C CNN
@@ -4747,10 +4661,10 @@ $EndComp
 Wire Wire Line
 	1700 7100 1800 7100
 $Comp
-L power:GND #PWR?
+L power:GND #PWR027
 U 1 1 5FBA2324
 P 1700 7200
-F 0 "#PWR?" H 1700 6950 50  0001 C CNN
+F 0 "#PWR027" H 1700 6950 50  0001 C CNN
 F 1 "GND" V 1705 7072 50  0000 R CNN
 F 2 "" H 1700 7200 50  0001 C CNN
 F 3 "" H 1700 7200 50  0001 C CNN
@@ -4758,10 +4672,10 @@ F 3 "" H 1700 7200 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L Connector:TestPoint TP?
+L Connector:TestPoint TP46
 U 1 1 5FBA232A
 P 1800 7200
-F 0 "TP?" V 1754 7388 50  0000 L CNN
+F 0 "TP46" V 1754 7388 50  0000 L CNN
 F 1 "TestPoint" V 1845 7388 50  0000 L CNN
 F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2000 7200 50  0001 C CNN
 F 3 "~" H 2000 7200 50  0001 C CNN
@@ -4771,10 +4685,10 @@ $EndComp
 Wire Wire Line
 	1700 7200 1800 7200
 $Comp
-L Connector:TestPoint TP?
+L Connector:TestPoint TP47
 U 1 1 5FC8E5C5
 P 1800 7300
-F 0 "TP?" V 1754 7488 50  0000 L CNN
+F 0 "TP47" V 1754 7488 50  0000 L CNN
 F 1 "TestPoint" V 1845 7488 50  0000 L CNN
 F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2000 7300 50  0001 C CNN
 F 3 "~" H 2000 7300 50  0001 C CNN
@@ -4783,4 +4697,90 @@ F 3 "~" H 2000 7300 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1650 7300 1800 7300
+Text GLabel 6000 4150 0    50   Input ~ 0
+MISO_0
+Text GLabel 6000 3950 0    50   Input ~ 0
+SCK
+Text GLabel 6000 4050 0    50   Input ~ 0
+NLDAC_0
+Text GLabel 6000 3850 0    50   Input ~ 0
+MOSI
+$Comp
+L natecermak:ISO7741 U15
+U 1 1 5D6CA23E
+P 6750 4000
+F 0 "U15" H 6750 4667 50  0000 C CNN
+F 1 "ISO7741" H 6750 4576 50  0000 C CNN
+F 2 "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" H 6710 3590 50  0001 C CIN
+F 3 "http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340c&fileType=pdf" H 6750 4400 50  0001 C CNN
+	1    6750 4000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7400 3650 7400 3750
+Wire Wire Line
+	6100 3650 6100 3750
+Wire Wire Line
+	6300 4250 6350 4250
+Wire Wire Line
+	6300 3600 6300 4250
+Wire Wire Line
+	6000 3850 6350 3850
+Wire Wire Line
+	6000 3950 6350 3950
+Wire Wire Line
+	6000 4050 6350 4050
+Wire Wire Line
+	6000 4150 6350 4150
+Wire Wire Line
+	7150 4150 7250 4150
+Wire Wire Line
+	7250 4150 7250 4300
+Connection ~ 7250 4150
+Wire Wire Line
+	7250 4150 7300 4150
+Wire Wire Line
+	7250 4300 7300 4300
+$Comp
+L natecermak:ISO7741 U4
+U 1 1 5E36443C
+P 6600 8550
+F 0 "U4" H 6600 9217 50  0000 C CNN
+F 1 "ISO7741" H 6600 9126 50  0000 C CNN
+F 2 "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" H 6560 8140 50  0001 C CIN
+F 3 "http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=iso7340c&fileType=pdf" H 6600 8950 50  0001 C CNN
+	1    6600 8550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7000 8700 7100 8700
+Wire Wire Line
+	7100 8700 7100 8850
+Connection ~ 7100 8700
+Wire Wire Line
+	7100 8700 7150 8700
+Wire Wire Line
+	7100 8850 7150 8850
+$Comp
+L natecermak:AMP03 U10
+U 1 1 5D50B000
+P 12100 6900
+F 0 "U10" H 12444 6946 50  0000 L CNN
+F 1 "AMP03" H 12444 6855 50  0000 L CNN
+F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 12100 6900 50  0001 C CNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/AMP03.pdf" H 12100 6900 50  0001 C CNN
+	1    12100 6900
+	1    0    0    -1  
+$EndComp
+$Comp
+L natecermak:AMP03 U21
+U 1 1 5D50E182
+P 12350 2350
+F 0 "U21" H 12694 2396 50  0000 L CNN
+F 1 "AMP03" H 12694 2305 50  0000 L CNN
+F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 12350 2350 50  0001 C CNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/AMP03.pdf" H 12350 2350 50  0001 C CNN
+	1    12350 2350
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
