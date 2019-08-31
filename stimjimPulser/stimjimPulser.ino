@@ -427,7 +427,9 @@ void loop() {
         int channel = 0, line = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &line );
         int val = Stimjim.readAdc(channel, line);
-        Serial.print("Read value: "); Serial.println(val);
+        int valRealUnits = (val - Stimjim.adcOffset10[channel]) * (line ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
+        Serial.print("Read value: "); Serial.print(val); Serial.print(" ("); Serial.print(valRealUnits);
+        Serial.println((line)?"uA)":"mV)");
       }
 
       bytesRecvd = 0; // reset the pointer!
