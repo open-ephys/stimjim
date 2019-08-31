@@ -82,7 +82,7 @@ int pulse (volatile PulseTrain* PT) {
   for (int i = 0; i < PT->nStages; i++) {
     delayMicroseconds(PT->stageDuration[i] - totalDelayTime); // empirically calibrated!
 
-    // read ADCs
+    // read ADCs 
     if (PT->mode[0] < 2)
       PT->measuredAmplitude[0][i] += (Stimjim.readAdc(0, PT->mode[0] > 0)-Stimjim.adcOffset10[0]) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
     if (PT->mode[1] < 2)
@@ -103,7 +103,6 @@ int pulse (volatile PulseTrain* PT) {
     } else if (PT->mode[1] < 2) {
       Stimjim.writeToDac(1, dac1val);
     }
-
   }
 
   // switch outputs to ground
@@ -158,7 +157,7 @@ void startIT0(int ptIndex) {
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
   pulse0(); //intervalTimer starts with delay - we want to start with pulse!
-  
+
   Serial.print("\nStarted T train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
   if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
@@ -282,7 +281,39 @@ void loop() {
     Serial.readBytes(comBuf + bytesRecvd, 1); // read one byte into the buffer
     bytesRecvd++; // keep track of the number of characters we've read!
 
-    if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - means we've recvd a full command!
+    /* Valid commands include:
+     *    S - Set pulseTrain parameters. Example:
+     *        S0,1,0,1000,100000; 100,-100,100; -50,50,20;
+     *        1st argument (0) means set parameters for pulseTrain 0.
+     *        2nd argument (1) - mode 1 (voltage) on output channel 0 (see modes below under M)
+     *        3rd argument (0) - mode 0 (current) on output channel 1 
+     *        4th argument (1000) - period of pulsetrain in microseconds. In example, run 1 pulse every ms. 
+     *        5th argument (100000) - duration of pulsetrain in microseconds. In example, duration is 100 ms.
+     *        6th, 7th and 8th arguments - pulse stage 0 parameters
+     *            amplitudes for both channels (in uA and mV, depending on mode), and duration in usec.
+     *            In this case, sets amplitudes to 100uA, -100mV, for 100 microseconds
+     *        9th, 10th and 11th arguments - pulse stage 1 parameters
+     *            amplitudes for both channels (in uA and mV, depending on mode), and duration in usec.
+     *            In this case, sets amplitudes to 100uA, -100mV, for 100 microseconds
+     *        etc... for trios of arguments, up to 10 stages total.
+     *        
+     *    T, U - T0 means start PulseTrain[0]. U0 also means start PulseTrain[0]. T and U can be 
+     *           used to run two pulse train simultaneously. 
+     *    B - measure ADC offset value (by grounding output and measuring ADC value on output).
+     *    C - measure current and voltage offsets by sweeping DAC values and reading output.
+     *    D - Print current values of all offsets (ADC, current, voltage)
+     *    R - R0,1 means trigger input on channel 0 starts PulseTrain 1.
+     *    M - M0,0 means set output mode for channel 0 to 0. output modes are as follows:
+     *        0 - voltage
+     *        1 - current
+     *        2 - disconnected (hi-z)
+     *        3 - grounded
+     *    A - A0,1000 means set amplitude on channel 0 to 1000 (dac units)
+     *    E - E0,1 means read channel zero, line 1. Line 0 is voltage out, line 1 is current sense.
+     *        Returns (prints over serial) value in raw adc units. 
+     * 
+     */
+    if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - we received a full command!
       unsigned int ptIndex = 0;
       comBuf[bytesRecvd - 1] = '\0'; // make sure we dont accidentally read into the rest of the string!
       
@@ -332,26 +363,25 @@ void loop() {
         if (comBuf[0] == 'U') startIT1(ptIndex);
       }
 
-      else if (comBuf[0] == 'D') {
-        // print offset values for user reference
+      else if (comBuf[0] == 'B') {
+        Stimjim.getAdcOffsets();
+      }
+
+      else if (comBuf[0] == 'C') {
+        Stimjim.getCurrentOffsets();
+        Stimjim.getVoltageOffsets();
+      }
+            
+      else if (comBuf[0] == 'D') { // print offset values for user reference
         char str[100];
         sprintf(str, "ADC offsets (+-2.5V): %f, %f\nADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
                 Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
                 Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
         Serial.println(str);
       }
-
-      else if (comBuf[0] == 'C') {
-        Stimjim.getAdcOffsets();
-        Stimjim.getCurrentOffsets();
-        Stimjim.getVoltageOffsets();
-      }
-      else if (comBuf[0] == 'B') {
-        Stimjim.getAdcOffsets();
-      }
-
+      
       else if (comBuf[0] == 'R') {
-        int trigSrc = 0, ptIndex = 0, falling = 0;
+        int trigSrc = 0, falling = 0;
         sscanf(comBuf + 1, "%d,%d,%d", &trigSrc, &ptIndex, &falling );
         if (ptIndex >= PT_ARRAY_LENGTH) {
           Serial.println("Invalid PulseTrain index.");
@@ -377,6 +407,16 @@ void loop() {
         Stimjim.setOutputMode(channel, mode);
         Serial.print("Set channel "); Serial.print(channel); Serial.print(" to mode "); Serial.println(mode);
       }
+
+      else if (comBuf[0] == 'V') {
+        int channel = 0, amp = 0;
+        sscanf(comBuf + 1, "%d,%d", &channel, &amp );
+        int dacVal = 1.0 * amp / MILLIVOLTS_PER_DAC + Stimjim.voltageOffsets[channel];
+        Stimjim.writeToDac(channel, dacVal);
+        Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.print(amp);
+        Serial.print(" mV (dac value "); Serial.print(dacVal); Serial.println(").");
+      }
+            
       else if (comBuf[0] == 'A') {
         int channel = 0, amp = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &amp );
