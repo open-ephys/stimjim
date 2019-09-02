@@ -2,7 +2,7 @@ Stimjim - a flexible, precise, and inexpensive open-source stimulator
 -------------------------------
 Stimjim is a current and voltage stimulator for stimulating neural tissue (as with stimulating electrodes). 
 
-![Stimjim picture](photo.png)
+![Stimjim picture](images/photo.png)
 
 # Specifications:
 
@@ -42,7 +42,7 @@ This tells Stimjim to start running PulseTrain #0. If we had parameterized Pulse
 
 ##  Parameterization 
 
-![Alt text](./pulseTrainParametrization.svg)
+![Alt text](images/pulseTrainParametrization.svg)
 
 The numbers that come after an "S" indicate parameters as denoted below:
 
