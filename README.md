@@ -20,7 +20,7 @@ Stimjim is a current and voltage stimulator for stimulating neural tissue (as wi
 
 Here are the steps to build your very own Stimjim box. 
 
-1. Order [printed circuit boards (PCBs)](./PCB/stimjim_fabricationFiles.zip)  (from [JLCPCB](https://jlcpcb.com/), [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer). 
+1. Order printed circuit boards (PCBs) for the [main board](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm, otherwise standard order parameters) and the [enclosure front and back panels](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [JLCPCB](https://jlcpcb.com/), [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer. Note that for the panels, the PCB manufacturer may alert you to the fact that there is no exposed copper. This is correct, there should be a copper layer entirely covered by soldermask.
 2. Order [components](./stimjim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
 3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering ability.
 4. Compile and download the [firmware](./stimjimPulser/) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!). Before compiling stimjimPulser.ino, You will need to install the Stimjim library by copying the "lib" folder to the appropriate arduino "libraries" folder on your computer.
