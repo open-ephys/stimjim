@@ -10,7 +10,7 @@ Stimjim is a current and voltage stimulator for stimulating neural tissue (as wi
  - Total cost: $200 USD.
  - Output range in current mode: -3.33mA to +3.33mA. 
  - Output range in voltage mode: -15V to 15V.
- - Pulse width down to 0.03 ms (as configured with default firmware)
+ - Pulse width down to 0.02 ms (as configured with default firmware)
  - Compliance voltage is +-13.7V in current mode (+/-3.33uA output possible for resistances up to 4k, +-137uA possible for resistances up to 100k)
  - Powered by USB
  - Channels are isolated from power supply and from each other.
@@ -53,10 +53,10 @@ The numbers that come after an "S" indicate parameters as denoted below:
 5. [duration];
 6. [mV or uA for stage 0 output 0],
 7. [mV or uA for stage 0 output 1],
-8. [stage 0 duration (ms)]; 
+8. [stage 0 duration (us)]; 
 9. [mV or uA for stage 1 output 0],
 10. [mV or uA for stage 1 output 1],
-11. [stage 1 duration (ms)];
+11. [stage 1 duration (us)];
 12. (etc for additional stages, up to 10 total stages).
 
 After the "S", the first parameter is the number of the PulseTrain that we are defining. The next two parameters are the modes of each output channels. Modes are as follows:
@@ -72,7 +72,7 @@ Our example command above was:
    
 In this example, output 0 is generating a voltage output (mode 0), and output 1 is generating a current output (mode 1). To specify that a channel should not output anything during a pulse train, set the mode to 3 (ground).  
 
-The fourth parameter is the _period_ of the pulse train. In this example, pulses are delivered every 2000 ms.
+The fourth parameter is the _period_ of the pulse train. In this example, pulses are delivered every 2000 us (2 ms).
 
 The fifth parameter is the _duration_ of the pulse train, in microseconds. In the example, the pulse train lasts for one second (1000000 microseconds).
 
