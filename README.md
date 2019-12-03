@@ -22,28 +22,32 @@ Here are the steps to build your very own Stimjim box.
 
 ### Option 1: Assemble (solder components onto) the board yourself.
 
-1. Order printed circuit boards (PCBs) for the [main board](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm, otherwise standard order parameters) and the [enclosure front and back panels](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [JLCPCB](https://jlcpcb.com/), [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer. Note that for the panels, the PCB manufacturer may alert you to the fact that there is no exposed copper. This is correct, there should be a copper layer entirely covered by soldermask.
+1. Order printed circuit boards (PCBs) for the [main board](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm, otherwise standard order parameters) and the [enclosure front and back panels](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [JLCPCB](https://jlcpcb.com/), [Seeedstudio](https://www.seeedstudio.com/fusion_pcb.html) or any other PCB manufacturer. Note that for the panels, the PCB manufacturer may alert you to the fact that there is no exposed copper. This is correct, there should be a copper layer entirely covered by soldermask.
 2. Order [components](./stimjim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
 3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering experience and capability. I typically use a pair of good tweezers, leaded solder paste, and a soldering iron, although a reflow oven also will work as well and may be easier.
 
 ### Option 2: Use [SeeedStudio's assembly service](https://www.seeedstudio.com/fusion_pcb.html). 
 Recent estimate is about $800 for two assembled boards, plus another roughly $100 for the enclosure and panels. Thanks to Vincent Prevosto for trying this out and submitting these instructions!
 
-1. The main board PCB and components can be ordered and assembled together on [Seeedstudio](https://www.seeedstudio.com/fusion.html). 
-   For that, you'll need three set of files:
-   1.  [The main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm) 
-   2.  [Files denoting the positions of the components](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip) on the board.
-   3.  The [Bill of Materials, formatted for Seeedstudio](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). 
-   To order assembled boards, go to [https://www.seeedstudio.com/fusion_pcb.html](https://www.seeedstudio.com/fusion_pcb.html).
-   *   Click on **Add Gerber Files** and upload [the main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip)
-	   Make sure to select 4 layers and enter correct dimensions (129x79.5 mm).
-	   Select PCB quantity (minimum 5)
-   *   Move now to the **PCB Assembly** section
-   *   Click on **Add Assembly Drawing & Pick and Place File** and upload the [zip file containing pdf assembly files and position files](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip).
-   *	Select the requested PCB assembly quantity (tested with 2 for $780 USD in late 2019).
-   *	Click on **Add BOM File** and upload the [Seeedstudio-formatted Bill of Materials](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). The service will check parts availability. Seeedstudio may not be able to provide an instant quote, but they should send you one within a day.
-   *	This service has been tested successfully, but you have the option to have them test the assembly. 
-2. Order the [front and back panels for the enclosure](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [Seeedstudio](https://www.seeedstudio.com/fusion.html), [JLCPCB](https://jlcpcb.com/) or any other PCB company you like.
+1.  The main board PCB and components can be ordered and assembled together on [Seeedstudio](https://www.seeedstudio.com/fusion_pcb.html). 
+    For that, you'll need three set of files:
+   
+    1.  [The main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm) 
+    2.  [Files denoting the positions of the components](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip) on the board.
+    3.  The [Bill of Materials, formatted for Seeedstudio](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). 
+   
+    To order assembled boards, go to [https://www.seeedstudio.com/fusion_pcb.html](https://www.seeedstudio.com/fusion_pcb.html).
+   
+    *   Click on **Add Gerber Files** and upload [the main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip)
+        Make sure to select 4 layers and enter correct dimensions (129x79.5 mm). 
+        Select PCB quantity (minimum 5)
+    *   Move now to the **PCB Assembly** section
+    *   Click on **Add Assembly Drawing & Pick and Place File** and upload the [zip file containing pdf assembly files and position files](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip).
+    *   Select the requested PCB assembly quantity (tested with 2 for $780 USD in late 2019).
+    *   Click on **Add BOM File** and upload the [Seeedstudio-formatted Bill of Materials](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). The service will check parts availability. Seeedstudio may not be able to provide an instant quote, but they should send you one within a day.
+    *   Seeedstudio-assembled Stimjims have been successfully tested by one user, but you have the option to have SeeedStudio test the assembly as well.
+   
+2. Order the [front and back panels for the enclosure](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [Seeedstudio](https://www.seeedstudio.com/fusion_pcb.html), [JLCPCB](https://jlcpcb.com/) or any other PCB company you like.
 3. Order the enclosure itself (see the [Bill of materials](./stimjim_BOM.xlsx) from [Digikey](https://www.digikey.com/).
 
 Continuing from either option 1 or 2:
