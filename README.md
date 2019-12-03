@@ -64,17 +64,17 @@ Recent estimate is about $800 for two assembled boards, plus another roughly $10
 
 # Getting started using Stimjim:
 
-To generate a pulse train, you first need to send a serial command, terminated by a newline (\n) in order to define a pulse train. An example command would be:
+To generate a pulse train, you first need to send a serial command, terminated by a newline (\n) in order to define a PulseTrain. An example command would be:
 
     S0,0,1,2000,1000000; 100,0,150; -100,-100,200
    
-The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain #0. The code provided here allows Stimjim to store 10 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain #0. 
+The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain 0. The code provided here allows Stimjim to store 100 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain 0. 
 
 Once a PulseTrain is defined, to run it you would send a command of the form:
 
     T0
 
-This tells Stimjim to start running PulseTrain #0. If we had parameterized PulseTrain #3, we could just as easily run PulseTrain #3 with the command "T3".
+This tells Stimjim to start running PulseTrain 0. If we had parameterized PulseTrain #3, we could just as easily run PulseTrain #3 with the command "T3".
 
 ##  Parameterization 
 
@@ -117,11 +117,11 @@ Parameters after the 5th come in sets of 3, and describe a "stage" of a pulse in
 In the example given above, there are two stages to each pulse. In the first, channel 0 outputs 100mV, channel 1 outputs nothing, and that lasts for 150 usec. Then channel 0 switches to outputting -100mV, and channel 2 outputs -100uA for 200 usec. 
 
 ## Triggering
-Stimjim can utilize trigger signals from its BNC inputs. To make a rising edge on input 0 trigger PulseTrain #1, send the command
+Stimjim can utilize trigger signals from its BNC inputs. To make a rising edge on input 0 trigger PulseTrain 1, send the command
 
 	R0,1
 
-To make a rising edge on input 1 trigger PulseTrain #2
+To make a rising edge on input 1 trigger PulseTrain 2
 
 	R1,2
 	
