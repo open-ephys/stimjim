@@ -20,11 +20,47 @@ Stimjim is a current and voltage stimulator for stimulating neural tissue (as wi
 
 Here are the steps to build your very own Stimjim box. 
 
+### Option 1: Assemble (solder components onto) the board yourself.
+
 1. Order printed circuit boards (PCBs) for the [main board](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm, otherwise standard order parameters) and the [enclosure front and back panels](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [JLCPCB](https://jlcpcb.com/), [Seeedstudio](https://www.seeedstudio.com/fusion.html) or any other PCB manufacturer. Note that for the panels, the PCB manufacturer may alert you to the fact that there is no exposed copper. This is correct, there should be a copper layer entirely covered by soldermask.
 2. Order [components](./stimjim_BOM.xlsx) (entirely from [Digikey](https://www.digikey.com/)).
-3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering ability.
-4. Compile and download the [firmware](./stimjimPulser/) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!). Before compiling stimjimPulser.ino, You will need to install the Stimjim library by copying the "lib" folder to the appropriate arduino "libraries" folder on your computer.
-5. Stimulate something!
+3. Solder components onto the PCB, using the [schematic](./schematic.pdf) and [layout](./pcb.pdf) files for reference. This may take a few hours, depending on your soldering experience and capability. I typically use a pair of good tweezers, leaded solder paste, and a soldering iron, although a reflow oven also will work as well and may be easier.
+
+### Option 2: Use [SeeedStudio's assembly service](https://www.seeedstudio.com/fusion_pcb.html). 
+Recent estimate is about $800 for two assembled boards, plus another roughly $100 for the enclosure and panels. Thanks to Vincent Prevosto for trying this out and submitting these instructions!
+
+1. The main board PCB and components can be ordered and assembled together on [Seeedstudio](https://www.seeedstudio.com/fusion.html). 
+   For that, you'll need three set of files:
+   1.  [The main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm) 
+   2.  [Files denoting the positions of the components](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip) on the board.
+   3.  The [Bill of Materials, formatted for Seeedstudio](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). 
+   To order assembled boards, go to [https://www.seeedstudio.com/fusion_pcb.html](https://www.seeedstudio.com/fusion_pcb.html).
+   *   Click on **Add Gerber Files** and upload [the main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip)
+	   Make sure to select 4 layers and enter correct dimensions (129x79.5 mm).
+	   Select PCB quantity (minimum 5)
+   *   Move now to the **PCB Assembly** section
+   *   Click on **Add Assembly Drawing & Pick and Place File** and upload the [zip file containing pdf assembly files and position files](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip).
+   *	Select the requested PCB assembly quantity (tested with 2 for $780 USD in late 2019).
+   *	Click on **Add BOM File** and upload the [Seeedstudio-formatted Bill of Materials](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). The service will check parts availability. Seeedstudio may not be able to provide an instant quote, but they should send you one within a day.
+   *	This service has been tested successfully, but you have the option to have them test the assembly. 
+2. Order the [front and back panels for the enclosure](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [Seeedstudio](https://www.seeedstudio.com/fusion.html), [JLCPCB](https://jlcpcb.com/) or any other PCB company you like.
+3. Order the enclosure itself (see the [Bill of materials](./stimjim_BOM.xlsx) from [Digikey](https://www.digikey.com/).
+
+Continuing from either option 1 or 2:
+
+4.  Put the main board inside the enclosure (bottom slot), and screw the panels onto the front and back of the enclosure. 
+5.  Connect the Stimjim to the computer via USB. Compile and download the [firmware](./stimjimPulser/) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!). Before compiling stimjimPulser.ino, You will need to install the Stimjim library by copying the [stimjim library folder](./lib/) to the appropriate arduino "libraries" folder on your computer. On Windows, this is typically My Documents/Arduino/libraries and on linux it is typically ~/Arduino/libraries. 
+6.  Upon bootup, Stimjim should self-report (via the serial connection, visible using the "Serial Monitor" tool in the Arduino IDE) on a handful of calibration routines it runs. Example output looks as follows:
+	   Booting StimJim on Teensy 3.5!
+	   Initializing inputs...
+	   ADC offsets (+-2.5V): -11.030000, -11.150000
+	   ADC offsets (+-10V): -10.220000, -10.340000
+	   current offsets: 11, 8
+	   voltage offsets: 0, 0
+	   Ready to go!
+	The ADC offsets indicate the ADC reading (in ADC units, 2.4mV per ADC unit) from the output when the output is grounded, for channels 0 and 1, respectively. The ADC typically has a small but nonzero "Zero offset error" which is the reading when it should be reading exactly 0V. Stimjim measures this error (with two different range settings) and corrects all subsequent readings. We typically see values less than 20 - a value of +-4096 indicates some sort of problem with the board.
+	
+	Current offsets are the raw value of the DAC output (-32768 to 32767) that yields the current reading closest to 0uA. This offset is also used in subsequent stimulation to avoid any small but consistent DC current during pulses.
 
 # Getting started using Stimjim:
 
@@ -80,7 +116,19 @@ Parameters after the 5th come in sets of 3, and describe a "stage" of a pulse in
 
 In the example given above, there are two stages to each pulse. In the first, channel 0 outputs 100mV, channel 1 outputs nothing, and that lasts for 150 usec. Then channel 0 switches to outputting -100mV, and channel 2 outputs -100uA for 200 usec. 
 
+## Triggering
+Stimjim can utilize trigger signals from its BNC inputs. To make a rising edge on input 0 trigger PulseTrain #1, send the command
 
+	R0,1
 
+To make a rising edge on input 1 trigger PulseTrain #2
+
+	R1,2
+	
+And finally, to make a falling edge on input 1 trigger PulseTrain 2:
+
+	R1,2,1
+
+The final argument for the R command is optional, and defaults to 0 (rising edge).
 
 
