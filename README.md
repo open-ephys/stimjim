@@ -29,39 +29,35 @@ Here are the steps to build your very own Stimjim box.
 ### Option 2: Use [SeeedStudio's assembly service](https://www.seeedstudio.com/fusion_pcb.html). 
 Recent estimate is about $800 for two assembled boards, plus another roughly $100 for the enclosure and panels. Thanks to Vincent Prevosto for trying this out and submitting these instructions!
 
-1.  The main board PCB and components can be ordered and assembled together on [Seeedstudio](https://www.seeedstudio.com/fusion_pcb.html). 
-    For that, you'll need three set of files:
-   
-    1.  [The main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip) (4-layer, 129x79.5 mm) 
-    2.  [Files denoting the positions of the components](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip) on the board.
-    3.  The [Bill of Materials, formatted for Seeedstudio](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). 
-   
+1.  The main board PCB and components can be ordered and assembled together on SeeedStudio.
     To order assembled boards, go to [https://www.seeedstudio.com/fusion_pcb.html](https://www.seeedstudio.com/fusion_pcb.html).
    
-    *   Click on **Add Gerber Files** and upload [the main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip)
+    *   Click on **Add Gerber Files** and upload [the main board Gerber files](./PCB/stimjimFabricationFiles_v0.18.zip). 
         Make sure to select 4 layers and enter correct dimensions (129x79.5 mm). 
-        Select PCB quantity (minimum 5)
-    *   Move now to the **PCB Assembly** section
+        Select PCB quantity (minimum 5).
+    *   Move now to the **PCB Assembly** section.
     *   Click on **Add Assembly Drawing & Pick and Place File** and upload the [zip file containing pdf assembly files and position files](./PCB/stimjim_SeeedStudioAssembly_PickAndPlace.zip).
     *   Select the requested PCB assembly quantity (tested with 2 for $780 USD in late 2019).
     *   Click on **Add BOM File** and upload the [Seeedstudio-formatted Bill of Materials](./PCB/stimjim_SeeedStudioAssembly_BOM.xlsx). The service will check parts availability. Seeedstudio may not be able to provide an instant quote, but they should send you one within a day.
     *   Seeedstudio-assembled Stimjims have been successfully tested by one user, but you have the option to have SeeedStudio test the assembly as well.
    
 2. Order the [front and back panels for the enclosure](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [Seeedstudio](https://www.seeedstudio.com/fusion_pcb.html), [JLCPCB](https://jlcpcb.com/) or any other PCB company you like.
-3. Order the enclosure itself (see the [Bill of materials](./stimjim_BOM.xlsx) from [Digikey](https://www.digikey.com/).
+3. Order the enclosure itself (see the line "enclosure" in the [Bill of materials](./stimjim_BOM.xlsx)) from [Digikey](https://www.digikey.com/).
 
-Continuing from either option 1 or 2:
+## Continuing from either option 1 or 2:
 
 4.  Put the main board inside the enclosure (bottom slot), and screw the panels onto the front and back of the enclosure. 
 5.  Connect the Stimjim to the computer via USB. Compile and download the [firmware](./stimjimPulser/) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!). Before compiling stimjimPulser.ino, You will need to install the Stimjim library by copying the [stimjim library folder](./lib/) to the appropriate arduino "libraries" folder on your computer. On Windows, this is typically My Documents/Arduino/libraries and on linux it is typically ~/Arduino/libraries. 
 6.  Upon bootup, Stimjim should self-report (via the serial connection, visible using the "Serial Monitor" tool in the Arduino IDE) on a handful of calibration routines it runs. Example output looks as follows:
-	   Booting StimJim on Teensy 3.5!
-	   Initializing inputs...
-	   ADC offsets (+-2.5V): -11.030000, -11.150000
-	   ADC offsets (+-10V): -10.220000, -10.340000
-	   current offsets: 11, 8
-	   voltage offsets: 0, 0
-	   Ready to go!
+
+	    Booting StimJim on Teensy 3.5!
+	    Initializing inputs...
+	    ADC offsets (+-2.5V): -11.030000, -11.150000
+	    ADC offsets (+-10V): -10.220000, -10.340000
+	    current offsets: 11, 8
+	    voltage offsets: 0, 0
+	    Ready to go!
+	   
 	The ADC offsets indicate the ADC reading (in ADC units, 2.4mV per ADC unit) from the output when the output is grounded, for channels 0 and 1, respectively. The ADC typically has a small but nonzero "Zero offset error" which is the reading when it should be reading exactly 0V. Stimjim measures this error (with two different range settings) and corrects all subsequent readings. We typically see values less than 20 - a value of +-4096 indicates some sort of problem with the board.
 	
 	Current offsets are the raw value of the DAC output (-32768 to 32767) that yields the current reading closest to 0uA. This offset is also used in subsequent stimulation to avoid any small but consistent DC current during pulses.
@@ -70,13 +66,13 @@ Continuing from either option 1 or 2:
 
 To generate a pulse train, you first need to send a serial command, terminated by a newline (\n) in order to define a pulse train. An example command would be:
 
-   S0,0,1,2000,1000000; 100,0,150; -100,-100,200
+    S0,0,1,2000,1000000; 100,0,150; -100,-100,200
    
 The "S" is to *s*pecify the parameters of a pulse train, and the zero immediately following the S implies that we are going to set parameters for PulseTrain #0. The code provided here allows Stimjim to store 10 different PulseTrain parameter sets. If any comma- and semicolon-separated numbers appear following the S, they are the pulse train parameters. A command that simply consists of "S0" will result in simply printing out the current parameters of PulseTrain #0. 
 
 Once a PulseTrain is defined, to run it you would send a command of the form:
 
-   T0
+    T0
 
 This tells Stimjim to start running PulseTrain #0. If we had parameterized PulseTrain #3, we could just as easily run PulseTrain #3 with the command "T3".
 
@@ -108,7 +104,7 @@ After the "S", the first parameter is the number of the PulseTrain that we are d
 
 Our example command above was: 
    
-   S0,0,1,2000,1000000; 100,0,150; -100,-100,200
+    S0,0,1,2000,1000000; 100,0,150; -100,-100,200
    
 In this example, output 0 is generating a voltage output (mode 0), and output 1 is generating a current output (mode 1). To specify that a channel should not output anything during a pulse train, set the mode to 3 (ground).  
 
