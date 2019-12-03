@@ -44,7 +44,7 @@ Recent estimate is about $800 for two assembled boards, plus another roughly $10
 2. Order the [front and back panels for the enclosure](./PCB/stimjimPanelFabricationFiles_v0.18.zip) (1-layer, 2 designs, total size 140x71 mm) from [Seeedstudio](https://www.seeedstudio.com/fusion_pcb.html), [JLCPCB](https://jlcpcb.com/) or any other PCB company you like.
 3. Order the enclosure itself (see the line "enclosure" in the [Bill of materials](./stimjim_BOM.xlsx)) from [Digikey](https://www.digikey.com/).
 
-## Continuing from either option 1 or 2:
+### Continuing from either option 1 or 2:
 
 4.  Put the main board inside the enclosure (bottom slot), and screw the panels onto the front and back of the enclosure. 
 5.  Connect the Stimjim to the computer via USB. Compile and download the [firmware](./stimjimPulser/) onto the Teensy, using the [Arduino IDE](https://www.arduino.cc/en/main/software) with [Teensyduino](https://www.pjrc.com/teensy/td_download.html) installed (or write your own!). Before compiling stimjimPulser.ino, You will need to install the Stimjim library by copying the [stimjim library folder](./lib/) to the appropriate arduino "libraries" folder on your computer. On Windows, this is typically My Documents/Arduino/libraries and on linux it is typically ~/Arduino/libraries. 
