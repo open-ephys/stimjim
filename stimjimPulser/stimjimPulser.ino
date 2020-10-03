@@ -132,7 +132,7 @@ int pulse (volatile PulseTrain* PT) {
 
 void printTrainResultSummary(volatile PulseTrain* PT) {
   Serial.print("Train complete. Delivered "); Serial.print(PT->nPulses);
-  Serial.println(" pulses.\nCurrent/Voltage by stage: ");
+  Serial.println(" pulses.\r\nCurrent/Voltage by stage: ");
   Serial.println("           Ch0                Ch1 ");
   char str[200];
   for (int i = 0; i < PT->nStages; i++) {
@@ -174,7 +174,7 @@ void startIT0(int ptIndex) {
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
   pulse0(); //intervalTimer starts with delay - we want to start with pulse!
 
-  Serial.print("\nStarted T train with parameters of PulseTrain "); Serial.println(ptIndex);
+  Serial.print("\r\nStarted T train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
   if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
 }
@@ -191,7 +191,7 @@ void startIT1(int ptIndex) {
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
   pulse1(); //intervalTimer starts with delay - we want to start with pulse!
   
-  Serial.print("\nStarted U train with parameters of PulseTrain "); Serial.println(ptIndex);
+  Serial.print("\r\nStarted U train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
   if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
 }
@@ -206,20 +206,20 @@ void printPulseTrainParameters(int i) {
   const char modeStrings[4][40] = {"Voltage output", "Current output", "No output (high-Z)", "No output (grounded)"};
   Serial.println("----------------------------------");
   char str[200];
-  sprintf(str, "Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
+  sprintf(str, "Parameters for PulseTrain[%d]\r\n  mode[ch0]: %d (%s)\r\n  mode[ch1]: %d (%s)\r\n",
           i, PTs[i].mode[0], modeStrings[PTs[i].mode[0]], PTs[i].mode[1], modeStrings[PTs[i].mode[1]]);
   Serial.print(str);
-  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\n  duration:  %lu usec (%0.3f sec)\n",
+  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\r\n  duration:  %lu usec (%0.3f sec)\r\n",
           PTs[i].period, 0.000001 * PTs[i].period, 1000000.0 / PTs[i].period, PTs[i].duration, 0.000001 * PTs[i].duration);
   Serial.print(str);
-  Serial.println("\n  stage    duration     output0   output1");
+  Serial.println("\r\n  stage    duration     output0   output1");
   for (int j = 0; j < PTs[i].nStages; j++) {
-    sprintf(str, "   %2d  %7d usec %8d%s %8d%s\n", j, PTs[i].stageDuration[j],
+    sprintf(str, "   %2d  %7d usec %8d%s %8d%s\r\n", j, PTs[i].stageDuration[j],
             PTs[i].amplitude[0][j], (PTs[i].mode[0] == 0) ? "mV" : "uA",
             PTs[i].amplitude[1][j], (PTs[i].mode[1] == 0) ? "mV" : "uA");
     Serial.print(str);
   }
-  Serial.println("----------------------------------\n");
+  Serial.println("----------------------------------\r\n");
 }
 
 
@@ -279,12 +279,12 @@ void setup() {
 
   // print offset values for user reference
   char str[200];
-  sprintf(str, "ADC offsets (+-2.5V): %f, %f\nADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
+  sprintf(str, "ADC offsets (+-2.5V): %f, %f\r\nADC offsets (+-10V): %f, %f\r\ncurrent offsets: %d, %d\r\nvoltage offsets: %d, %d\r\n",
           Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
           Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
   Serial.println(str);
   
-  Serial.println("Ready to go!\n\n");
+  Serial.println("Ready to go!\r\n\r\n");
 }
 
 
@@ -329,7 +329,7 @@ void loop() {
      *        Returns (prints over serial) value in raw adc units. 
      * 
      */
-    if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - we received a full command!
+    if (comBuf[bytesRecvd - 1] == '\r\n') { // termination character for string - we received a full command!
       unsigned int ptIndex = 0;
       comBuf[bytesRecvd - 1] = '\0'; // make sure we dont accidentally read into the rest of the string!
       
@@ -390,7 +390,7 @@ void loop() {
             
       else if (comBuf[0] == 'D') { // print offset values for user reference
         char str[100];
-        sprintf(str, "ADC offsets (+-2.5V): %f, %f\nADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
+        sprintf(str, "ADC offsets (+-2.5V): %f, %f\r\nADC offsets (+-10V): %f, %f\r\ncurrent offsets: %d, %d\r\nvoltage offsets: %d, %d\r\n",
                 Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
                 Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
         Serial.println(str);
