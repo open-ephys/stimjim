@@ -68,8 +68,8 @@ class AppWindow(QMainWindow):
 
         self.ui.pulseTrainSpinBox.valueChanged.connect(self.updatePulseTrainSettings) # update display
         self.ui.phases.cellChanged.connect(self.updateInternalPulseTrains) # update display
-        self.ui.ch0Mode.valueChanged.connect(self.updateInternalPulseTrains) # update display
-        self.ui.ch1Mode.valueChanged.connect(self.updateInternalPulseTrains) # update display
+        self.ui.ch0Mode.currentIndexChanged.connect(self.updateInternalPulseTrains) # update display
+        self.ui.ch1Mode.currentIndexChanged.connect(self.updateInternalPulseTrains) # update display
         self.ui.frequency.valueChanged.connect(self.updateInternalPulseTrains) # update display
         self.ui.duration.valueChanged.connect(self.updateInternalPulseTrains) # update display
         self.ignoreChanges = False
@@ -102,7 +102,7 @@ class AppWindow(QMainWindow):
             self.pulseTrains[i].frequency = self.ui.frequency.value()
             self.pulseTrains[i].duration = self.ui.duration.value()
             
-            for ix, iy in np.ndindex(self.pulseTrains[i].phases):
+            for ix, iy in np.ndindex(self.pulseTrains[i].phases.shape):
                 self.pulseTrains[i].phases[ix, iy] = int(self.ui.phases.item(ix, iy).text())
 
     def updateButtonStates(self, b):
