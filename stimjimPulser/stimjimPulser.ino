@@ -329,13 +329,18 @@ void loop() {
      *        Returns (prints over serial) value in raw adc units. 
      * 
      */
-    if (comBuf[bytesRecvd - 1] == '\r\n') { // termination character for string - we received a full command!
-      unsigned int ptIndex = 0;
-      comBuf[bytesRecvd - 1] = '\0'; // make sure we dont accidentally read into the rest of the string!
-      
+    if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - we received a full command!
+      int ptIndex = 0;
+
+      // remove \n and possibly \r from end of comBuf
+      comBuf[bytesRecvd - 1] = '\0';
+      if (bytesRecvd >= 2)
+        if (comBuf[bytesRecvd - 2] == '\r')
+          comBuf[bytesRecvd - 2] = '\0';
+
       if (comBuf[0] == 'S') {
-        sscanf(comBuf + 1, "%u,", &ptIndex);
-        if (ptIndex >= PT_ARRAY_LENGTH) {
+        sscanf(comBuf + 1, "%d,", &ptIndex);
+        if (ptIndex < 0 || ptIndex >= PT_ARRAY_LENGTH) {
           Serial.println("Invalid PulseTrain index.");
           bytesRecvd = 0;
           return;
@@ -370,7 +375,7 @@ void loop() {
 
       else if (comBuf[0] == 'T' || comBuf[0] == 'U') {
         ptIndex = atoi(comBuf + 1);
-        if (ptIndex >= PT_ARRAY_LENGTH) {
+        if (ptIndex < 0 || ptIndex >= PT_ARRAY_LENGTH) {
           Serial.println("Invalid PulseTrain index.");
           bytesRecvd = 0;
           return;
