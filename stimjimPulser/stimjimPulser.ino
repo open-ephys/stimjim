@@ -29,7 +29,7 @@ int bytesRecvd;
 // ------------- PulseTrain parameter setup -------------------- //
 struct PulseTrain {
   unsigned int mode[2];
-  unsigned int period;                          // usec
+  unsigned long period;                          // usec
   unsigned long duration;                       // usec
 
   int nStages;
@@ -172,11 +172,11 @@ void startIT0(int ptIndex) {
   activePT0->trainStartTime = micros();
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
-  pulse0(); //intervalTimer starts with delay - we want to start with pulse!
-
+    
   Serial.print("\r\nStarted T train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
   if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
+  pulse0(); //intervalTimer starts with delay - we want to start with pulse!
 }
 
 void startIT1ViaInputTrigger() {
@@ -189,11 +189,11 @@ void startIT1(int ptIndex) {
   activePT1->trainStartTime = micros();
   if (!IT1.begin(pulse1, activePT1->period))
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
-  pulse1(); //intervalTimer starts with delay - we want to start with pulse!
   
   Serial.print("\r\nStarted U train with parameters of PulseTrain "); Serial.println(ptIndex);
   if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
   if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
+  pulse1(); //intervalTimer starts with delay - we want to start with pulse!
 }
 
 
@@ -209,7 +209,7 @@ void printPulseTrainParameters(int i) {
   sprintf(str, "Parameters for PulseTrain[%d]\r\n  mode[ch0]: %d (%s)\r\n  mode[ch1]: %d (%s)\r\n",
           i, PTs[i].mode[0], modeStrings[PTs[i].mode[0]], PTs[i].mode[1], modeStrings[PTs[i].mode[1]]);
   Serial.print(str);
-  sprintf(str, "  period:    %d usec (%0.3f sec, %0.3f Hz)\r\n  duration:  %lu usec (%0.3f sec)\r\n",
+  sprintf(str, "  period:    %lu usec (%0.3f sec, %0.3f Hz)\r\n  duration:  %lu usec (%0.3f sec)\r\n",
           PTs[i].period, 0.000001 * PTs[i].period, 1000000.0 / PTs[i].period, PTs[i].duration, 0.000001 * PTs[i].duration);
   Serial.print(str);
   Serial.println("\r\n  stage    duration     output0   output1");
@@ -346,7 +346,7 @@ void loop() {
           return;
         }
 
-        int m = sscanf(comBuf + 1, "%*d,%u,%u,%u,%lu;",
+        int m = sscanf(comBuf + 1, "%*d,%u,%u,%lu,%lu;",
                        &(PTs[ptIndex].mode[0]),
                        &(PTs[ptIndex].mode[1]),
                        &(PTs[ptIndex].period),
