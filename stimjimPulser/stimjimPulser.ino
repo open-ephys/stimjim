@@ -167,7 +167,19 @@ void startIT0ViaInputTrigger() {
     startIT0(triggerTargetPTs[0]);
 }
 
+void startIT1ViaInputTrigger() {
+  if (triggerTargetPTs[1] >= 0)
+    startIT1(triggerTargetPTs[1]);
+}
+
 void startIT0(int ptIndex) {
+  if (ptIndex < 0) {
+    Serial.println("Forcing T train to stop");
+    IT0.end();
+    if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, LOW);
+    if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, LOW);
+    return;
+  }
   activePT0 = clearPulseTrainHistory(&PTs[ptIndex]);
   activePT0->trainStartTime = micros();
   if (!IT0.begin(pulse0, activePT0->period))
@@ -179,12 +191,14 @@ void startIT0(int ptIndex) {
   pulse0(); //intervalTimer starts with delay - we want to start with pulse!
 }
 
-void startIT1ViaInputTrigger() {
-  if (triggerTargetPTs[1] >= 0)
-    startIT1(triggerTargetPTs[1]);
-}
-
 void startIT1(int ptIndex) {
+  if (ptIndex < 0) {
+    Serial.println("Forcing U train to stop");
+    if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, LOW);
+    if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, LOW);
+    IT1.end();
+    return;
+  }
   activePT1 = clearPulseTrainHistory(&PTs[ptIndex]);
   activePT1->trainStartTime = micros();
   if (!IT1.begin(pulse1, activePT1->period))
@@ -222,20 +236,11 @@ void printPulseTrainParameters(int i) {
   Serial.println("----------------------------------\r\n");
 }
 
-
 volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT) {
   PT->nPulses = 0;
   memset((void *) PT->measuredAmplitude, 0, 4*MAX_NUM_STAGES*sizeof(int));
   return (PT);
 }
-
-
-
-
-
-
-
-
 
 void setup() {
   Serial.begin(112500);
@@ -247,24 +252,11 @@ void setup() {
   Stimjim.begin();
 
   for (int i = 0; i < PT_ARRAY_LENGTH; i++) {
-    PTs[i].mode[0] = 0;
-    PTs[i].mode[1] = 0;
+    PTs[i].mode[0] = 3;
+    PTs[i].mode[1] = 3;
     PTs[i].period = 10000;
-    PTs[i].duration = 10000000;
-    PTs[i].nStages = 2;
-    for (int j = 0; j < MAX_NUM_STAGES; j++) {
-      PTs[i].amplitude[0][j] = j ? -1000 : 1000;
-      PTs[i].amplitude[1][j] = j ? 1000 : -1000;
-      PTs[i].stageDuration[j] = 100;
-    }
-  }
-
-  PTs[1].mode[0] = 1;
-  PTs[1].mode[1] = 1;
-  for (int j = 0; j < MAX_NUM_STAGES; j++) {
-    PTs[1].amplitude[0][j] = j ? -100 : 100;
-    PTs[1].amplitude[1][j] = j ?  100 : -100;
-    PTs[1].stageDuration[j] = 100;
+    PTs[i].duration = 500000;
+    PTs[i].nStages = 0;
   }
 
   Serial.println("Initializing inputs...");
@@ -286,10 +278,6 @@ void setup() {
   
   Serial.println("Ready to go!\r\n\r\n");
 }
-
-
-
-
 
 void loop() {
 
@@ -375,7 +363,7 @@ void loop() {
 
       else if (comBuf[0] == 'T' || comBuf[0] == 'U') {
         ptIndex = atoi(comBuf + 1);
-        if (ptIndex < 0 || ptIndex >= PT_ARRAY_LENGTH) {
+        if (ptIndex >= PT_ARRAY_LENGTH) {
           Serial.println("Invalid PulseTrain index.");
           bytesRecvd = 0;
           return;

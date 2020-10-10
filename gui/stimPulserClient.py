@@ -8,13 +8,14 @@ from PyQt5 import QtGui, QtCore, uic
 from mainWindow import Ui_MainWindow
 import enumSerialPorts
 
+NUM_PULSETRAINS = 100
 
 class PulseTrain():
-    def __init__(self, ch0Mode=3, ch1Mode=3, frequency=10000, duration=1000000):
+    def __init__(self, ch0Mode=3, ch1Mode=3, frequency_hz=100, duration_sec=0.5):
         self.ch0Mode = ch0Mode
         self.ch1Mode = ch1Mode
-        self.frequency = frequency
-        self.duration = duration
+        self.frequency_hz = frequency_hz
+        self.duration_sec = duration_sec
         self.phases = np.zeros((10,3), dtype='int32')
         #self.phases = (np.random.rand(10,3)*100).astype(int) #, dtype='int32')
 
@@ -25,7 +26,7 @@ class SerialThread(QtCore.QThread):
         self.portName = portName
         self.txq = Queue.Queue()
         self.running = False
-        
+
     # In serial thread:
     def run(self):
         self.running = True
@@ -39,10 +40,10 @@ class SerialThread(QtCore.QThread):
             s = self.con.read(self.con.in_waiting or 1)
             if s:
                 print(s.decode().replace("\r",""), end='')
-                
+
     def send(self, s):
         self.txq.put(s)
-        
+
 
 class AppWindow(QMainWindow):
     text_update = QtCore.pyqtSignal(str)
@@ -55,7 +56,10 @@ class AppWindow(QMainWindow):
         
         self.serialThread = SerialThread("")
         
-        self.ui.portName.addItems(enumSerialPorts.enumSerialPorts())
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.updateSerialPorts)
+        self.timer.start(1000)
+
         self.ui.connectButton.clicked.connect(self.connectSerial)
         self.ui.disconnectButton.clicked.connect(self.disconnectSerial)
         self.ui.startButton.clicked.connect(self.startPulseTrain)
@@ -70,16 +74,21 @@ class AppWindow(QMainWindow):
         self.ui.phases.cellChanged.connect(self.updateInternalPulseTrains) # update display
         self.ui.ch0Mode.currentIndexChanged.connect(self.updateInternalPulseTrains) # update display
         self.ui.ch1Mode.currentIndexChanged.connect(self.updateInternalPulseTrains) # update display
-        self.ui.frequency.valueChanged.connect(self.updateInternalPulseTrains) # update display
-        self.ui.duration.valueChanged.connect(self.updateInternalPulseTrains) # update display
+        self.ui.frequency_hz.valueChanged.connect(self.updateInternalPulseTrains) # update display
+        self.ui.duration_sec.valueChanged.connect(self.updateInternalPulseTrains) # update display
         self.ignoreChanges = False
 
-        self.pulseTrains = [PulseTrain() for i in range(100)]
+        self.pulseTrains = [PulseTrain() for i in range(NUM_PULSETRAINS)]
+        self.updatePulseTrainSettings()
 
         self.text_update.connect(self.appendText)
         sys.stdout = self
         self.show()
     
+    def updateSerialPorts(self):
+        self.ui.portName.clear()
+        self.ui.portName.addItems(enumSerialPorts.enumSerialPorts())
+
     def setIn0Trigger(self):
         self.serialThread.send(f"R0,{self.ui.in0TriggerSpinBox.value()}\n")
 
@@ -88,10 +97,14 @@ class AppWindow(QMainWindow):
 
     def updatePulseTrainSettings(self):
         i = self.ui.pulseTrainSpinBox.value()
-        x = self.pulseTrains[i].phases
+        pt = self.pulseTrains[i]
         self.ignoreChanges = True
-        for ix, iy in np.ndindex(x.shape):
-            self.ui.phases.setItem(ix, iy, QTableWidgetItem(str(x[ix, iy])))
+        self.ui.ch0Mode.setCurrentIndex(pt.ch0Mode)
+        self.ui.ch1Mode.setCurrentIndex(pt.ch1Mode)
+        self.ui.frequency_hz.setValue(pt.frequency_hz)
+        self.ui.duration_sec.setValue(pt.duration_sec) 
+        for ix, iy in np.ndindex(pt.phases.shape):
+            self.ui.phases.setItem(ix, iy, QTableWidgetItem(str(pt.phases[ix, iy])))
         self.ignoreChanges = False
 
     def updateInternalPulseTrains(self):
@@ -99,8 +112,8 @@ class AppWindow(QMainWindow):
             i = self.ui.pulseTrainSpinBox.value()
             self.pulseTrains[i].ch0Mode = self.ui.ch0Mode.currentIndex()
             self.pulseTrains[i].ch1Mode = self.ui.ch1Mode.currentIndex()
-            self.pulseTrains[i].frequency = self.ui.frequency.value()
-            self.pulseTrains[i].duration = self.ui.duration.value()
+            self.pulseTrains[i].frequency_hz = self.ui.frequency_hz.value()
+            self.pulseTrains[i].duration_sec = self.ui.duration_sec.value()
             
             for ix, iy in np.ndindex(self.pulseTrains[i].phases.shape):
                 self.pulseTrains[i].phases[ix, iy] = int(self.ui.phases.item(ix, iy).text())
@@ -132,19 +145,17 @@ class AppWindow(QMainWindow):
     def startPulseTrain(self):
         pt = self.pulseTrains[self.ui.pulseTrainSpinBox.value()]
 
-        buf = "S0,%d,%d,%d,%d;" % (pt.ch0Mode, pt.ch1Mode, int(1e6/pt.frequency), int(1e6*pt.duration))
-        for i in range(self.ui.phases.rowCount()):
-            amp0 = int(self.ui.phases.item(i,0).text())
-            amp1 = int(self.ui.phases.item(i,1).text())
-            phaseDuration = int(self.ui.phases.item(i,2).text())
-            if (phaseDuration > 0):
-                buf += "%d,%d,%d;" % (amp0, amp1, phaseDuration)
+        buf = "S0,%d,%d,%d,%d;" % (pt.ch0Mode, pt.ch1Mode, int(1e6/pt.frequency_hz), int(1e6*pt.duration_sec))
+        for i in range(pt.phases.shape[0]):
+            if (pt.phases[i, 2] > 0):
+                buf += "%d,%d,%d;" % (pt.phases[i,0], pt.phases[i,1], pt.phases[i,2])
         print(f"-> {buf}\n-> T0\n")
         self.serialThread.send(buf + "\nT0\n")
         
     def stopPulseTrain(self):
         print("# ending pulse train!")
-        
+        self.serialThread.send("T-1\n")
+
     def write(self, s):                      # Handle sys.stdout.write: update display
         self.text_update.emit(s)             # Send signal to synchronise call with main thread
  

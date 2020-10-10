@@ -291,7 +291,7 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QDoubleSpinBox" name="frequency">
+       <widget class="QDoubleSpinBox" name="frequency_hz">
         <property name="decimals">
          <number>3</number>
         </property>
@@ -314,9 +314,12 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QDoubleSpinBox" name="duration">
+       <widget class="QDoubleSpinBox" name="duration_sec">
         <property name="decimals">
-         <number>6</number>
+         <number>3</number>
+        </property>
+        <property name="maximum">
+         <double>1000000.000000000000000</double>
         </property>
         <property name="value">
          <double>1.000000000000000</double>
