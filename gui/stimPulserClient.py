@@ -1,4 +1,3 @@
-
 import sys
 import serial
 import queue as Queue
@@ -8,7 +7,9 @@ from PyQt5 import QtGui, QtCore, uic
 from mainWindow import Ui_MainWindow
 import enumSerialPorts
 
+
 NUM_PULSETRAINS = 100
+
 
 class PulseTrain():
     def __init__(self, ch0Mode=3, ch1Mode=3, frequency_hz=100, duration_sec=0.5):
@@ -33,7 +34,7 @@ class SerialThread(QtCore.QThread):
         self.con = serial.Serial(self.portName, 256000, timeout=0.1)
         self.con.flushInput()
         print(f"# Opening {self.portName}")
-        
+
         while self.running:
             if not self.txq.empty():
                 self.con.write(str.encode(self.txq.get())) # send string     
@@ -53,9 +54,9 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
+
         self.serialThread = SerialThread("")
-        
+
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.updateSerialPorts)
         self.timer.start(1000)
@@ -64,7 +65,7 @@ class AppWindow(QMainWindow):
         self.ui.disconnectButton.clicked.connect(self.disconnectSerial)
         self.ui.startButton.clicked.connect(self.startPulseTrain)
         self.ui.stopButton.clicked.connect(self.stopPulseTrain)
-        
+
         self.updateButtonStates(False)
 
         self.ui.in0TriggerSpinBox.valueChanged.connect(self.setIn0Trigger) # update display
@@ -84,7 +85,7 @@ class AppWindow(QMainWindow):
         self.text_update.connect(self.appendText)
         sys.stdout = self
         self.show()
-    
+
     def updateSerialPorts(self):
         self.ui.portName.clear()
         self.ui.portName.addItems(enumSerialPorts.enumSerialPorts())
@@ -114,7 +115,7 @@ class AppWindow(QMainWindow):
             self.pulseTrains[i].ch1Mode = self.ui.ch1Mode.currentIndex()
             self.pulseTrains[i].frequency_hz = self.ui.frequency_hz.value()
             self.pulseTrains[i].duration_sec = self.ui.duration_sec.value()
-            
+
             for ix, iy in np.ndindex(self.pulseTrains[i].phases.shape):
                 self.pulseTrains[i].phases[ix, iy] = int(self.ui.phases.item(ix, iy).text())
 
@@ -134,7 +135,6 @@ class AppWindow(QMainWindow):
             self.updateButtonStates(True)
         except :
             print("# Failed to open port!")
-        
 
     def disconnectSerial(self):
         print("# Disconnecting!")
@@ -172,9 +172,10 @@ class AppWindow(QMainWindow):
             if sep:                             # New line if LF
                 cur.insertBlock()
         self.ui.serialOutputBrowser.setTextCursor(cur)         # Update visible cursor
-         
 
-app = QApplication(sys.argv)
-w = AppWindow()
-w.show()
-sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    w = AppWindow()
+    w.show()
+    sys.exit(app.exec_())
