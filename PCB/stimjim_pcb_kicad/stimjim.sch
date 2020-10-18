@@ -1,6 +1,5 @@
 EESchema Schematic File Version 4
-LIBS:stimjim-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr User 15354 9449
 encoding utf-8
@@ -3541,7 +3540,7 @@ U 1 1 5DFCF206
 P 2200 5500
 F 0 "J1" H 2250 6017 50  0000 C CNN
 F 1 "Conn_02x08_Odd_Even" H 2250 5926 50  0000 C CNN
-F 2 "Connector_Multicomp:Multicomp_MC9A22-1634_2x08_P2.54mm_Horizontal" H 2200 5500 50  0001 C CNN
+F 2 "microstim:Multicomp_MC9A22-1634_2x08x2.54mm_Angled" H 2200 5500 50  0001 C CNN
 F 3 "~" H 2200 5500 50  0001 C CNN
 	1    2200 5500
 	1    0    0    -1  
