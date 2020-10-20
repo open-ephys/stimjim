@@ -27,6 +27,7 @@ class SerialThread(QtCore.QThread):
         self.portName = portName
         self.txq = Queue.Queue()
         self.running = False
+        self.printOutput = True
 
     # In serial thread:
     def run(self):
@@ -39,7 +40,7 @@ class SerialThread(QtCore.QThread):
             if not self.txq.empty():
                 self.con.write(str.encode(self.txq.get())) # send string     
             s = self.con.read(self.con.in_waiting or 1)
-            if s:
+            if s and self.printOutput:
                 print(s.decode().replace("\r",""), end='')
 
     def send(self, s):
@@ -80,15 +81,20 @@ class AppWindow(QMainWindow):
         self.ignoreChanges = False
 
         self.pulseTrains = [PulseTrain() for i in range(NUM_PULSETRAINS)]
-        self.updatePulseTrainSettings()
 
         self.text_update.connect(self.appendText)
+
         sys.stdout = self
         self.show()
 
     def updateSerialPorts(self):
+        # update list of available ports, retaining current selection if possible
+        selectedPort = self.ui.portName.currentText()
         self.ui.portName.clear()
-        self.ui.portName.addItems(enumSerialPorts.enumSerialPorts())
+        availablePorts = enumSerialPorts.enumSerialPorts()
+        self.ui.portName.addItems(availablePorts)
+        if selectedPort in availablePorts:
+             self.ui.portName.setCurrentIndex(availablePorts.index(selectedPort))
 
     def setIn0Trigger(self):
         self.serialThread.send(f"R0,{self.ui.in0TriggerSpinBox.value()}\n")
@@ -118,6 +124,7 @@ class AppWindow(QMainWindow):
 
             for ix, iy in np.ndindex(self.pulseTrains[i].phases.shape):
                 self.pulseTrains[i].phases[ix, iy] = int(self.ui.phases.item(ix, iy).text())
+            self.sendStimjimPulseTrainSettings()
 
     def updateButtonStates(self, b):
             self.ui.connectButton.setEnabled(not b)
@@ -136,21 +143,31 @@ class AppWindow(QMainWindow):
         except :
             print("# Failed to open port!")
 
+        # quietly update stimjim PulseTrains to match current settings
+        self.serialThread.printOutput = False
+        for i in range(NUM_PULSETRAINS):
+            self.sendStimjimPulseTrainSettings(i)
+        self.serialThread.printOutput = True
+
     def disconnectSerial(self):
         print("# Disconnecting!")
         self.serialThread.running = False
         self.serialThread.wait()
         self.updateButtonStates(False)
         
-    def startPulseTrain(self):
-        pt = self.pulseTrains[self.ui.pulseTrainSpinBox.value()]
-
-        buf = "S0,%d,%d,%d,%d;" % (pt.ch0Mode, pt.ch1Mode, int(1e6/pt.frequency_hz), int(1e6*pt.duration_sec))
+    def sendStimjimPulseTrainSettings(self, ptIndex=None):
+        if ptIndex is None:
+            ptIndex = self.ui.pulseTrainSpinBox.value()
+        pt = self.pulseTrains[ptIndex]
+        buf = "S%d,%d,%d,%d,%d;" % (ptIndex, pt.ch0Mode, pt.ch1Mode, int(1e6/pt.frequency_hz), int(1e6*pt.duration_sec))
         for i in range(pt.phases.shape[0]):
             if (pt.phases[i, 2] > 0):
                 buf += "%d,%d,%d;" % (pt.phases[i,0], pt.phases[i,1], pt.phases[i,2])
-        print(f"-> {buf}\n-> T0\n")
-        self.serialThread.send(buf + "\nT0\n")
+        self.serialThread.send(buf + "\n")
+
+    def startPulseTrain(self):
+        self.sendStimjimPulseTrainSettings()
+        self.serialThread.send(f"T{self.ui.pulseTrainSpinBox.value()}\n")
         
     def stopPulseTrain(self):
         print("# ending pulse train!")
@@ -159,17 +176,17 @@ class AppWindow(QMainWindow):
     def write(self, s):                      # Handle sys.stdout.write: update display
         self.text_update.emit(s)             # Send signal to synchronise call with main thread
  
-    def flush(self):                            # Handle sys.stdout.flush: do nothing
+    def flush(self):                         # Handle sys.stdout.flush: do nothing
         pass
  
-    def appendText(self, text):                # Text display update handler
+    def appendText(self, text):              # Text display update handler
         cur = self.ui.serialOutputBrowser.textCursor()
         cur.movePosition(QtGui.QTextCursor.End) # Move cursor to end of text
         s = str(text)
         while s:
-            head,sep,s = s.partition("\n")      # Split line at LF
-            cur.insertText(head)                # Insert text at cursor
-            if sep:                             # New line if LF
+            head,sep,s = s.partition("\n")   # Split line at LF
+            cur.insertText(head)             # Insert text at cursor
+            if sep:                          # New line if LF
                 cur.insertBlock()
         self.ui.serialOutputBrowser.setTextCursor(cur)         # Update visible cursor
 
