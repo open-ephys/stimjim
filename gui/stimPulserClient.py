@@ -1,9 +1,12 @@
 import sys
-import serial
+import time
 import queue as Queue
+
+import serial
 import numpy as np
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
 from PyQt5 import QtGui, QtCore, uic
+
 from mainWindow import Ui_MainWindow
 import enumSerialPorts
 
@@ -18,7 +21,6 @@ class PulseTrain():
         self.frequency_hz = frequency_hz
         self.duration_sec = duration_sec
         self.phases = np.zeros((10,3), dtype='int32')
-        #self.phases = (np.random.rand(10,3)*100).astype(int) #, dtype='int32')
 
 
 class SerialThread(QtCore.QThread):
@@ -58,9 +60,11 @@ class AppWindow(QMainWindow):
 
         self.serialThread = SerialThread("")
 
+        # make sure serial port options stay fresh
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.updateSerialPorts)
         self.timer.start(1000)
+        self.updateSerialPorts()
 
         self.ui.connectButton.clicked.connect(self.connectSerial)
         self.ui.disconnectButton.clicked.connect(self.disconnectSerial)
@@ -81,6 +85,7 @@ class AppWindow(QMainWindow):
         self.ignoreChanges = False
 
         self.pulseTrains = [PulseTrain() for i in range(NUM_PULSETRAINS)]
+        self.updatePulseTrainSettings()
 
         self.text_update.connect(self.appendText)
 
@@ -88,6 +93,9 @@ class AppWindow(QMainWindow):
         self.show()
 
     def updateSerialPorts(self):
+        # don't update ports if serial thread is running
+        if self.serialThread.running:
+            return
         # update list of available ports, retaining current selection if possible
         selectedPort = self.ui.portName.currentText()
         self.ui.portName.clear()
@@ -95,6 +103,9 @@ class AppWindow(QMainWindow):
         self.ui.portName.addItems(availablePorts)
         if selectedPort in availablePorts:
              self.ui.portName.setCurrentIndex(availablePorts.index(selectedPort))
+
+        self.ui.connectButton.setEnabled(len(availablePorts) != 0)
+
 
     def setIn0Trigger(self):
         self.serialThread.send(f"R0,{self.ui.in0TriggerSpinBox.value()}\n")
@@ -144,10 +155,11 @@ class AppWindow(QMainWindow):
             print("# Failed to open port!")
 
         # quietly update stimjim PulseTrains to match current settings
-        self.serialThread.printOutput = False
         for i in range(NUM_PULSETRAINS):
             self.sendStimjimPulseTrainSettings(i)
-        self.serialThread.printOutput = True
+        
+        self.setIn0Trigger()
+        self.setIn1Trigger()
 
     def disconnectSerial(self):
         print("# Disconnecting!")
@@ -168,7 +180,7 @@ class AppWindow(QMainWindow):
     def startPulseTrain(self):
         self.sendStimjimPulseTrainSettings()
         self.serialThread.send(f"T{self.ui.pulseTrainSpinBox.value()}\n")
-        
+
     def stopPulseTrain(self):
         print("# ending pulse train!")
         self.serialThread.send("T-1\n")
