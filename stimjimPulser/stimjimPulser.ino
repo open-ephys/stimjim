@@ -287,10 +287,10 @@ void loop() {
 
     /* Valid commands include:
      *    S - Set pulseTrain parameters. Example:
-     *        S0,1,0,1000,100000; 100,-100,100; -50,50,20;
+     *        S0,0,1,1000,100000; 100,-100,100; -50,50,20;
      *        1st argument (0) means set parameters for pulseTrain 0.
-     *        2nd argument (1) - mode 1 (voltage) on output channel 0 (see modes below under M)
-     *        3rd argument (0) - mode 0 (current) on output channel 1 
+     *        2nd argument (0) - mode 0 (voltage) on output channel 0 (see modes below under M)
+     *        3rd argument (1) - mode 1 (current) on output channel 1 
      *        4th argument (1000) - period of pulsetrain in microseconds. In example, run 1 pulse every ms. 
      *        5th argument (100000) - duration of pulsetrain in microseconds. In example, duration is 100 ms.
      *        6th, 7th and 8th arguments - pulse stage 0 parameters
