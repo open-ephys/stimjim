@@ -1,4 +1,4 @@
 (sym_lib_table
-  (lib (name natecermak)(type Legacy)(uri ${KIPRJMOD}/natecermak.lib)(options "")(descr ""))
-  (lib (name teensy)(type Legacy)(uri ${KIPRJMOD}/teensy.lib)(options "")(descr ""))
+  (lib (name "stimjimlib")(type "KiCad")(uri "${KIPRJMOD}/stimjim.kicad_sym")(options "")(descr ""))
+  (lib (name "teensy")(type "KiCad")(uri "${KIPRJMOD}/teensy.kicad_sym")(options "")(descr ""))
 )
