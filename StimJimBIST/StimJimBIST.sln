@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StimJimBIST", "StimJimBIST\StimJimBIST.csproj", "{AB650591-EDFE-45D7-89C1-4DF70C58C460}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB650591-EDFE-45D7-89C1-4DF70C58C460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB650591-EDFE-45D7-89C1-4DF70C58C460}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB650591-EDFE-45D7-89C1-4DF70C58C460}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB650591-EDFE-45D7-89C1-4DF70C58C460}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9E9391E-4F0F-4156-9957-557AF2AC8F30}
+	EndGlobalSection
+EndGlobal
