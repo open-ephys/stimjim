@@ -1,7 +1,7 @@
-/*    Copyright (c) 2019 Nathan Cermak <cerman07 at protonmail.com>. 
- *  
- *    This file is part of the Stimjim Library for Arduino 
- *    
+/*    Copyright (c) 2019 Nathan Cermak <cerman07 at protonmail.com>.
+ *
+ *    This file is part of the Stimjim Library for Arduino
+ *
  *    The Stimjim Library is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
@@ -23,9 +23,9 @@ void StimJim::begin(){
   SPI.begin();
 
   //AD5752 DAC runs at max 30MHz, SPI mode 1 or 2
-  SpiSettingsDac = SPISettings(30000000, MSBFIRST, SPI_MODE1); 
+  SpiSettingsDac = SPISettings(30000000, MSBFIRST, SPI_MODE1);
   //AD7321 settings - clock starts high, data latch on falling edge
-  SpiSettingsAdc = SPISettings(10000000, MSBFIRST, SPI_MODE2);  
+  SpiSettingsAdc = SPISettings(10000000, MSBFIRST, SPI_MODE2);
 
   // ------------- Setup output pins, turn on LEDs ------------------------------------ //
   int pins[] = {NLDAC_0, NLDAC_1, CS0_0, CS1_0, CS0_1, CS1_1, OE0_0, OE1_0, OE0_1, OE1_1, LED0, LED1};
@@ -34,12 +34,17 @@ void StimJim::begin(){
     digitalWriteFast(pins[i], HIGH);
   }
 
+  // These follow LED state
+  pinMode(GPIO_10, OUTPUT);
+  pinMode(GPIO_11, OUTPUT);
+  digitalWriteFast(GPIO_10, LOW);
+  digitalWriteFast(GPIO_11, LOW);
 
   setupDacs();
 
   setAdcLine(0,0);
   setAdcLine(1,0);
-  
+
   getAdcOffsets();
   getCurrentOffsets();
   //getVoltageOffsets();
@@ -47,6 +52,8 @@ void StimJim::begin(){
   delay(300);
   digitalWriteFast(LED0, LOW);
   digitalWriteFast(LED1, LOW);
+
+
 }
 
 void StimJim::setOutputMode(byte channel, byte mode) {
@@ -136,7 +143,7 @@ void StimJim::setAdcLine(byte channel, byte line) {
   SPI.beginTransaction(SpiSettingsAdc);
   digitalWrite(cs, LOW);
   SPI.transfer16(32768 + 1024 * line + 16); //[15-13] = 100 means write control reg; [10] = ADD0; [4] = use internal ref;
-  digitalWrite(cs, HIGH);  
+  digitalWrite(cs, HIGH);
   SPI.endTransaction();
 }
 
@@ -167,19 +174,19 @@ int StimJim::readAdc(byte channel, byte line) {
 void StimJim::getAdcOffsets(){
   setOutputMode(0,3);
   setOutputMode(1,3);
-  
+
   adcOffset25[0] = 0;
   adcOffset25[1] = 0;
   adcOffset10[0] = 0;
   adcOffset10[1] = 0;
-  
+
   setAdcRange(2.5);
   int x0,x1;
   for (int i = 0; i < 150; i++){
     x0 = readAdc(0,0);
     x1 = readAdc(1,0);
     if (i >= 50) { // sometimes there is an initial transient for first reads - ignore it
-	  adcOffset25[0] += x0; 
+	  adcOffset25[0] += x0;
 	  adcOffset25[1] += x1;
     }
   }
@@ -188,7 +195,7 @@ void StimJim::getAdcOffsets(){
     x0 = readAdc(0,0);
     x1 = readAdc(1,0);
     if (i >= 50) { // sometimes there is an initial transient for first reads - ignore it
-	  adcOffset10[0] += x0; 
+	  adcOffset10[0] += x0;
 	  adcOffset10[1] += x1;
     }
   }
@@ -234,7 +241,7 @@ void StimJim::getCurrentOffsets() {
 
 void StimJim::getVoltageOffsets() {
   float adcReadSum[2];
-  int bestDcVal[2] = {10000, 10000}; 
+  int bestDcVal[2] = {10000, 10000};
 
   setOutputMode(0, 0); // VOLTAGE OUTPUT - DANGEROUS
   setOutputMode(1, 0); // VOLTAGE OUTPUT - DANGEROUS

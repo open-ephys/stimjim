@@ -1,7 +1,7 @@
-/*    stimjimPulser (c) 2019 Nathan Cermak <cerman07 at protonmail.com>. 
- *  
- *    This file is part of stimjimPulser. 
- *    
+/*    stimjimPulser (c) 2019 Nathan Cermak <cerman07 at protonmail.com>.
+ *
+ *    This file is part of stimjimPulser.
+ *
  *    stimjimPulser is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
@@ -21,10 +21,10 @@
 #define PT_ARRAY_LENGTH 100
 #define MAX_NUM_STAGES 10
 
-
 // ------------- Serial setup ---------------------------------- //
 char comBuf[1000];
 int bytesRecvd;
+bool verbose = false;
 
 // ------------- PulseTrain parameter setup -------------------- //
 struct PulseTrain {
@@ -63,12 +63,6 @@ void printTrainResultSummary(volatile PulseTrain* PT);
 volatile PulseTrain* clearPulseTrainHistory(volatile PulseTrain* PT);
 
 
-
-
-
-
-
-
 int pulse (volatile PulseTrain* PT) {
   //check if the pulseTrain is finished; if so, exit
   if (micros() - PT->trainStartTime >= PT->duration)
@@ -82,7 +76,7 @@ int pulse (volatile PulseTrain* PT) {
   int dac0val, dac1val;
   float adcReadTime =  4.50 * ((PT->mode[0] < 2) + (PT->mode[1] < 2));  //16 bits at 10MHz, calibrated time is 4.5us
   float dacWriteTime = 2.75 * ((PT->mode[0] < 2) + (PT->mode[1] < 2));  //24 bits at 30MHz, calibrated time is 2.75us
-  float totalDelayTime = dacWriteTime + adcReadTime + 0.5; 
+  float totalDelayTime = dacWriteTime + adcReadTime + 0.5;
   dac0val = PT->amplitude[0][0] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? Stimjim.currentOffsets[0] : Stimjim.voltageOffsets[0]);
   dac1val = PT->amplitude[1][0] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? Stimjim.currentOffsets[1] : Stimjim.voltageOffsets[1]);
 
@@ -98,12 +92,12 @@ int pulse (volatile PulseTrain* PT) {
   for (int i = 0; i < PT->nStages; i++) {
     delayMicroseconds(PT->stageDuration[i] - totalDelayTime); // empirically calibrated!
 
-    // read ADCs 
+    // read ADCs
     if (PT->mode[0] < 2)
       PT->measuredAmplitude[0][i] += (Stimjim.readAdc(0, PT->mode[0] > 0)-Stimjim.adcOffset10[0]) * ((PT->mode[0]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
     if (PT->mode[1] < 2)
       PT->measuredAmplitude[1][i] += (Stimjim.readAdc(1, PT->mode[1] > 0)-Stimjim.adcOffset10[1]) * ((PT->mode[1]) ? MICROAMPS_PER_ADC : MILLIVOLTS_PER_ADC);
-    
+
     if ( i + 1 < PT->nStages) {
       dac0val = PT->amplitude[0][i + 1] / ((!PT->mode[0]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[0]) ? Stimjim.currentOffsets[0] : Stimjim.voltageOffsets[0]);
       dac1val = PT->amplitude[1][i + 1] / ((!PT->mode[1]) ? MILLIVOLTS_PER_DAC : MICROAMPS_PER_DAC) + ((PT->mode[1]) ? Stimjim.currentOffsets[1] : Stimjim.voltageOffsets[1]);
@@ -148,8 +142,16 @@ void pulse0() {
   if (!pulse(activePT0)) {
     IT0.end();
     printTrainResultSummary(activePT0);
-    if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, LOW);
-    if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, LOW);
+    if (activePT0->mode[0] < 2)
+	{
+      digitalWriteFast(LED0, LOW);
+	  digitalWriteFast(GPIO_10, LOW);
+	}
+    if (activePT0->mode[1] < 2)
+	{
+      digitalWriteFast(LED1, LOW);
+	  digitalWriteFast(GPIO_11, LOW);
+	}
   }
 }
 
@@ -157,8 +159,17 @@ void pulse1() {
   if (!pulse(activePT1)) {
     IT1.end();
     printTrainResultSummary(activePT1);
-    if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, LOW);
-    if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, LOW);
+    if (activePT1->mode[0] < 2)
+	{
+      digitalWriteFast(LED0, LOW);
+	  digitalWriteFast(GPIO_10, LOW);
+	}
+    if (activePT1->mode[1] < 2)
+	{
+      digitalWriteFast(LED1, LOW);
+	  digitalWriteFast(GPIO_11, LOW);
+	}
+
   }
 }
 
@@ -176,26 +187,50 @@ void startIT0(int ptIndex) {
   if (ptIndex < 0) {
     Serial.println("Forcing T train to stop");
     IT0.end();
-    if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, LOW);
-    if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, LOW);
+    if (activePT0->mode[0] < 2)
+	{
+      digitalWriteFast(LED0, LOW);
+	  digitalWriteFast(GPIO_10, LOW);
+	}
+    if (activePT0->mode[1] < 2)
+	{
+      digitalWriteFast(LED1, LOW);
+	  digitalWriteFast(GPIO_11, LOW);
+	}
     return;
   }
   activePT0 = clearPulseTrainHistory(&PTs[ptIndex]);
   activePT0->trainStartTime = micros();
   if (!IT0.begin(pulse0, activePT0->period))
     Serial.println("startIT0: failure to initiate IntervalTimer IT0");
-    
+
   Serial.print("\r\nStarted T train with parameters of PulseTrain "); Serial.println(ptIndex);
-  if (activePT0->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
-  if (activePT0->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
+  if (activePT0->mode[0] < 2)
+  {
+      digitalWriteFast(LED0, HIGH);
+	  digitalWriteFast(GPIO_10, HIGH);
+	}
+  if (activePT0->mode[1] < 2)
+  {
+    digitalWriteFast(LED1, HIGH);
+	digitalWriteFast(GPIO_11, HIGH);
+  }
   pulse0(); //intervalTimer starts with delay - we want to start with pulse!
 }
 
 void startIT1(int ptIndex) {
   if (ptIndex < 0) {
     Serial.println("Forcing U train to stop");
-    if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, LOW);
-    if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, LOW);
+    if (activePT1->mode[0] < 2)
+	{
+      digitalWriteFast(LED0, LOW);
+	  digitalWriteFast(GPIO_10, LOW);
+	}
+    if (activePT1->mode[1] < 2)
+	{
+      digitalWriteFast(LED1, LOW);
+	  digitalWriteFast(GPIO_11, LOW);
+	}
     IT1.end();
     return;
   }
@@ -203,10 +238,18 @@ void startIT1(int ptIndex) {
   activePT1->trainStartTime = micros();
   if (!IT1.begin(pulse1, activePT1->period))
     Serial.println("startIT1: failure to initiate IntervalTimer IT1");
-  
+
   Serial.print("\r\nStarted U train with parameters of PulseTrain "); Serial.println(ptIndex);
-  if (activePT1->mode[0] < 2)  digitalWriteFast(LED0, HIGH);
-  if (activePT1->mode[1] < 2)  digitalWriteFast(LED1, HIGH);
+  if (activePT1->mode[0] < 2)
+  {
+    digitalWriteFast(LED0, HIGH);
+	digitalWriteFast(GPIO_10, HIGH);
+  }
+  if (activePT1->mode[1] < 2)
+  {
+      digitalWriteFast(LED1, HIGH);
+	  digitalWriteFast(GPIO_11, HIGH);
+  }
   pulse1(); //intervalTimer starts with delay - we want to start with pulse!
 }
 
@@ -265,6 +308,9 @@ void setup() {
   triggerTargetPTs[0] = -1; // initialize target to -1 so that triggers do nothing
   triggerTargetPTs[1] = -1;
 
+  // GPIO
+  pinMode(GPIO_10, OUTPUT);
+
   IT0.priority(64);
   IT1.priority(64);
   Serial.flush();
@@ -275,7 +321,7 @@ void setup() {
           Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
           Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
   Serial.println(str);
-  
+
   Serial.println("Ready to go!\r\n\r\n");
 }
 
@@ -290,8 +336,8 @@ void loop() {
      *        S0,0,1,1000,100000; 100,-100,100; -50,50,20;
      *        1st argument (0) means set parameters for pulseTrain 0.
      *        2nd argument (0) - mode 0 (voltage) on output channel 0 (see modes below under M)
-     *        3rd argument (1) - mode 1 (current) on output channel 1 
-     *        4th argument (1000) - period of pulsetrain in microseconds. In example, run 1 pulse every ms. 
+     *        3rd argument (1) - mode 1 (current) on output channel 1
+     *        4th argument (1000) - period of pulsetrain in microseconds. In example, run 1 pulse every ms.
      *        5th argument (100000) - duration of pulsetrain in microseconds. In example, duration is 100 ms.
      *        6th, 7th and 8th arguments - pulse stage 0 parameters
      *            amplitudes for both channels (in uA and mV, depending on mode), and duration in usec.
@@ -300,9 +346,9 @@ void loop() {
      *            amplitudes for both channels (in uA and mV, depending on mode), and duration in usec.
      *            In this case, sets amplitudes to 100uA, -100mV, for 100 microseconds
      *        etc... for trios of arguments, up to 10 stages total.
-     *        
-     *    T, U - T0 means start PulseTrain[0]. U0 also means start PulseTrain[0]. T and U can be 
-     *           used to run two pulse train simultaneously. 
+     *
+     *    T, U - T0 means start PulseTrain[0]. U0 also means start PulseTrain[0]. T and U can be
+     *           used to run two pulse train simultaneously.
      *    B - measure ADC offset value (by grounding output and measuring ADC value on output).
      *    C - measure current and voltage offsets by sweeping DAC values and reading output.
      *    D - Print current values of all offsets (ADC, current, voltage)
@@ -312,10 +358,12 @@ void loop() {
      *        1 - current
      *        2 - disconnected (hi-z)
      *        3 - grounded
-     *    A - A0,1000 means set amplitude on channel 0 to 1000 (dac units)
+     *    A - A0,1000 means set amplitude on channel 0 to 1000 (dac units; -32,768 to +32,767)
+     *    V - V0,100 means set amplitude on channel 0 to 100mV
      *    E - E0,1 means read channel zero, line 1. Line 0 is voltage out, line 1 is current sense.
-     *        Returns (prints over serial) value in raw adc units. 
-     * 
+     *        Returns (prints over serial) value in raw adc units.
+     *    V - V0 means default serial reporting, V1 means verbose
+     *
      */
     if (comBuf[bytesRecvd - 1] == '\n') { // termination character for string - we received a full command!
       int ptIndex = 0;
@@ -380,7 +428,7 @@ void loop() {
         Stimjim.getCurrentOffsets();
         Stimjim.getVoltageOffsets();
       }
-            
+
       else if (comBuf[0] == 'D') { // print offset values for user reference
         char str[100];
         sprintf(str, "ADC offsets (+-2.5V): %f, %f\r\nADC offsets (+-10V): %f, %f\r\ncurrent offsets: %d, %d\r\nvoltage offsets: %d, %d\r\n",
@@ -388,7 +436,7 @@ void loop() {
                 Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
         Serial.println(str);
       }
-      
+
       else if (comBuf[0] == 'R') {
         int trigSrc = 0, falling = 0;
         sscanf(comBuf + 1, "%d,%d,%d", &trigSrc, &ptIndex, &falling );
@@ -421,16 +469,26 @@ void loop() {
         int channel = 0, amp = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &amp );
         int dacVal = 1.0 * amp / MILLIVOLTS_PER_DAC + Stimjim.voltageOffsets[channel];
-        Stimjim.writeToDac(channel, dacVal);
-        Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.print(amp);
-        Serial.print(" mV (dac value "); Serial.print(dacVal); Serial.println(").");
+        if (dacVal <= 32767 && dacVal >= -32768)
+        {
+          Stimjim.writeToDac(channel, dacVal);
+          Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.print(amp);
+          Serial.print(" mV (dac value "); Serial.print(dacVal); Serial.println(").");
+        } else {
+          Serial.print(dacVal); Serial.println(" is out of range.");
+        }
       }
-            
+
       else if (comBuf[0] == 'A') {
         int channel = 0, amp = 0;
         sscanf(comBuf + 1, "%d,%d", &channel, &amp );
-        Stimjim.writeToDac(channel, amp);
-        Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.println(amp);
+        if (amp <= 32767 && amp >= -32768)
+        {
+          Stimjim.writeToDac(channel, amp);
+          Serial.print("Set channel "); Serial.print(channel); Serial.print(" to amplitude "); Serial.println(amp);
+        } else {
+          Serial.print(amp); Serial.println(" is out of range.");
+        }
       }
       else if (comBuf[0] == 'E') {
         int channel = 0, line = 0;
