@@ -21,6 +21,13 @@ try {
     const int VoltageTolerancemV = 50;
     const int CurrentToleranceuA = 50;
 
+    // Clear initial content
+    while (port.BytesToRead > 0)
+    {
+        var buff = new byte[port.BytesToRead];
+        port.Read(buff, 0, port.BytesToRead);
+    }
+
     Console.WriteLine("Testing voltage mode.");
     Console.WriteLine();
 
