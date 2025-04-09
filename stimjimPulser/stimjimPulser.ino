@@ -37,8 +37,8 @@
 //    B - measure ADC offset value (by grounding output and measuring ADC value on output).
 //    C - measure current and voltage offsets by sweeping DAC values and reading output.
 //    D - Print current values of all offsets (ADC, current, voltage)
-//    R - R0,1 means that a trigger input on channel 0 starts PulseTrain 1.
-//        R0,0 means that channel 0 is an output that marks stimulus start time
+//    R - R0,<n>,0 means that logic high on "input" 0 starts PulseTrain n.
+//        R0,0,1 means that "input" 0 is reprogrammed as an output that marks stimulus start time of whatever pulsetrain is being delivered
 //    M - M0,0 means set output mode for channel 0 to 0. output modes are as follows:
 //        0 - voltage
 //        1 - current
@@ -502,7 +502,6 @@ void loop()
 
             } else if (comBuf[0] == 'R') {
 
-                Serial.print("Trying to set R");
                 int trigSrc = 0, output = 0;
                 sscanf(comBuf + 1, "%d,%d,%d", &trigSrc, &ptIndex, &output );
 
@@ -521,6 +520,7 @@ void loop()
                       trigOutput[trigSrc] = false;
                 } else {
                       Serial.print("Detaching interrupt to IN"); Serial.println(trigSrc);
+                      Serial.print("Programming IN"); Serial.print(trigSrc); Serial.print(" as output that indicates activity on output ");Serial.println(trigSrc);
                       detachInterrupt( (trigSrc) ? IN1 : IN0);
                       triggerTargetPTs[trigSrc] = -1;
                       pinMode((trigSrc) ? IN1 : IN0, OUTPUT);
