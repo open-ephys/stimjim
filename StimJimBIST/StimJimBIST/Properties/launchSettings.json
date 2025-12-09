@@ -2,7 +2,7 @@
   "profiles": {
     "StimJimBIST": {
       "commandName": "Project",
-      "commandLineArgs": "COM3"
+      "commandLineArgs": "COM5"
     }
   }
 }

@@ -4,6 +4,13 @@
 	(generator_version "9.0")
 	(uuid "e1a7ff5e-86e9-48d5-b3a8-c95cde2f29f3")
 	(paper "A4")
+	(title_block
+		(title "StimJim")
+		(rev "B")
+		(comment 1 "Nate Cermak")
+		(comment 2 "Jonathan Newman")
+		(comment 3 "Cris Sharp")
+	)
 	(lib_symbols
 		(symbol "AD1582_1"
 			(pin_names
@@ -8984,7 +8991,7 @@
 		)
 		(uuid "bcdb525e-3acd-405f-b7f5-0204d1a22003")
 	)
-	(hierarchical_label "CS0"
+	(hierarchical_label "~{CS}_{DAC}"
 		(shape input)
 		(at 35.56 85.09 180)
 		(effects
@@ -8995,7 +9002,7 @@
 		)
 		(uuid "db983755-c67d-4e19-bd61-77ed88b0b8f4")
 	)
-	(hierarchical_label "CS1"
+	(hierarchical_label "~{CS}_{ADC}"
 		(shape input)
 		(at 35.56 87.63 180)
 		(effects
