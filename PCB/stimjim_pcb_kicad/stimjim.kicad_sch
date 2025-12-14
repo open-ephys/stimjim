@@ -7069,7 +7069,7 @@
 				)
 			)
 		)
-		(property "Footprint" "microstim:Multicomp_MC9A22-1634_2x08x2.54mm_Angled"
+		(property "Footprint" "Connector_IDC:IDC-Header_2x08_P2.54mm_Horizontal"
 			(at 139.7 170.18 0)
 			(effects
 				(font
@@ -7161,7 +7161,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "001b03c6-0ec1-426d-8d93-0afd499547d0")
 		(property "Reference" "D3"
 			(at 146.4564 117.0686 0)
@@ -7656,7 +7656,7 @@
 				)
 			)
 		)
-		(property "Footprint" "open-ephys:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal"
+		(property "Footprint" "Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal"
 			(at 48.26 60.96 0)
 			(effects
 				(font
@@ -9315,7 +9315,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "ea0e0067-648f-4f76-868b-289402356fb1")
 		(property "Reference" "R26"
 			(at 135.763 107.95 90)

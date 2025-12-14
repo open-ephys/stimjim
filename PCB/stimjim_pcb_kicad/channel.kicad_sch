@@ -10357,7 +10357,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "microstim:731375003"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 278.13 130.81 0)
 			(effects
 				(font

@@ -3554,7 +3554,7 @@
 		)
 		(uuid "37853afd-1f2d-44fc-8d5b-b902013affd7")
 	)
-	(text "NB: Place resistors\nclose to pins 46 & 47"
+	(text "NB: Place resistors\nclose to pins 66 & 67"
 		(exclude_from_sim no)
 		(at 93.98 137.16 0)
 		(effects
@@ -15319,7 +15319,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "microstim:731375003"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 212.09 187.96 0)
 			(effects
 				(font
@@ -17126,7 +17126,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "microstim:731375003"
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
 			(at 189.23 190.5 0)
 			(effects
 				(font
@@ -18802,7 +18802,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://abracon.com/AIGcrystals/ABM8AIG.pdf"
 			(at 82.55 162.56 0)
 			(effects
 				(font

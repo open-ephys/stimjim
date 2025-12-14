@@ -61,20 +61,8 @@
       ],
       "drc_exclusions": [
         [
-          "hole_clearance|162138750|162707500|b60bec80-f7fe-433f-9a2c-80e557da3dc1|1ffb35c2-772b-46a1-bba6-0bf85ac5b87c",
-          ""
-        ],
-        [
-          "hole_clearance|162138750|162707500|d3fe5346-b7ec-45ef-a104-7a0e192dc4b5|1ffb35c2-772b-46a1-bba6-0bf85ac5b87c",
-          ""
-        ],
-        [
-          "hole_clearance|168238750|162707500|0323a371-f060-4a94-9b81-ee208cbc5852|dcc10ae2-57f5-4a1d-8bec-2065cca2ea15",
-          ""
-        ],
-        [
-          "hole_clearance|168238750|162707500|52455c3e-ea69-4d95-9024-d03725e795ff|dcc10ae2-57f5-4a1d-8bec-2065cca2ea15",
-          ""
+          "lib_footprint_mismatch|165000000|130500000|f75b126e-d367-47d5-91ae-636ff66d5bce|00000000-0000-0000-0000-000000000000",
+          "change footprint hole size to pass DRC"
         ]
       ],
       "meta": {
@@ -534,7 +522,7 @@
         "line_style": 0,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
-        "name": "l1-diff-90_jlc06161H-3313A",
+        "name": "l1-diff-90_jlc04161H-3313",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
@@ -550,10 +538,10 @@
     "net_colors": null,
     "netclass_assignments": {
       "/D+": [
-        "l1-diff-90_jlc06161H-3313A"
+        "l1-diff-90_jlc04161H-3313"
       ],
       "/D-": [
-        "l1-diff-90_jlc06161H-3313A"
+        "l1-diff-90_jlc04161H-3313"
       ]
     },
     "netclass_patterns": []
@@ -566,7 +554,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "stimjim.step",
       "svg": "",
       "vrml": ""
     },
