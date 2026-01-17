@@ -2698,7 +2698,7 @@
 		)
 	)
 	(gr_text "Trig.0"
-		(at 178.5 93.403553 0)
+		(at 178.5 93.25 0)
 		(layer "F.SilkS")
 		(uuid "141773f4-68ea-403e-800b-13bbb3a22d86")
 		(effects
