@@ -1,0 +1,144 @@
+;
+; pio_spi.pio
+;
+; Two SPI programs, one SM per channel.  The SM is stopped and reconfigured
+; between DAC and ADC transactions so they never contend on SCK / MOSI.
+;
+; ── pio_spi_mode1  ──────────────────────────────────────────────────────────
+;   CPOL=0, CPHA=1  (SPI Mode 1)  –  DAC, 8-bit TX only
+;   SCK idles LOW.
+;   MOSI is output on the rising (leading) edge; slave latches on falling edge.
+;
+;   Timing (2 PIO cycles per SCK period):
+;     out  side 1 → SCK rises   (1 cycle)
+;     jmp  side 0 → SCK falls   (1 cycle)
+;   ⟹  PIO clock = 2 × 10 MHz = 20 MHz,  clkdiv = F_sys / 20 000 000
+;
+; ── pio_spi_mode2  ──────────────────────────────────────────────────────────
+;   CPOL=1, CPHA=0  (SPI Mode 2)  –  ADC, 16-bit simultaneous TX+RX
+;   SCK idles HIGH.
+;   Master samples MISO on falling edge (leading for CPOL=1).
+;   Master changes MOSI on rising  edge (trailing).
+;
+;   Bit-count proof (16 bits):
+;     pre-loop:  1 out  (MOSI[15])
+;     loop×15:  15 in   (MISO[15..1])  +  15 out  (MOSI[14..0])
+;     post-loop: 1 in   (MISO[0])
+;     ──────────────────────────────────────
+;     total:    16 in, 16 out  ✓
+;
+;   Both programs run at the same 20 MHz PIO clock.
+
+; ════════════════════════════════════════════════════════════════════════════
+;  Mode 1 – CPOL=0, CPHA=1  (DAC, 8-bit TX)
+; ════════════════════════════════════════════════════════════════════════════
+.program pio_spi_mode1
+.side_set 1             ; SCK, idle = 0
+
+.wrap_target
+    pull  block          side 0  ; wait for 24-bit word (left-aligned in 32-bit word)
+    set   x, 23          side 0  ; 24-bit counter
+bitloop_m1:
+    out   pins, 1        side 1
+    jmp   x-- bitloop_m1 side 0
+.wrap
+
+% c-sdk {
+#include "hardware/clocks.h"
+#include "hardware/gpio.h"
+
+#define PIO_SPI_ADC_BAUD_HZ  10000000u   /* 10 MHz */
+#define PIO_SPI_DAC_BAUD_HZ  30000000u   /* 30 MHz */
+
+/**
+ * Initialise pio_spi_mode1 on the given SM.
+ * mosi / sck are ABSOLUTE GPIO numbers (correct for RP2350 pio_set_gpio_base).
+ */
+static inline void pio_spi_mode1_init(
+        PIO pio, uint sm, uint offset,
+        uint mosi, uint sck)
+{
+    pio_sm_config c = pio_spi_mode1_program_get_default_config(offset);
+
+    sm_config_set_out_pins    (&c, mosi, 1);
+    sm_config_set_sideset_pins(&c, sck);
+
+    /* MSB-first, no autopull; explicit pull in the program */
+    sm_config_set_out_shift(&c, /*shift_dir=*/false, /*autopull=*/false, 8);
+
+    /* 2 PIO cycles per SCK period */
+    float div = (float)clock_get_hz(clk_sys) / (2.f * (float)PIO_SPI_DAC_BAUD_HZ);
+    sm_config_set_clkdiv(&c, div);
+
+    pio_gpio_init(pio, mosi);
+    pio_gpio_init(pio, sck);
+
+    pio_sm_set_consecutive_pindirs(pio, sm, mosi, 1, true);
+    pio_sm_set_consecutive_pindirs(pio, sm, sck,  1, true);
+
+    /* Ensure SCK idles low between frames */
+    gpio_set_pulls(sck, /*up=*/false, /*down=*/true);
+
+    pio_sm_init(pio, sm, offset, &c);
+    /* Caller enables the SM via pio_sm_set_enabled() */
+}
+%}
+
+
+; ════════════════════════════════════════════════════════════════════════════
+;  Mode 2 – CPOL=1, CPHA=0  (ADC, 16-bit TX+RX)
+; ════════════════════════════════════════════════════════════════════════════
+.program pio_spi_mode2
+.side_set 1             ; SCK,  idle = 1
+
+.wrap_target
+    pull  block          side 1  ; stall until TX word arrives; SCK stays high
+    set   x, 14          side 1  ; 15 remaining iterations after MSB
+    out   pins, 1        side 1  ; output MOSI[15], SCK stays high
+
+bitloop_m2:
+    in    pins, 1        side 0  ; SCK falls  (leading):  sample MISO
+    out   pins, 1        side 1  ; SCK rises  (trailing): output next MOSI
+    jmp   x-- bitloop_m2 side 1  ; loop (side 1 is harmless when jmp not taken)
+
+    in    pins, 1        side 0  ; SCK falls: sample final MISO[0]
+    push  block          side 1  ; push 16-bit RX word to FIFO; SCK → idle
+.wrap
+
+% c-sdk {
+/**
+ * Initialise pio_spi_mode2 on the given SM.
+ * miso / mosi / sck are ABSOLUTE GPIO numbers.
+ */
+static inline void pio_spi_mode2_init(
+        PIO pio, uint sm, uint offset,
+        uint miso, uint mosi, uint sck)
+{
+    pio_sm_config c = pio_spi_mode2_program_get_default_config(offset);
+
+    sm_config_set_in_pins     (&c, miso);
+    sm_config_set_out_pins    (&c, mosi, 1);
+    sm_config_set_sideset_pins(&c, sck);
+
+    /* MSB-first, no autopush / autopull; explicit pull/push in the program */
+    sm_config_set_in_shift (&c, /*shift_dir=*/false, /*autopush=*/false, 16);
+    sm_config_set_out_shift(&c, /*shift_dir=*/false, /*autopull=*/false, 16);
+
+    float div = (float)clock_get_hz(clk_sys) / (2.f * (float)PIO_SPI_ADC_BAUD_HZ);
+    sm_config_set_clkdiv(&c, div);
+
+    pio_gpio_init(pio, miso);
+    pio_gpio_init(pio, mosi);
+    pio_gpio_init(pio, sck);
+
+    pio_sm_set_consecutive_pindirs(pio, sm, miso, 1, false); /* input  */
+    pio_sm_set_consecutive_pindirs(pio, sm, mosi, 1, true);  /* output */
+    pio_sm_set_consecutive_pindirs(pio, sm, sck,  1, true);  /* output */
+
+    /* Ensure SCK idles high between frames */
+    gpio_set_pulls(sck, /*up=*/true, /*down=*/false);
+
+    pio_sm_init(pio, sm, offset, &c);
+    /* Caller enables the SM via pio_sm_set_enabled() */
+}
+%}

@@ -21,6 +21,7 @@ endif()
 
 set(PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR}/board)
 set(PICO_BOARD stimjim_rp2354b CACHE STRING "Board type")
+add_compile_options(-fstack-usage)
 
 include(pico_sdk_import.cmake)
 project(main C CXX ASM)
@@ -28,13 +29,14 @@ pico_sdk_init()
 
 add_executable(main
     main.c
-    dac.c
-    stimjim_ctx.c
+    pio_spi.c
+    stimjim_context.c
+    core1.c
     )
 
 pico_enable_stdio_usb(main 1)
 
-target_link_libraries(main pico_stdlib hardware_spi pico_multicore pico_bootsel_via_double_reset)
+target_link_libraries(main pico_stdlib pico_multicore pico_bootsel_via_double_reset hardware_pio pico_divider)
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
 if (PICO_CYW43_SUPPORTED)
     target_link_libraries(main pico_cyw43_arch_none)
