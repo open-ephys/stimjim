@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <hardware/structs/bus_ctrl.h>
 #include <hardware/gpio.h>
 #include <pico/multicore.h>
 #include <pico/util/queue.h>
@@ -16,7 +17,7 @@
 
 #define BUF_LEN 1024
 
-queue_t q_tx_offsets, q_rx_offsets, q_stim_result, q_manual_cmd, q_adc_result;
+queue_t q_offsets_tx, q_offsets_rx, q_stim_result, q_manual_cmd, q_adc_result;
 queue_t q_stimulus_cmd, q_stimulus_trigger[2];
 
 // These parser functions help convert strings to numbers. They account for if a
@@ -41,33 +42,17 @@ static void parse_i32(parser_t *ps, int32_t *out, const char *name, int32_t min,
     parse_skip(ps);
     errno = 0;
     char *ep;
-    long val = strtol(ps->p, &ep, 10);
+    const char *start = ps->p;
+    long long val = strtoll(ps->p, &ep, 10);
     if (ep == ps->p || errno == ERANGE || val < min || val > max) {
-        printf("Invalid %s: %ld (must be %d..%d)\n\n", name, val, min, max);
+        if (errno == ERANGE)
+            printf("Invalid %s: %.*s (must be %d..%d)\n\n", name, (int)(ep - start), start, min, max);
+        else
+            printf("Invalid %s: %lld (must be %d..%d)\n\n", name, val, min, max);
         ps->ok = false;
         return;
     }
     *out = (int32_t)val;
-    ps->p = ep;
-}
-
-static void parse_u32(parser_t *ps, uint32_t *out, const char *name, uint32_t min, uint32_t max) {
-    if (!ps->ok) return;
-    parse_skip(ps);
-    if (*ps->p == '-') {
-        printf("Invalid %s: must not be negative\n\n", name);
-        ps->ok = false;
-        return;
-    }
-    errno = 0;
-    char *ep;
-    unsigned long val = strtoul(ps->p, &ep, 10);
-    if (ep == ps->p || errno == ERANGE || val > max) {
-        printf("Invalid %s: %lu (must be %u..%u)\n\n", name, val, min, max);
-        ps->ok = false;
-        return;
-    }
-    *out = (uint32_t)val;
     ps->p = ep;
 }
 
@@ -80,21 +65,37 @@ static void print_offsets(stimjim_context_t *sc) {
     putchar('\n');
 }
 
+static void refresh_trigger_pulsetrains(stimjim_context_t *sc, int pt_idx) {
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
+        if (io.dir != GPIO_IN) continue;
+        if (io.idx < 0) continue;
+        if (pt_idx >= 0 && io.idx != pt_idx) continue;
+
+        pulsetrain_t pt_raw = stimjim_ctx_get_pulsetrain(sc, (uint8_t)io.idx);
+        if (pt_raw.output_mode[ch] >= OUTPUT_MODE_FLOAT || pt_raw.n_pulses == 0) continue;
+
+        pulsetrain_t pt_conv = convert_pt((uint8_t)io.idx);
+        queue_add_blocking(&q_stimulus_trigger[ch], &pt_conv);
+        sio_hw->doorbell_out_set = 1 << 2;
+    }
+}
+
 static void cmd_S(stimjim_context_t *sc, char *args) {
     static const char usage[] =
         "S usage: S<idx>,<mode0>,<mode1>,<period_us>,<total_dur_us>;"
         " <amp0>,<amp1>,<stage_dur_us>; ...\n";
 
     int32_t n, mode0, mode1;
-    uint32_t duration;
+    int32_t duration;
     pulsetrain_t pt = { 0 };
 
     parser_t ps = parser_init(args);
     parse_i32(&ps, &n, "pulse train index", 0, MAX_PULSETRAINS - 1);
     parse_i32(&ps, &mode0, "output mode", 0, 3);
     parse_i32(&ps, &mode1, "output mode", 0, 3);
-    parse_u32(&ps, &pt.period, "period",  1, UINT32_MAX);
-    parse_u32(&ps, &duration,  "duration", 1, UINT32_MAX);
+    parse_i32(&ps, &pt.period, "period",  1, INT32_MAX);
+    parse_i32(&ps, &duration,  "duration", 1, INT32_MAX);
     if (!ps.ok) { puts(usage); return; }
 
     pt.output_mode[0] = (uint8_t)mode0;
@@ -102,9 +103,13 @@ static void cmd_S(stimjim_context_t *sc, char *args) {
 
     parse_skip(&ps);
     while (ps.ok && *ps.p && pt.n_stages < MAX_STAGES) {
-        parse_i32(&ps, &pt.stage_amplitude[0][pt.n_stages], "amplitude[0]", -150000, 150000);
-        parse_i32(&ps, &pt.stage_amplitude[1][pt.n_stages], "amplitude[1]", -150000, 150000);
-        parse_u32(&ps, &pt.stage_duration[pt.n_stages], "stage_dur", 1, UINT16_MAX);
+        char amp_name[32];
+        snprintf(amp_name, sizeof(amp_name), "amplitude[0] stage[%d]", pt.n_stages);
+        parse_i32(&ps, &pt.stage_amplitude[0][pt.n_stages], amp_name, -150000, 150000);
+        snprintf(amp_name, sizeof(amp_name), "amplitude[1] stage[%d]", pt.n_stages);
+        parse_i32(&ps, &pt.stage_amplitude[1][pt.n_stages], amp_name, -150000, 150000);
+        snprintf(amp_name, sizeof(amp_name), "stage_dur stage[%d]", pt.n_stages);
+        parse_i32(&ps, &pt.stage_duration[pt.n_stages], amp_name, 1, UINT16_MAX);
         if (!ps.ok) return;
         pt.n_stages++;
         parse_skip(&ps);
@@ -127,6 +132,7 @@ static void cmd_S(stimjim_context_t *sc, char *args) {
         puts("Warning: <20us stage or inter-pulse gap detected. Desired pulse timings are not guaranteed.");
 
     stimjim_ctx_set_pulsetrain(sc, (uint8_t)n, &pt);
+    refresh_trigger_pulsetrains(sc, n);
 
     printf("PulseTrain[%d]: mode[%d,%d], period=%u us, pulses=%u, %d stages\n",
            n, pt.output_mode[0], pt.output_mode[1], pt.period, pt.n_pulses, pt.n_stages);
@@ -143,13 +149,14 @@ static void cmd_TU(stimjim_context_t *sc, char *args) {
     if (!ps.ok) return;
     pulsetrain_t pt = convert_pt((uint8_t)idx);
     queue_add_blocking(&q_stimulus_cmd, &pt);
+    sio_hw->doorbell_out_set = 1 << 2;
     printf("Started PulseTrain[%d].\n\n", idx);
 }
 
 static void cmd_R(stimjim_context_t *sc, char *args) {
     int32_t ch = 0, idx = 0, out = 0;
     parser_t ps = parser_init(args);
-    parse_i32(&ps, &ch,  "channel",           0,  1);
+    parse_i32(&ps, &ch, "channel", 0,  1);
     parse_i32(&ps, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1);
     if (*ps.p == ',')
         parse_i32(&ps, &out, "trigger/sync", 0, 1);
@@ -168,6 +175,7 @@ static void cmd_R(stimjim_context_t *sc, char *args) {
         if (pt.output_mode[ch] < OUTPUT_MODE_FLOAT && pt.n_pulses > 0) {
             pulsetrain_t pt = convert_pt((uint8_t)idx);
             queue_add_blocking(&q_stimulus_trigger[ch], &pt);
+            sio_hw->doorbell_out_set = 1 << 2;
         }
         printf("IN%d -> PulseTrain[%d] trigger\n\n", ch, idx);
     }
@@ -190,6 +198,7 @@ static void cmd_V(stimjim_context_t *sc, char *args) {
 
     manual_cmd_t cmd = { .type = MANUAL_CMD_DAC_SET, .ch = (bool)ch, .dac_code = (int16_t)code };
     queue_add_blocking(&q_manual_cmd, &cmd);
+    sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to %d mV (DAC code %d).\n\n", ch, mv, code);
 }
 
@@ -203,18 +212,20 @@ static void cmd_A(char *args) {
 
     manual_cmd_t cmd = { .type = MANUAL_CMD_DAC_SET, .ch = (bool)ch, .dac_code = code };
     queue_add_blocking(&q_manual_cmd, &cmd);
+    sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to DAC code %d.\n\n", ch, code);
 }
 
 static void cmd_E(stimjim_context_t *sc, char *args) {
     int32_t ch = 0, line = 0;
     parser_t ps = parser_init(args);
-    parse_i32(&ps, &ch,   "channel", 0, 1);
-    parse_i32(&ps, &line, "line",    0, 1);
+    parse_i32(&ps, &ch, "channel", 0, 1);
+    parse_i32(&ps, &line, "line", 0, 1);
     if (!ps.ok) { puts("E usage: E<ch>,<line>\n"); return; }
 
     manual_cmd_t cmd = { .type = MANUAL_CMD_ADC_READ, .ch = (bool)ch, .line = (bool)line };
     queue_add_blocking(&q_manual_cmd, &cmd);
+    sio_hw->doorbell_out_set = 1 << 2;
 
     int16_t val;
     queue_remove_blocking(&q_adc_result, &val);
@@ -229,17 +240,32 @@ static void cmd_E(stimjim_context_t *sc, char *args) {
 static void cmd_M(stimjim_context_t *sc, char *args) {
     int32_t ch = 0, mode = 0;
     parser_t ps = parser_init(args);
-    parse_i32(&ps, &ch,   "channel",     0, 1);
+    parse_i32(&ps, &ch, "channel", 0, 1);
     parse_i32(&ps, &mode, "output mode", 0, 3);
     if (!ps.ok) { puts("M usage: M<ch>,<mode>  (mode: 0=voltage 1=current 2=float 3=gnd)\n"); return; }
     set_output_mode((bool)ch, (uint8_t)mode);
     printf("Ch%d output mode set to %d\n\n", ch, mode);
 }
 
+static void cmd_B(stimjim_context_t *sc, char *args) {
+    if (*args != '\0') { puts("B usage: B\n"); return; }
+    printf("Updating ADC offsets...\n");
+    const offsets_tx_t offsets_calibration = { .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC };
+    stimjim_ctx_set_offsets(sc, &offsets_calibration);
+    refresh_trigger_pulsetrains(sc, -1);
+    printf("Offsets updated\n\n");
+}
+
 static void cmd_C(stimjim_context_t *sc, char *args) {
     if (*args != '\0') { puts("C usage: C\n"); return; }
-    printf("Updating offsets...\n");
-    stimjim_ctx_set_offsets(sc, &(bool){true});
+    printf("Updating current and voltage offsets...\n");
+    offsets_t offsets[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
+    const offsets_tx_t offsets_calibration = { 
+        .offset_tx_type = OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
+        .adc = { offsets[0].adc, offsets[1].adc } 
+    };
+    stimjim_ctx_set_offsets(sc, &offsets_calibration);
+    refresh_trigger_pulsetrains(sc, -1);
     printf("Offsets updated\n\n");
 }
 
@@ -262,7 +288,7 @@ static void cmd_X(char *args) {
     printf("Channel %d cancelled\n\n", ch);
 }
 
-static void process_cmds(stimjim_context_t *sc) {
+static void process_user_input(stimjim_context_t *sc) {
     static char buf[BUF_LEN];
     static uint16_t nbuf = 0;
 
@@ -289,6 +315,7 @@ static void process_cmds(stimjim_context_t *sc) {
         case 'A': cmd_A(args); break;
         case 'E': cmd_E(sc, args); break;
         case 'M': cmd_M(sc, args); break;
+        case 'B': cmd_B(sc, args); break;
         case 'C': cmd_C(sc, args); break;
         case 'D': cmd_D(sc, args); break;
         case 'X': cmd_X(args); break;
@@ -296,7 +323,7 @@ static void process_cmds(stimjim_context_t *sc) {
     }
 }
 
-static void process_completed_pulsetrains(stimjim_context_t *sc) {
+static void print_stimulus_reports_from_core1(stimjim_context_t *sc) {
     stim_result_t sr;
     if (!queue_try_remove(&q_stim_result, &sr)) return;
 
@@ -332,8 +359,8 @@ int main(void) {
     gpio_init(CHANNEL_IO_A);
     gpio_init(CHANNEL_IO_B);
 
-    queue_init(&q_tx_offsets, sizeof(uint8_t), 1);
-    queue_init(&q_rx_offsets, sizeof(offsets_t) * 2, 1);
+    queue_init(&q_offsets_tx, sizeof(offsets_tx_t) * 2, 1);
+    queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
     queue_init(&q_stimulus_cmd, sizeof(pulsetrain_t), 2);
     queue_init(&q_stimulus_trigger[0], sizeof(pulsetrain_t), 5);
     queue_init(&q_stimulus_trigger[1], sizeof(pulsetrain_t), 5);
@@ -341,19 +368,20 @@ int main(void) {
     queue_init(&q_manual_cmd, sizeof(manual_cmd_t), 5); 
     queue_init(&q_adc_result, sizeof(int16_t), 5);
 
-    while (!tud_cdc_connected()) sleep_ms(100);
-
+    bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
     multicore_launch_core1(main_core1);
     if (multicore_fifo_pop_blocking() != 0xDEADBEEF)
         return EXIT_FAILURE;
 
-    stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_tx_offsets, &q_rx_offsets);
+    stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_offsets_tx, &q_offsets_rx);
+
+    while (!tud_cdc_connected()) sleep_ms(100);
 
     printf("StimJim %s\n\n", FIRMWARE_VERSION);
     print_offsets(stimjim_ctx);
 
     while (true) {
-        process_cmds(stimjim_ctx);
-        process_completed_pulsetrains(stimjim_ctx);
+        process_user_input(stimjim_ctx);
+        print_stimulus_reports_from_core1(stimjim_ctx);
     }
 }

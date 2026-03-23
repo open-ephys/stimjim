@@ -2,15 +2,15 @@
 
 #include "stimjim_context.h"
 
-#define SAMPLES 100
+#define CORE_HANDSHAKE_MESSAGE 0xDEADBEEF
 
-extern queue_t q_tx_offsets, q_rx_offsets, q_stim_result, q_manual_cmd, q_adc_result;
+extern queue_t q_offsets_tx, q_offsets_rx, q_stim_result, q_manual_cmd, q_adc_result;
 extern queue_t q_stimulus_cmd; 
 extern queue_t q_stimulus_trigger[2]; 
 
 typedef struct {
     uint8_t ch, n_stages;
-    int32_t  measured_amplitudes[MAX_STAGES + 1];
+    int32_t measured_amplitudes[MAX_STAGES + 1];
     uint32_t delivered_stages[MAX_STAGES + 1];
     output_mode_t output_mode;
 } stim_result_t;

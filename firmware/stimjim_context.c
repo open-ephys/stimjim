@@ -1,7 +1,7 @@
 /*  
  *  Implements an opaque pointer in C. The benefits are:
  *  - Setters maintain parity between the context state and hardware state.
- *    The context cannot otherwise be modified in main.
+ *    The context's members cannot otherwise be accessed.
  *  - The context is locally scoped to main.(.. unless you initialize
  *    elsewhere as well.)
  */
@@ -12,18 +12,18 @@ struct stimjim_ctx {
     channel_io_t channel_io_pins[2];
     offsets_t  offsets[2];
     pulsetrain_t pulsetrains[MAX_PULSETRAINS];
-    queue_t *q_tx_offsets, *q_rx_offsets;
+    queue_t *q_offsets_tx, *q_offsets_rx;
 };
 
-// single static instance — initialized and maintained in core0
+// single static instance
 static stimjim_context_t stimjim_ctx = { 0 };
 
-// helpers
-
+// convert mV or uA to dac_code
 static inline int16_t dac_code(const offsets_t off, const bool line, const int amplitude) {
     return (int16_t)(amplitude / (line ? MICROAMPS_PER_DAC : MILLIVOLTS_PER_DAC)) + (line ? off.current : off.voltage);
 }
 
+// for every stage in pulse train, convert mV or uA to dac code
 pulsetrain_t convert_pt(const uint8_t pt_idx) {
     
     pulsetrain_t pt = stimjim_ctx_get_pulsetrain(&stimjim_ctx, pt_idx);
@@ -44,7 +44,7 @@ pulsetrain_t convert_pt(const uint8_t pt_idx) {
         pt_converted.stage_amplitude[1][i] = dac_code(offsets[1], pt.output_mode[1], pt.stage_amplitude[1][i]);
     }
 
-    // Inter-pulse gap: zero amplitude for the remainder of the period
+    // inter-pulse gap: zero amplitude for the remainder of the period
     pt_converted.stage_duration[pt.n_stages]  = pt.period - stage_duration_sum;
     pt_converted.stage_amplitude[0][pt.n_stages] = dac_code(offsets[0], pt.output_mode[0], 0);
     pt_converted.stage_amplitude[1][pt.n_stages] = dac_code(offsets[1], pt.output_mode[1], 0);
@@ -54,12 +54,15 @@ pulsetrain_t convert_pt(const uint8_t pt_idx) {
 
 // init
 
-stimjim_context_t *stimjim_ctx_init(queue_t *q_tx_offsets, queue_t *q_rx_offsets) {
-    stimjim_ctx.q_tx_offsets = q_tx_offsets;
-    stimjim_ctx.q_rx_offsets = q_rx_offsets;
+stimjim_context_t *stimjim_ctx_init(queue_t *q_offsets_tx, queue_t *q_offsets_rx) {
+    stimjim_ctx.q_offsets_tx = q_offsets_tx;
+    stimjim_ctx.q_offsets_rx = q_offsets_rx;
     for (uint8_t ch = 0; ch < 2; ch++) 
         stimjim_ctx_set_channel_io(&stimjim_ctx, ch, -1, GPIO_OUT);
-    stimjim_ctx_set_offsets(&stimjim_ctx, true);
+    offsets_tx_t offsets_calibration = {
+        .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT,
+    };
+    stimjim_ctx_set_offsets(&stimjim_ctx, &offsets_calibration);
 
     gpio_put(LED_A, false);
     gpio_put(LED_B, false);
@@ -102,7 +105,8 @@ void stimjim_ctx_set_pulsetrain(stimjim_context_t *stimjim_ctx, const uint8_t pt
     stimjim_ctx->pulsetrains[pt_index] = *pt;
 }
 
-void stimjim_ctx_set_offsets(stimjim_context_t *stimjim_ctx, const bool all_offsets) {
-    queue_add_blocking(stimjim_ctx->q_tx_offsets, &all_offsets);
-    queue_remove_blocking(stimjim_ctx->q_rx_offsets, &stimjim_ctx->offsets);
+void stimjim_ctx_set_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration) {
+    queue_add_blocking(stimjim_ctx->q_offsets_tx, offsets_calibration);
+    sio_hw->doorbell_out_set = 1u << 2;
+    queue_remove_blocking(stimjim_ctx->q_offsets_rx, &stimjim_ctx->offsets);
 }
