@@ -359,7 +359,7 @@ int main(void) {
     gpio_init(CHANNEL_IO_A);
     gpio_init(CHANNEL_IO_B);
 
-    queue_init(&q_offsets_tx, sizeof(offsets_tx_t) * 2, 1);
+    queue_init(&q_offsets_tx, sizeof(offsets_tx_t), 1);
     queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
     queue_init(&q_stimulus_cmd, sizeof(pulsetrain_t), 2);
     queue_init(&q_stimulus_trigger[0], sizeof(pulsetrain_t), 5);
