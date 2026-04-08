@@ -65,7 +65,7 @@ static void print_offsets(stimjim_context_t *sc) {
     putchar('\n');
 }
 
-static void refresh_trigger_pulsetrains(stimjim_context_t *sc, int pt_idx) {
+static void refresh_trigger_pulsetrains(stimjim_context_t *sc, int32_t pt_idx) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
         if (io.dir != GPIO_IN) continue;
@@ -250,7 +250,9 @@ static void cmd_M(stimjim_context_t *sc, char *args) {
 static void cmd_B(stimjim_context_t *sc, char *args) {
     if (*args != '\0') { puts("B usage: B\n"); return; }
     printf("Updating ADC offsets...\n");
-    const offsets_tx_t offsets_calibration = { .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC };
+    const offsets_tx_t offsets_calibration = {
+        .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_VOLTAGE | OFFSETS_TX_CALIBRATE_CURRENT,
+    };
     stimjim_ctx_set_offsets(sc, &offsets_calibration);
     refresh_trigger_pulsetrains(sc, -1);
     printf("Offsets updated\n\n");

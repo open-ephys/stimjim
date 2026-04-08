@@ -45,7 +45,7 @@ static inline pio_sm_config pio_spi_mode1_program_get_default_config(uint offset
 
 /**
  * Initialise pio_spi_mode1 on the given SM.
- * mosi / sck are ABSOLUTE GPIO numbers (correct for RP2350 pio_set_gpio_base).
+ * mosi / sck are ABSOLUTE GPIO numbers
  */
 static inline void pio_spi_mode1_init(
         PIO pio, uint sm, uint offset,

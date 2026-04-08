@@ -57,6 +57,7 @@ __always_inline static inline int16_t adc_read_blocking(pio_spi_t *pio_spi) {
     pio_spi_wait_done(pio_spi);
     adc_get_value(pio_spi, &val);
     pio_spi_deselect_adc(pio_spi);
+    sleep_us(2);
     return val;
 }
 
@@ -85,6 +86,10 @@ static void measure_offsets(stimulus_context_t *sc, offsets_t *offsets, const of
                 acc += (float)adc_read_blocking(sc[ch].pio_spi);
             offsets[ch].adc = acc / (float)SAMPLES;
         }
+    }
+    else {
+        offsets[0].adc = offsets_calibration.adc[0];
+        offsets[1].adc = offsets_calibration.adc[1];
     }
 
     const int8_t sweep_range = 50;
