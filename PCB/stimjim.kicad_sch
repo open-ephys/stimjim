@@ -3623,6 +3623,157 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "open-ephys:Screw"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Screw_0_1"
+				(rectangle
+					(start -2.54 5.08)
+					(end 2.54 2.54)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 2.54)
+					(end 1.27 -5.08)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 2.54) (xy 1.27 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -1.27) (xy 1.27 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -2.54) (xy 1.27 -3.81)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -3.81) (xy 1.27 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:GND"
 			(power)
 			(pin_numbers
@@ -4089,7 +4240,7 @@
 	)
 	(text "PCB to case\nground point"
 		(exclude_from_sim no)
-		(at 194.31 157.734 0)
+		(at 198.12 157.734 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4261,7 +4412,7 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 154.94) (xy 185.42 157.48)
+			(xy 189.23 154.94) (xy 189.23 157.48)
 		)
 		(stroke
 			(width 0)
@@ -5329,7 +5480,7 @@
 	(symbol
 		(lib_name "MountingHole_1")
 		(lib_id "Mechanical:MountingHole")
-		(at 224.79 153.67 0)
+		(at 227.33 153.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -5337,7 +5488,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005c07145a")
 		(property "Reference" "H1"
-			(at 222.25 152.5016 0)
+			(at 224.79 152.5016 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5346,7 +5497,7 @@
 			)
 		)
 		(property "Value" "MountingHole"
-			(at 222.25 154.813 0)
+			(at 224.79 154.813 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5355,7 +5506,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
-			(at 224.79 153.67 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5364,7 +5515,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 224.79 153.67 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5373,7 +5524,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 224.79 153.67 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5382,7 +5533,7 @@
 			)
 		)
 		(property "KLC_S4.2_DVDD" ""
-			(at 224.79 153.67 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5391,7 +5542,7 @@
 			)
 		)
 		(property "KLC_S4.2_VREG_LX" ""
-			(at 224.79 153.67 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5400,7 +5551,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 224.79 153.67 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5420,7 +5571,7 @@
 	(symbol
 		(lib_name "MountingHole_2")
 		(lib_id "Mechanical:MountingHole")
-		(at 224.79 158.75 0)
+		(at 227.33 158.75 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -5428,7 +5579,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005c071952")
 		(property "Reference" "H2"
-			(at 222.25 157.5816 0)
+			(at 224.79 157.5816 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5437,7 +5588,7 @@
 			)
 		)
 		(property "Value" "MountingHole"
-			(at 222.25 159.893 0)
+			(at 224.79 159.893 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5446,7 +5597,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
-			(at 224.79 158.75 0)
+			(at 227.33 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5455,7 +5606,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 224.79 158.75 0)
+			(at 227.33 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5464,7 +5615,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 224.79 158.75 0)
+			(at 227.33 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5473,7 +5624,7 @@
 			)
 		)
 		(property "KLC_S4.2_DVDD" ""
-			(at 224.79 158.75 0)
+			(at 227.33 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5482,7 +5633,7 @@
 			)
 		)
 		(property "KLC_S4.2_VREG_LX" ""
-			(at 224.79 158.75 0)
+			(at 227.33 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5491,7 +5642,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 224.79 158.75 0)
+			(at 227.33 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5511,7 +5662,7 @@
 	(symbol
 		(lib_name "MountingHole_3")
 		(lib_id "Mechanical:MountingHole")
-		(at 229.87 153.67 0)
+		(at 232.41 153.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -5519,7 +5670,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005c071a16")
 		(property "Reference" "H3"
-			(at 232.41 152.5016 0)
+			(at 234.95 152.5016 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5528,7 +5679,7 @@
 			)
 		)
 		(property "Value" "MountingHole"
-			(at 232.41 154.813 0)
+			(at 234.95 154.813 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5537,7 +5688,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
-			(at 229.87 153.67 0)
+			(at 232.41 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5546,7 +5697,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 229.87 153.67 0)
+			(at 232.41 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5555,7 +5706,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 229.87 153.67 0)
+			(at 232.41 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5564,7 +5715,7 @@
 			)
 		)
 		(property "KLC_S4.2_DVDD" ""
-			(at 229.87 153.67 0)
+			(at 232.41 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5573,7 +5724,7 @@
 			)
 		)
 		(property "KLC_S4.2_VREG_LX" ""
-			(at 229.87 153.67 0)
+			(at 232.41 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5582,7 +5733,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 229.87 153.67 0)
+			(at 232.41 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5601,7 +5752,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 229.87 158.75 0)
+		(at 232.41 158.75 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -5609,7 +5760,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005c071ae6")
 		(property "Reference" "H4"
-			(at 232.41 157.5816 0)
+			(at 234.95 157.5816 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5618,7 +5769,7 @@
 			)
 		)
 		(property "Value" "MountingHole"
-			(at 232.41 159.893 0)
+			(at 234.95 159.893 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5627,7 +5778,7 @@
 			)
 		)
 		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
-			(at 229.87 158.75 0)
+			(at 232.41 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5636,7 +5787,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 229.87 158.75 0)
+			(at 232.41 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5645,7 +5796,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 229.87 158.75 0)
+			(at 232.41 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5654,7 +5805,7 @@
 			)
 		)
 		(property "KLC_S4.2_DVDD" ""
-			(at 229.87 158.75 0)
+			(at 232.41 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5663,7 +5814,7 @@
 			)
 		)
 		(property "KLC_S4.2_VREG_LX" ""
-			(at 229.87 158.75 0)
+			(at 232.41 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5672,7 +5823,7 @@
 			)
 		)
 		(property "MPN" ""
-			(at 229.87 158.75 0)
+			(at 232.41 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5715,7 +5866,7 @@
 				)
 			)
 		)
-		(property "Footprint" "microstim:LED_D5.0mm_Horizontal_O1.27mm_Z3.0mm_pinSwapped"
+		(property "Footprint" "open-ephys:LUMEX_SSF-LHXH100GD-01"
 			(at 154.94 135.89 0)
 			(effects
 				(font
@@ -6277,7 +6428,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole_Pad")
-		(at 185.42 152.4 0)
+		(at 189.23 152.4 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6286,7 +6437,7 @@
 		(fields_autoplaced yes)
 		(uuid "187715fe-d951-4396-880f-07599cd724ff")
 		(property "Reference" "N1"
-			(at 187.96 149.8599 0)
+			(at 191.77 149.8599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6295,7 +6446,7 @@
 			)
 		)
 		(property "Value" "SMTRA_M3-7-5ET"
-			(at 187.96 152.3999 0)
+			(at 191.77 152.3999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6304,7 +6455,7 @@
 			)
 		)
 		(property "Footprint" "open-ephys:SMTRA_M3-7-5ET"
-			(at 185.42 152.4 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6313,7 +6464,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 185.42 152.4 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6322,7 +6473,7 @@
 			)
 		)
 		(property "Description" "Mounting Hole with connection"
-			(at 185.42 152.4 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6331,7 +6482,7 @@
 			)
 		)
 		(property "KLC_S4.2_DVDD" ""
-			(at 185.42 152.4 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6340,7 +6491,7 @@
 			)
 		)
 		(property "KLC_S4.2_VREG_LX" ""
-			(at 185.42 152.4 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6349,7 +6500,7 @@
 			)
 		)
 		(property "MPN" "SMTRA_M3-7-5ET"
-			(at 185.42 152.4 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6484,6 +6635,15 @@
 				(hide yes)
 			)
 		)
+		(property "Component Class" "USB"
+			(at 46.99 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "A1"
 			(uuid "3980ea24-36ad-4d0a-a864-6e4d86c8e84e")
 		)
@@ -6546,7 +6706,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 185.42 157.48 0)
+		(at 189.23 157.48 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6556,7 +6716,7 @@
 		(fields_autoplaced yes)
 		(uuid "2d9db2d6-e749-4254-9bab-3148d43a75c8")
 		(property "Reference" "#PWR019"
-			(at 185.42 163.83 0)
+			(at 189.23 163.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6565,7 +6725,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 185.42 162.56 0)
+			(at 189.23 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6573,7 +6733,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 185.42 157.48 0)
+			(at 189.23 157.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6582,7 +6742,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 185.42 157.48 0)
+			(at 189.23 157.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6591,7 +6751,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 185.42 157.48 0)
+			(at 189.23 157.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8226,6 +8386,77 @@
 		)
 	)
 	(symbol
+		(lib_id "open-ephys:Screw")
+		(at 189.23 142.24 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board no)
+		(dnp no)
+		(uuid "b77ed0c0-f69f-4d13-91c2-c598e66a4c27")
+		(property "Reference" "MP1"
+			(at 193.04 140.9699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "92095A181"
+			(at 193.04 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 189.23 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.mcmaster.com/92095A181/"
+			(at 189.23 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "M3 Button Head, 8mm, 18-8 Stainless Steel"
+			(at 189.23 135.636 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Vendor" "McMaster-Carr"
+			(at 189.23 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project ""
+				(path "/47d0dc91-2bd7-478f-bec1-bf62d0379f8e"
+					(reference "MP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Mechanical:Housing")
 		(at 259.08 157.48 0)
 		(unit 1)
@@ -8244,7 +8475,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "EXN-23359-SVP"
+		(property "Value" "EXN-23359-BKP"
 			(at 262.89 159.0674 0)
 			(effects
 				(font
@@ -8436,7 +8667,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "ea0e0067-648f-4f76-868b-289402356fb1")

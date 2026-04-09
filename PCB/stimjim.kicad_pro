@@ -62,31 +62,15 @@
       "drc_exclusions": [
         [
           "copper_edge_clearance|182250000|167987500|00000000-0000-0000-0000-00005c8cd27f|6394f76f-1d5d-443f-94bf-1340e1695f0e",
-          ""
+          "grounding thread should be at edge of board"
         ],
         [
           "footprint_type_mismatch|186000000|167987500|59d3f9fe-07d9-45b4-bbce-993e8e7e5fe2|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
-          "hole_clearance|158450000|162035000|59c304e6-47ca-41f2-b4dd-40410361aa9d|b60bec80-f7fe-433f-9a2c-80e557da3dc1",
-          ""
-        ],
-        [
-          "hole_clearance|158450000|162035000|59c304e6-47ca-41f2-b4dd-40410361aa9d|d3fe5346-b7ec-45ef-a104-7a0e192dc4b5",
-          ""
-        ],
-        [
-          "hole_clearance|164550000|162035000|ccb47a7b-ca7b-46f5-b959-5c96701e2fda|0323a371-f060-4a94-9b81-ee208cbc5852",
-          ""
-        ],
-        [
-          "hole_clearance|164550000|162035000|ccb47a7b-ca7b-46f5-b959-5c96701e2fda|52455c3e-ea69-4d95-9024-d03725e795ff",
-          ""
-        ],
-        [
-          "lib_footprint_mismatch|165187500|130500000|f75b126e-d367-47d5-91ae-636ff66d5bce|00000000-0000-0000-0000-000000000000",
-          "Increase pad thermal vias to 0.3mm "
+          "lib_footprint_mismatch|165000000|130500000|f75b126e-d367-47d5-91ae-636ff66d5bce|00000000-0000-0000-0000-000000000000",
+          "made GND stitching holes bigger so that the board's minimum hole size constraint is not violated and also to minimize the diversity of hole sizes"
         ]
       ],
       "meta": {
@@ -713,6 +697,18 @@
           "group_by": false,
           "label": "LCSC",
           "name": "LCSC",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Component Class",
+          "name": "Component Class",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Vendor",
+          "name": "Vendor",
           "show": false
         }
       ],

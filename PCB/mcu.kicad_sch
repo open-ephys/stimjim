@@ -20636,7 +20636,7 @@
 				)
 			)
 		)
-		(property "Footprint" "microstim:LED_D5.0mm_Horizontal_O1.27mm_Z3.0mm_pinSwapped"
+		(property "Footprint" "open-ephys:LUMEX_SSF-LHXH100GD-01"
 			(at 196.85 88.9 0)
 			(effects
 				(font
@@ -23130,7 +23130,7 @@
 				)
 			)
 		)
-		(property "Footprint" "microstim:LED_D5.0mm_Horizontal_O1.27mm_Z3.0mm_pinSwapped"
+		(property "Footprint" "open-ephys:LUMEX_SSF-LHXH100GD-01"
 			(at 196.85 96.52 0)
 			(effects
 				(font
@@ -23302,7 +23302,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92"
+		(property "Footprint" "open-ephys:SAMESKY_TS04-66-XX-BK-XXX-SMT-XX"
 			(at 39.37 118.11 0)
 			(effects
 				(font
