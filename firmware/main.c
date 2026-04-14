@@ -106,15 +106,22 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     pt.output_mode[1] = 1 << mode1;
 
     if (*p != ';' && *p != '\0' && *p != '\r' && *p != '\n') { puts(cmd_usage); return; }
+    int32_t amp_limit[2];
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = 10000;
+        else if (pt.output_mode[ch] & OUTPUT_MODE_CURRENT) amp_limit[ch] = 3333;
+        else                                               amp_limit[ch] = 0;
+    }
+
     while (*p == ';' || *p == ' ') {
         if (*p == ';') p++;
         while (*p == ' ') p++;
         if (!*p || pt.n_stages >= MAX_STAGES) break;
         char field_name[32];
         snprintf(field_name, sizeof(field_name), "amp0 stage[%d]", pt.n_stages);
-        if (!try_parse_i32_with_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -150000, 150000)) return;
+        if (!try_parse_i32_with_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -amp_limit[0], amp_limit[0])) return;
         snprintf(field_name, sizeof(field_name), "amp1 stage[%d]", pt.n_stages);
-        if (!try_parse_i32_with_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -150000, 150000)) return;
+        if (!try_parse_i32_with_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return;
         snprintf(field_name, sizeof(field_name), "stage_dur_us stage[%d]", pt.n_stages);
         if (!try_parse_i32_with_range(&p, &pt.stage_duration[pt.n_stages], field_name, 1, UINT16_MAX)) return;
         pt.n_stages++;

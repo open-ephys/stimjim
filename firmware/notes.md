@@ -1,5 +1,3 @@
-Do the ranges work for current also?
-
 - 40 mV and 2.5 μA max error 
 
 Extra credit:
