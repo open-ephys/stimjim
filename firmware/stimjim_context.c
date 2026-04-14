@@ -2,7 +2,7 @@
  *  Implements an opaque pointer in C. The benefits are:
  *  - Setters maintain parity between the context state and hardware state.
  *    The context's members cannot otherwise be accessed.
- *  - The context is locally scoped to main.(.. unless you initialize
+ *  - The context is locally scoped to main.(.. unless you stimjim_ctx_init
  *    elsewhere as well.)
  */
 
@@ -19,15 +19,15 @@ struct stimjim_ctx {
 static stimjim_context_t stimjim_ctx = { 0 };
 
 // convert mV or uA to dac_code
-static inline int16_t dac_code(const offsets_t off, const bool line, const int amplitude) {
+static inline int16_t dac_code(const offsets_t off, const bool line, const int32_t amplitude) {
     return (int16_t)(amplitude / (line ? MICROAMPS_PER_DAC : MILLIVOLTS_PER_DAC)) + (line ? off.current : off.voltage);
 }
 
 // for every stage in pulse train, convert mV or uA to dac code
-pulsetrain_t convert_pt(const uint8_t pt_idx) {
-    
-    pulsetrain_t pt = stimjim_ctx_get_pulsetrain(&stimjim_ctx, pt_idx);
-    
+pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const uint8_t pt_idx) {
+
+    pulsetrain_t pt = stimjim_ctx_get_pulsetrain(ctx, pt_idx);
+
     pulsetrain_t pt_converted = {
         .output_mode = { pt.output_mode[0], pt.output_mode[1] },
         .n_stages = pt.n_stages + 1,
@@ -35,19 +35,19 @@ pulsetrain_t convert_pt(const uint8_t pt_idx) {
     };
 
     uint32_t stage_duration_sum = 0;
-    offsets_t offsets[2] = { stimjim_ctx_get_offsets(&stimjim_ctx, 0), stimjim_ctx_get_offsets(&stimjim_ctx, 1) };
+    offsets_t offsets[2] = { stimjim_ctx_get_offsets(ctx, 0), stimjim_ctx_get_offsets(ctx, 1) };
     
     for (uint8_t i = 0; i < pt.n_stages; i++) {
         stage_duration_sum += pt.stage_duration[i];
         pt_converted.stage_duration[i] = pt.stage_duration[i];
-        pt_converted.stage_amplitude[0][i] = dac_code(offsets[0], pt.output_mode[0], pt.stage_amplitude[0][i]);
-        pt_converted.stage_amplitude[1][i] = dac_code(offsets[1], pt.output_mode[1], pt.stage_amplitude[1][i]);
+        pt_converted.stage_amplitude[0][i] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[0][i]);
+        pt_converted.stage_amplitude[1][i] = dac_code(offsets[1], pt.output_mode[1] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[1][i]);
     }
 
     // inter-pulse gap: zero amplitude for the remainder of the period
     pt_converted.stage_duration[pt.n_stages]  = pt.period - stage_duration_sum;
-    pt_converted.stage_amplitude[0][pt.n_stages] = dac_code(offsets[0], pt.output_mode[0], 0);
-    pt_converted.stage_amplitude[1][pt.n_stages] = dac_code(offsets[1], pt.output_mode[1], 0);
+    pt_converted.stage_amplitude[0][pt.n_stages] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, 0);
+    pt_converted.stage_amplitude[1][pt.n_stages] = dac_code(offsets[1], pt.output_mode[1] & OUTPUT_MODE_CURRENT, 0);
 
     return pt_converted;
 }
@@ -72,7 +72,7 @@ stimjim_context_t *stimjim_ctx_init(queue_t *q_offsets_tx, queue_t *q_offsets_rx
 
 // getters
 
-const channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *stimjim_ctx, const bool ch) {
+const channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {
     return stimjim_ctx->channel_io_pins[ch];
 }
 
@@ -80,13 +80,13 @@ const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *stimjim_c
     return stimjim_ctx->pulsetrains[pt_index];
 }
 
-const offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *stimjim_ctx, const bool ch) {
+const offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {
     return stimjim_ctx->offsets[ch];
 }
 
 // setters
 
-void stimjim_ctx_set_channel_io(stimjim_context_t *stimjim_ctx, bool ch, const int8_t target, const bool dir) {
+void stimjim_ctx_set_channel_io(stimjim_context_t *stimjim_ctx, const uint8_t ch, const int8_t target, const bool dir) {
     const uint ch_pin = ch ? CHANNEL_IO_B : CHANNEL_IO_A;
 
     gpio_set_pulls(ch_pin, false, !dir);
@@ -94,11 +94,10 @@ void stimjim_ctx_set_channel_io(stimjim_context_t *stimjim_ctx, bool ch, const i
 
     stimjim_ctx->channel_io_pins[ch].dir = dir;
     stimjim_ctx->channel_io_pins[ch].idx = target;
-    if (dir)
+    if (dir || target < 0)
         io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3] &= ~RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
     else
         io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3] |= RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
-
 }
 
 void stimjim_ctx_set_pulsetrain(stimjim_context_t *stimjim_ctx, const uint8_t pt_index, const pulsetrain_t *pt) {
@@ -107,6 +106,5 @@ void stimjim_ctx_set_pulsetrain(stimjim_context_t *stimjim_ctx, const uint8_t pt
 
 void stimjim_ctx_set_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration) {
     queue_add_blocking(stimjim_ctx->q_offsets_tx, offsets_calibration);
-    sio_hw->doorbell_out_set = 1u << 2;
     queue_remove_blocking(stimjim_ctx->q_offsets_rx, &stimjim_ctx->offsets);
 }
