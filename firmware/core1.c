@@ -12,6 +12,13 @@
 #define ADC_BASE_CONFIG 0x8010u
 #define ADC_CURRENT_LINE 0x0400u
 
+// DAC config frames: high byte = register addr, low 16 bits = value
+#define DAC_REG_RANGE     0x08u
+#define DAC_RANGE_PM10V   4u
+#define DAC_REG_POWER     0x10u
+#define DAC_POWER_ON      1u
+#define DAC_CFG(reg, val) (((uint32_t)(reg) << 16) | (uint32_t)(val))
+
 static const uint64_t gpio_mask[2] = {
     (1LL << LED_A) | (1LL << CHANNEL_IO_A),
     (1LL << LED_B) | (1LL << CHANNEL_IO_B),
@@ -67,19 +74,16 @@ __always_inline static inline int16_t adc_read_blocking(pio_spi_t *pio_spi) {
     return val;
 }
 
+static void dac_write_config_blocking(pio_spi_t *p, uint32_t cfg) {
+    pio_spi_select_dac(p);
+    dac_write_config(p, cfg);
+    pio_spi_wait_done(p);
+    pio_spi_deselect_dac(p);
+}
+
 static void dac_init(pio_spi_t *p) {
-    const uint32_t dac_range = (0x08u << 16) | 4u;
-    const uint32_t dac_power = (0x10u << 16) | 1u;
-
-    pio_spi_select_dac(p);
-    dac_write_config(p, dac_range);
-    pio_spi_wait_done(p);
-    pio_spi_deselect_dac(p);
-
-    pio_spi_select_dac(p);
-    dac_write_config(p, dac_power);
-    pio_spi_wait_done(p);
-    pio_spi_deselect_dac(p);
+    dac_write_config_blocking(p, DAC_CFG(DAC_REG_RANGE, DAC_RANGE_PM10V));
+    dac_write_config_blocking(p, DAC_CFG(DAC_REG_POWER, DAC_POWER_ON));
 }
 
 __always_inline static inline void dac_latch(const uint64_t nldac_mask) {
@@ -126,7 +130,7 @@ static void measure_offsets(stimulus_context_t *sc, offsets_t *offsets, const of
             offsets[1].voltage = 0;
             continue;
         }
-        const uint16_t adc_cfg = ADC_BASE_CONFIG | ((uint16_t)line << 10);
+        const uint16_t adc_cfg = ADC_BASE_CONFIG | (line ? ADC_CURRENT_LINE : 0);
         for (uint8_t ch = 0; ch < 2; ch++) {
             adc_write_blocking(sc[ch].pio_spi, adc_cfg);
             set_output_mode(sc[ch].channel, line ? OUTPUT_MODE_GND : OUTPUT_MODE_VOLTAGE);
@@ -231,7 +235,6 @@ __always_inline static inline void isr_stage_transition(const uint8_t ch) {
         gpio_clr_mask64(gpio_mask[ch]);
     }
     else {
-        gpio_set_mask64(gpio_mask[ch]);
         dac_latch(nldac_mask[ch]);
     }
 }
@@ -246,7 +249,6 @@ __always_inline static inline void isr_stage_transition_sync(void) {
         gpio_clr_mask64(gpio_mask[0] | gpio_mask[1]);
     }
     else {
-        gpio_set_mask64(gpio_mask[0] | gpio_mask[1]);
         dac_latch(nldac_mask[0] | nldac_mask[1]);
     }
 }
@@ -290,13 +292,11 @@ __always_inline static inline void cancel_stimulus(stimulus_context_t *sc, const
 
 __always_inline static inline bool try_cancel_stimulus(stimulus_context_t *sc) {
     bool cancelled = false;
-    if (sc[0].stimulus_state != STIMULUS_STATE_IDLE && stimulus_cancel_requested(&sc[0])) {
-        cancel_stimulus(sc, 0);
-        cancelled = true;
-    }
-    if (sc[1].stimulus_state != STIMULUS_STATE_IDLE && stimulus_cancel_requested(&sc[1])) {
-        cancel_stimulus(sc, 1);
-        cancelled = true;
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        if (sc[ch].stimulus_state != STIMULUS_STATE_IDLE && stimulus_cancel_requested(&sc[ch])) {
+            cancel_stimulus(sc, ch);
+            cancelled = true;
+        }
     }
     return cancelled;
 }
@@ -346,7 +346,7 @@ __always_inline static inline void process_manual_cmd_queue(stimulus_context_t *
             dac_latch(nldac_mask[cmd.ch]);
         }
         else {
-            const uint16_t adc_cfg = ADC_BASE_CONFIG | ((uint16_t)cmd.line << 10);
+            const uint16_t adc_cfg = ADC_BASE_CONFIG | (cmd.line ? ADC_CURRENT_LINE : 0);
             adc_write_blocking(sc[cmd.ch].pio_spi, adc_cfg);
             int16_t val = adc_read_blocking(sc[cmd.ch].pio_spi);
             queue_add_blocking(&q_adc_result, &val);
@@ -422,6 +422,9 @@ __always_inline static inline void initiate_stimulus_single_ch(stimulus_context_
     pio_spi_deselect_dac(sc->pio_spi);
 
     set_output_mode(ch, sc->pt_active.output_mode[ch]);
+    uint32_t tick = timer0_hw->timerawl;
+    while (timer0_hw->timerawl == tick) { __asm__ volatile("nop"); }
+
     gpio_set_mask64(gpio_mask[ch]);
     dac_latch(nldac_mask[ch]);
     sc->next_alarm_us = timer0_hw->timerawl;
@@ -442,6 +445,9 @@ __always_inline static inline void initiate_stimulus_lockstep(stimulus_context_t
 
     set_output_mode(0, sc[0].pt_active.output_mode[0]);
     set_output_mode(1, sc[1].pt_active.output_mode[1]);
+    uint32_t tick = timer0_hw->timerawl;
+    while (timer0_hw->timerawl == tick) { __asm__ volatile("nop"); }
+
     gpio_set_mask64(gpio_mask[0] | gpio_mask[1]);
     dac_latch(nldac_mask[0] | nldac_mask[1]);
     sc[0].next_alarm_us = sc[1].next_alarm_us = timer0_hw->timerawl;
@@ -576,7 +582,7 @@ void __time_critical_func(main_core1)(void) {
     bool sync_ready[2] = { false, false };
 
     // confirm to core0 that core1 is ready
-    multicore_fifo_push_blocking(0xDEADBEEF);
+    multicore_fifo_push_blocking(CORE_HANDSHAKE_MESSAGE);
 
     while (true) {
 

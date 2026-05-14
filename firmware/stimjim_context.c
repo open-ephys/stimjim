@@ -2,7 +2,7 @@
  *  Implements an opaque pointer in C. The benefits are:
  *  - Setters maintain parity between the context state and hardware state.
  *    The context's members cannot otherwise be accessed.
- *  - The context is locally scoped to main.(.. unless you stimjim_ctx_init
+ *  - The context is locally scoped to main.(.. unless you call stimjim_ctx_init
  *    elsewhere as well.)
  */
 
@@ -24,7 +24,7 @@ static inline int16_t dac_code(const offsets_t off, const bool line, const int32
 }
 
 // for every stage in pulse train, convert mV or uA to dac code
-pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const uint8_t pt_idx) {
+pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const int8_t pt_idx) {
 
     pulsetrain_t pt = stimjim_ctx_get_pulsetrain(ctx, pt_idx);
 
@@ -76,8 +76,8 @@ const channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *stimjim_c
     return stimjim_ctx->channel_io_pins[ch];
 }
 
-const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *stimjim_ctx, const uint8_t pt_index) {
-    return stimjim_ctx->pulsetrains[pt_index];
+const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *stimjim_ctx, const int8_t pt_idx) {
+    return pt_idx < 0 ? (pulsetrain_t){0} : stimjim_ctx->pulsetrains[pt_idx];
 }
 
 const offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {

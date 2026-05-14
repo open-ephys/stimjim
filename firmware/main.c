@@ -20,8 +20,9 @@
 queue_t q_offsets_tx, q_offsets_rx, q_stimulus_result, q_manual_cmd, q_adc_result;
 queue_t q_stimulus_cmd, q_stimulus_trigger[2];
 
-// These parser functions help convert strings to numbers. They account for if a
-// user tries to set a value that exceeds the range of a 32-bit type.
+// ============================================================
+// STRING PARSER FUNCTIONS
+// ============================================================
 
 static bool is_delimiter(const char c) {
     return c == ',' || c == ';' || c == ' ';
@@ -34,32 +35,27 @@ static void parse_skip(const char **p) {
         (*p)++;
 }
 
-static bool parse_i32_validate_range(const char **p, int32_t *out, const int32_t min, const int32_t max) {
+static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *name, const int32_t min, const int32_t max) {
     parse_skip(p);
+
     char *ep;
     long long val = strtoll(*p, &ep, 10);
-    const char *end = ep;
-    while (*end && !is_delimiter(*end)) end++;
-    if (ep == *p || *ep != *end || val < min || val > max)
-        return false;
-    *out = (int32_t)val;
-    *p = ep;
-    return true;
-}
-
-static void print_parse_error(const char *p, const char *name, const int32_t min, const int32_t max) {
-    const char *end = p;
-    while (*end && !is_delimiter(*end)) end++;
-    printf("Invalid %s: '%.*s' (must be %d..%d)\n\n", name, (int)(end - p), p, min, max);
-}
-
-static bool try_parse_i32_with_range(const char **p, int32_t *out, const char *name, const int32_t min, const int32_t max) {
-    if (!parse_i32_validate_range(p, out, min, max)) {
-        print_parse_error(*p, name, min, max);
-        return false;
+    bool ok = (ep != *p) && (*ep == '\0' || is_delimiter(*ep)) && (val >= min) && (val <= max);
+    if (ok) {
+        *out = (int32_t)val;
+        *p = ep;
+        return true;
     }
-    return true;
+
+    const char *end = *p;
+    while (*end && !is_delimiter(*end)) end++;
+    printf("Invalid %s: '%.*s' (must be %d..%d)\n\n", name, (int)(end - *p), *p, min, max);
+    return false;
 }
+
+// ============================================================
+// HELPER FUNCTIONS
+// ============================================================
 
 static void print_offsets(const stimjim_context_t *sc) {
     for (uint8_t ch = 0; ch < 2; ch++) {
@@ -70,20 +66,23 @@ static void print_offsets(const stimjim_context_t *sc) {
     putchar('\n');
 }
 
-static void refresh_trigger_pulsetrains(const stimjim_context_t *sc, const int32_t pt_idx) {
+static void set_trigger_pulsetrain(const stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
+    pulsetrain_t pt_conv = stimjim_ctx_convert_pt(sc, idx);
+    queue_add_blocking(&q_stimulus_trigger[ch], &pt_conv);
+}
+
+static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
-        if (io.dir != GPIO_IN) continue;
-        if (io.idx < 0) continue;
-        if (pt_idx >= 0 && io.idx != pt_idx) continue;
-
-        pulsetrain_t pt_raw = stimjim_ctx_get_pulsetrain(sc, (uint8_t)io.idx);
-        if (!(pt_raw.output_mode[ch] & OUTPUT_MODE_ACTIVE) || pt_raw.n_pulses == 0) continue;
-
-        pulsetrain_t pt_conv = stimjim_ctx_convert_pt(sc, (uint8_t)io.idx);
-        queue_add_blocking(&q_stimulus_trigger[ch], &pt_conv);
+        set_trigger_pulsetrain(sc, ch, io.idx);
     }
 }
+
+// ============================================================
+// USER COMMAND FUNCTIONS
+// ============================================================
+
+// commands related to configuring or initiating/triggering pulse trains
 
 static void cmd_S(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] =
@@ -95,17 +94,17 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     pulsetrain_t pt = { 0 };
 
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1)
-     || !try_parse_i32_with_range(&p, &mode0, "mode0", 0, 3)
-     || !try_parse_i32_with_range(&p, &mode1, "mode1", 0, 3)
-     || !try_parse_i32_with_range(&p, &pt.period, "period_us",  1, INT32_MAX)
-     || !try_parse_i32_with_range(&p, &duration,  "total_dur_us", 1, INT32_MAX))
+    if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1)
+     || !try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
+     || !try_parse_i32_in_range(&p, &mode1, "mode1", 0, 3)
+     || !try_parse_i32_in_range(&p, &pt.period, "period_us",  1, INT32_MAX)
+     || !try_parse_i32_in_range(&p, &duration,  "total_dur_us", 1, INT32_MAX))
     { puts(cmd_usage); return; }
 
     pt.output_mode[0] = 1 << mode0;
     pt.output_mode[1] = 1 << mode1;
 
-    if (*p != ';' && *p != '\0' && *p != '\r' && *p != '\n') { puts(cmd_usage); return; }
+    if (*p != ';' && *p != '\0') { puts(cmd_usage); return; }
     int32_t amp_limit[2];
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = 10000;
@@ -119,11 +118,11 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         if (!*p || pt.n_stages >= MAX_STAGES) break;
         char field_name[32];
         snprintf(field_name, sizeof(field_name), "amp0 stage[%d]", pt.n_stages);
-        if (!try_parse_i32_with_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -amp_limit[0], amp_limit[0])) return;
+        if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -amp_limit[0], amp_limit[0])) return;
         snprintf(field_name, sizeof(field_name), "amp1 stage[%d]", pt.n_stages);
-        if (!try_parse_i32_with_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return;
+        if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return;
         snprintf(field_name, sizeof(field_name), "stage_dur_us stage[%d]", pt.n_stages);
-        if (!try_parse_i32_with_range(&p, &pt.stage_duration[pt.n_stages], field_name, 1, UINT16_MAX)) return;
+        if (!try_parse_i32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 1, UINT16_MAX)) return;
         pt.n_stages++;
     }
 
@@ -144,7 +143,12 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         puts("Warning: <20us stage or inter-pulse gap detected. Desired pulse timings are not guaranteed.");
 
     stimjim_ctx_set_pulsetrain(sc, (uint8_t)n, &pt);
-    refresh_trigger_pulsetrains(sc, n);
+
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
+        if (io.idx == n) 
+            set_trigger_pulsetrain(sc, ch, (int8_t)n);
+    }
 
     printf("PulseTrain[%d]: mode[%d,%d], period=%u us, pulses=%u, %d stages\n",
            n, pt.output_mode[0], pt.output_mode[1], pt.period, pt.n_pulses, pt.n_stages);
@@ -159,9 +163,9 @@ static void cmd_TU(const stimjim_context_t *sc, const char *args) {
 
     int32_t idx = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &idx, "pulse train index", 0, MAX_PULSETRAINS - 1))
+    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", 0, MAX_PULSETRAINS - 1))
     { puts(cmd_usage); return; }
-    pulsetrain_t pt = stimjim_ctx_convert_pt(sc, (uint8_t)idx);
+    pulsetrain_t pt = stimjim_ctx_convert_pt(sc, (int8_t)idx);
     queue_add_blocking(&q_stimulus_cmd, &pt);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Started PulseTrain[%d].\n\n", idx);
@@ -172,37 +176,33 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
 
     int32_t ch = 0, idx = 0, dir = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_with_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
+     || !try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
     { puts(cmd_usage); return; }
-    if (*p == ',' && !try_parse_i32_with_range(&p, &dir, "trigger/sync", 0, 1))
+    if (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
     { puts(cmd_usage); return; }
 
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, (int8_t)idx, (bool)dir);
 
-    if (idx == -1) {
+    if (idx == -1) 
         printf("IN%d -> Disabled\n\n", ch);
-    } 
-    else if (dir) {
+    else if (dir) 
         printf("IN%d -> Sync signal\n\n", ch);
-    } 
     else {
-        pulsetrain_t pt = stimjim_ctx_get_pulsetrain(sc, (uint8_t)idx);
-        if ((pt.output_mode[ch] & OUTPUT_MODE_ACTIVE) && pt.n_pulses > 0) {
-            pulsetrain_t pt = stimjim_ctx_convert_pt(sc, (uint8_t)idx);
-            queue_add_blocking(&q_stimulus_trigger[ch], &pt);
-        }
+        set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
         printf("IN%d -> PulseTrain[%d] trigger\n\n", ch, idx);
     }
 }
+
+// commands related to manual channel I/O
 
 static void cmd_V(const stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "V usage: V<ch>,<mV>\n";
 
     int32_t ch = 0, mv = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_with_range(&p, &mv, "mV", -10000, 10000))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
+     || !try_parse_i32_in_range(&p, &mv, "mV", -10000, 10000))
     { puts(cmd_usage); return; }
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
@@ -222,8 +222,8 @@ static void cmd_A(const char *args) {
     int32_t ch = 0;
     int32_t code = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_with_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
+     || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX))
     { puts(cmd_usage); return; }
 
     manual_cmd_t cmd = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code };
@@ -237,8 +237,8 @@ static void cmd_E(const stimjim_context_t *sc, const char *args) {
 
     int32_t ch = 0, line = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_with_range(&p, &line, "line", 0, 1))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
+     || !try_parse_i32_in_range(&p, &line, "line", 0, 1))
     { puts(cmd_usage); return; }
 
     manual_cmd_t cmd = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line };
@@ -261,12 +261,14 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
 
     int32_t ch = 0, mode = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_with_range(&p, &mode, "output mode", 0, 3))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
+     || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3))
     { puts(cmd_usage); return; }
     set_output_mode((uint8_t)ch, 1 << mode);
     printf("Ch%d output mode set to %d\n\n", ch, mode);
 }
+
+// commands related to calibration
 
 static void cmd_B(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "B usage: B\n";
@@ -277,7 +279,8 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_VOLTAGE | OFFSETS_TX_CALIBRATE_CURRENT,
     };
     stimjim_ctx_set_offsets(sc, &offsets_calibration);
-    refresh_trigger_pulsetrains(sc, -1);
+
+    set_trigger_pulsetrains_w_new_offsets(sc);
     printf("Offsets updated\n\n");
 }
 
@@ -292,7 +295,8 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
         .adc = { offsets[0].adc, offsets[1].adc } 
     };
     stimjim_ctx_set_offsets(sc, &offsets_calibration);
-    refresh_trigger_pulsetrains(sc, -1);
+
+    set_trigger_pulsetrains_w_new_offsets(sc);
     printf("Offsets updated\n\n");
 }
 
@@ -302,6 +306,8 @@ static void cmd_D(const stimjim_context_t *sc, const char *args) {
     if (*args != '\0') { puts(cmd_usage); return; }
     print_offsets(sc);
 }
+
+// cancel command
 
 static void cmd_X(const char *args) {
     static const char cmd_usage[] = "X usage: X[<ch>]\n";
@@ -313,29 +319,37 @@ static void cmd_X(const char *args) {
     }
     int32_t ch = 0;
     const char *p = args;
-    if (!try_parse_i32_with_range(&p, &ch, "channel", 0, 1))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1))
     { puts(cmd_usage); return; }
     sio_hw->doorbell_out_set = (1u << ch);
     printf("Channel %d cancelled\n\n", ch);
 }
 
-static void process_user_cmds(stimjim_context_t *sc) {
+// ============================================================
+// MAIN WHILE LOOP FUNCTIONS
+// ============================================================
+
+static char *read_serial_line(void) {
     static char buf[BUF_LEN];
     static uint16_t nbuf = 0;
 
     int32_t c = getchar_timeout_us(0);
-    if (c == PICO_ERROR_TIMEOUT) return;
-    if (nbuf >= sizeof(buf) - 1) { nbuf = 0; return; }
+    if (c == PICO_ERROR_TIMEOUT) return NULL;
+    if (nbuf >= sizeof(buf) - 1) { nbuf = 0; return NULL; }
 
     buf[nbuf++] = (char)c;
-    if (buf[nbuf - 1] != '\n') return;
+    if (buf[nbuf - 1] != '\n') return NULL;
 
     while (nbuf > 0 && (buf[nbuf - 1] == '\n' || buf[nbuf - 1] == '\r'))
         buf[--nbuf] = '\0';
 
-    const char cmd = buf[0];
-    char *args = buf + 1;
     nbuf = 0;
+    return buf;
+}
+
+static void process_serial_line(stimjim_context_t *sc, char *line) {
+    const char cmd = line[0];
+    char *args = line + 1;
 
     switch (cmd) {
         case 'S': cmd_S(sc, args); break;
@@ -354,7 +368,12 @@ static void process_user_cmds(stimjim_context_t *sc) {
     }
 }
 
-static void process_core1_reports(const stimjim_context_t *sc) {
+static void process_user_input(stimjim_context_t *sc) {
+    char *line = read_serial_line();
+    if (line) process_serial_line(sc, line);
+}
+
+static void process_core1_input(const stimjim_context_t *sc) {
     stimulus_result_t sr;
     if (!queue_try_remove(&q_stimulus_result, &sr)) return;
 
@@ -407,7 +426,7 @@ int main(void) {
 
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
     multicore_launch_core1(main_core1);
-    if (multicore_fifo_pop_blocking() != 0xDEADBEEF)
+    if (multicore_fifo_pop_blocking() != CORE_HANDSHAKE_MESSAGE)
         return EXIT_FAILURE;
 
     stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_offsets_tx, &q_offsets_rx);
@@ -418,7 +437,7 @@ int main(void) {
     print_offsets(stimjim_ctx);
 
     while (true) {
-        process_user_cmds(stimjim_ctx);
-        process_core1_reports(stimjim_ctx);
+        process_user_input(stimjim_ctx);
+        process_core1_input(stimjim_ctx);
     }
 }

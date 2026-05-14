@@ -58,11 +58,11 @@ __always_inline static inline void set_output_mode(uint8_t ch, output_mode_t mod
 stimjim_context_t *stimjim_ctx_init(queue_t *q_offsets_tx, queue_t *q_offsets_rx);
 
 const channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *ctx, const uint8_t ch);
-const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *ctx, const uint8_t pt_index);
+const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *ctx, const int8_t pt_index);
 const offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *ctx, const uint8_t ch);
 
 void stimjim_ctx_set_channel_io(stimjim_context_t *ctx, const uint8_t ch, const int8_t target, const bool dir);
 void stimjim_ctx_set_pulsetrain(stimjim_context_t *ctx, const uint8_t pt_index, const pulsetrain_t *pt);
 void stimjim_ctx_set_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration);
 
-pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const uint8_t pt_idx);
+pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const int8_t pt_idx);
