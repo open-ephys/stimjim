@@ -54,7 +54,23 @@ typedef struct {
 // global variables
 static volatile bool stage_transitioned[2] = { false };
 static volatile bool stimulus_ending[2] = { false };
-static volatile int8_t first_channel_to_trigger = -1;
+static pio_spi_t pio_spi[2] = {
+    { .pio = pio0, .base = 16, .sm_active = false,
+      .miso = SPI_MISO_A, .mosi = SPI_MOSI_A, .sck = SPI_SCK_A,
+      .cs_dac = CSA_A, .cs_adc = CSB_A },
+    { .pio = pio1, .base = 0,  .sm_active = false,
+      .miso = SPI_MISO_B, .mosi = SPI_MOSI_B, .sck = SPI_SCK_B,
+      .cs_dac = CSA_B, .cs_adc = CSB_B },
+};
+static stimulus_context_t sc[2] = {
+    { .channel = 0, .pio_spi = &pio_spi[0],
+      .nldac_pin = NLDAC_A, .led_pin = LED_A, .channel_io_pin = CHANNEL_IO_A,
+      .stimulus_state = STIMULUS_STATE_IDLE },
+    { .channel = 1, .pio_spi = &pio_spi[1],
+      .nldac_pin = NLDAC_B, .led_pin = LED_B, .channel_io_pin = CHANNEL_IO_B,
+      .stimulus_state = STIMULUS_STATE_IDLE },
+};
+static volatile bool sync_active = false;
 
 __always_inline static inline void adc_write_blocking(pio_spi_t *pio_spi, const uint16_t config) {
     pio_spi_select_adc(pio_spi);
@@ -208,19 +224,6 @@ __always_inline static inline void process_offsets_queue(stimulus_context_t *sc)
     }
 }
 
-__isr static void __time_critical_func(isr_trigger)(void) {
-    if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1)) {
-        io_bank0_hw->intr[CHANNEL_IO_A >> 3] = RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1);
-        if (first_channel_to_trigger == -1)
-            first_channel_to_trigger = 0;
-    }
-    else if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_B >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1)) {
-        io_bank0_hw->intr[CHANNEL_IO_B >> 3] = RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1);
-        if (first_channel_to_trigger == -1)
-            first_channel_to_trigger = 1;
-    }
-}
-
 __always_inline static inline void schedule_latch(const uint8_t index, const uint32_t target_us) {
     timer0_hw->intr = 1u << index;
     timer0_hw->alarm[index] = MAX(target_us, timer0_hw->timerawl + 1);
@@ -279,7 +282,6 @@ __always_inline static inline void cancel_stimulus(stimulus_context_t *sc, const
     while (!pio_spi_is_done(sc[ch].pio_spi));
     pio_spi_deselect_dac(sc[ch].pio_spi);
     dac_latch(nldac_mask[ch]);
-    first_channel_to_trigger = -1;
     sc[ch].stimulus_state = STIMULUS_STATE_END;
     // If the other channel is still active (sync pair partially cancelled),
     // transition it from sync timing (alarm[2]) to independent timing.
@@ -415,13 +417,13 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
     return false;
 }
 
-__always_inline static inline void initiate_stimulus_single_ch(stimulus_context_t *sc) {
+__always_inline static inline void initiate_stimulus_single_ch(stimulus_context_t *sc, const pulsetrain_t *pt) {
     uint8_t ch = sc->channel;
     stimulus_ending[ch] = false;
     pio_spi_wait_done(sc->pio_spi);
     pio_spi_deselect_dac(sc->pio_spi);
 
-    set_output_mode(ch, sc->pt_active.output_mode[ch]);
+    set_output_mode(ch, pt->output_mode[ch]);
     uint32_t tick = timer0_hw->timerawl;
     while (timer0_hw->timerawl == tick) { __asm__ volatile("nop"); }
 
@@ -430,12 +432,13 @@ __always_inline static inline void initiate_stimulus_single_ch(stimulus_context_
     sc->next_alarm_us = timer0_hw->timerawl;
     stage_transitioned[ch] = true;
 
+    sc->pt_active = *pt;
     pio_spi_select_adc(sc->pio_spi);
-    adc_write(sc->pio_spi, ADC_BASE_CONFIG | ((sc->pt_active.output_mode[ch] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0));
+    adc_write(sc->pio_spi, ADC_BASE_CONFIG | ((pt->output_mode[ch] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0));
     reset_stimulus_sm(sc);
 }
 
-__always_inline static inline void initiate_stimulus_lockstep(stimulus_context_t *sc) {
+__always_inline static inline void initiate_stimulus_lockstep(stimulus_context_t *sc, const pulsetrain_t *pt) {
     stimulus_ending[0] = stimulus_ending[1] = false;
 
     pio_spi_wait_done(sc[0].pio_spi);
@@ -443,8 +446,8 @@ __always_inline static inline void initiate_stimulus_lockstep(stimulus_context_t
     pio_spi_deselect_dac(sc[0].pio_spi);
     pio_spi_deselect_dac(sc[1].pio_spi);
 
-    set_output_mode(0, sc[0].pt_active.output_mode[0]);
-    set_output_mode(1, sc[1].pt_active.output_mode[1]);
+    set_output_mode(0, pt->output_mode[0]);
+    set_output_mode(1, pt->output_mode[1]);
     uint32_t tick = timer0_hw->timerawl;
     while (timer0_hw->timerawl == tick) { __asm__ volatile("nop"); }
 
@@ -453,10 +456,11 @@ __always_inline static inline void initiate_stimulus_lockstep(stimulus_context_t
     sc[0].next_alarm_us = sc[1].next_alarm_us = timer0_hw->timerawl;
     stage_transitioned[0] = stage_transitioned[1] = true;
 
+    sc[0].pt_active = sc[1].pt_active = *pt;
     pio_spi_select_adc(sc[0].pio_spi);
     pio_spi_select_adc(sc[1].pio_spi);
-    adc_write(sc[0].pio_spi, ADC_BASE_CONFIG | ((sc[0].pt_active.output_mode[0] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0));
-    adc_write(sc[1].pio_spi, ADC_BASE_CONFIG | ((sc[1].pt_active.output_mode[1] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0));
+    adc_write(sc[0].pio_spi, ADC_BASE_CONFIG | ((pt->output_mode[0] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0));
+    adc_write(sc[1].pio_spi, ADC_BASE_CONFIG | ((pt->output_mode[1] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0));
     reset_stimulus_sm(&sc[0]);
     reset_stimulus_sm(&sc[1]);
 }
@@ -479,15 +483,34 @@ __always_inline static inline int8_t stimulus_target(const stimulus_context_t *s
 __always_inline static inline void initiate_stimulus(stimulus_context_t *sc, bool *sync, const pulsetrain_t *pt, const int8_t target) {
     clear_cancel_stimulus_requests();
     if (target == 2) {
-        sc[0].pt_active = sc[1].pt_active = *pt;
-        initiate_stimulus_lockstep(sc);
+        initiate_stimulus_lockstep(sc, pt);
         *sync = true;
     }
     else {
-        sc[target].pt_active = *pt;
-        initiate_stimulus_single_ch(&sc[target]);
+        initiate_stimulus_single_ch(&sc[target], pt);
         *sync = false;
     }
+}
+
+__isr static void __time_critical_func(isr_trigger)(void) {
+    int8_t trig_ch;
+    if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1)) {
+        io_bank0_hw->intr[CHANNEL_IO_A >> 3] = RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1);
+        trig_ch = 0;
+    }
+    else if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_B >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1)) {
+        io_bank0_hw->intr[CHANNEL_IO_B >> 3] = RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1);
+        trig_ch = 1;
+    }
+    else return;
+
+    const pulsetrain_t *pt = &sc[trig_ch].pt_trigger;
+    int8_t target = stimulus_target(sc, pt);
+    if (target < 0) return;  // silent reject: target channel(s) busy or pt empty
+
+    bool sync_local;
+    initiate_stimulus(sc, &sync_local, pt, target);
+    sync_active = sync_local;
 }
 
 __always_inline static inline void preload_cmd_dac(stimulus_context_t *sc, const pulsetrain_t *pt, int8_t target) {
@@ -503,31 +526,23 @@ __always_inline static inline void preload_cmd_dac(stimulus_context_t *sc, const
     }
 }
 
-__always_inline static inline bool try_initiate_stimulus(stimulus_context_t *sc, bool *sync) {
+__always_inline static inline bool try_initiate_cmd(stimulus_context_t *sc) {
     static pulsetrain_t pt_cmd;
-    const pulsetrain_t *pt = NULL;
-    bool triggered = false;
+    if (!inline_queue_try_remove(&q_stimulus_cmd, &pt_cmd)) return false;
 
-    if (first_channel_to_trigger > -1) {
-        pt = &sc[first_channel_to_trigger].pt_trigger;
-        first_channel_to_trigger = -1;
-        triggered = true;
-    }
-    else if (inline_queue_try_remove(&q_stimulus_cmd, &pt_cmd))
-        pt = &pt_cmd;
-
-    if (!pt) return false;
-    int8_t target = stimulus_target(sc, pt);
+    uint32_t save = save_and_disable_interrupts();
+    int8_t target = stimulus_target(sc, &pt_cmd);
     if (target < 0) {
-        if (!triggered) {
-            stimulus_result_t sr = { .rejected = true };
-            inline_queue_try_add(&q_stimulus_result, &sr);
-        }
+        restore_interrupts(save);
+        stimulus_result_t sr = { .rejected = true };
+        inline_queue_try_add(&q_stimulus_result, &sr);
         return false;
     }
-    if (!triggered)
-        preload_cmd_dac(sc, pt, target);
-    initiate_stimulus(sc, sync, pt, target);
+    preload_cmd_dac(sc, &pt_cmd, target);
+    bool sync_local;
+    initiate_stimulus(sc, &sync_local, &pt_cmd, target);
+    sync_active = sync_local;
+    restore_interrupts(save);
     return true;
 }
 
@@ -540,24 +555,6 @@ __always_inline static inline void process_stimulus_trigger_queue(stimulus_conte
 }
 
 void __time_critical_func(main_core1)(void) {
-
-    static pio_spi_t pio_spi[2] = {
-        { .pio = pio0, .base = 16, .sm_active = false,
-          .miso = SPI_MISO_A, .mosi = SPI_MOSI_A, .sck = SPI_SCK_A,
-          .cs_dac = CSA_A, .cs_adc = CSB_A },
-        { .pio = pio1, .base = 0,  .sm_active = false,
-          .miso = SPI_MISO_B, .mosi = SPI_MOSI_B, .sck = SPI_SCK_B,
-          .cs_dac = CSA_B, .cs_adc = CSB_B },
-    };
-
-    static stimulus_context_t sc[2] = {
-        { .channel = 0, .pio_spi = &pio_spi[0],
-          .nldac_pin = NLDAC_A, .led_pin = LED_A, .channel_io_pin = CHANNEL_IO_A,
-          .stimulus_state = STIMULUS_STATE_IDLE },
-        { .channel = 1, .pio_spi = &pio_spi[1],
-          .nldac_pin = NLDAC_B, .led_pin = LED_B, .channel_io_pin = CHANNEL_IO_B,
-          .stimulus_state = STIMULUS_STATE_IDLE },
-    };
     
     pio_spi_init(sc[0].pio_spi);
     pio_spi_init(sc[1].pio_spi);
@@ -578,7 +575,6 @@ void __time_critical_func(main_core1)(void) {
     irq_set_enabled(TIMER0_IRQ_2, true);
     irq_set_enabled(IO_IRQ_BANK0, true);
 
-    bool sync = false;
     bool sync_ready[2] = { false, false };
 
     // confirm to core0 that core1 is ready
@@ -586,9 +582,9 @@ void __time_critical_func(main_core1)(void) {
 
     while (true) {
 
-        try_initiate_stimulus(sc, &sync);
+        try_initiate_cmd(sc);
 
-        if (sync) {
+        if (sync_active) {
             if (advance_stimulus(&sc[0])) sync_ready[0] = true;
             if (advance_stimulus(&sc[1])) sync_ready[1] = true;
             if (sync_ready[0] && sync_ready[1]) {
@@ -602,7 +598,7 @@ void __time_critical_func(main_core1)(void) {
         }
 
         if (try_cancel_stimulus(sc))
-            sync = false;
+            sync_active = false;
 
         if (both_channels_idle(sc)) {
             process_offsets_queue(sc);
