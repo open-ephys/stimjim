@@ -6,6 +6,7 @@
  *    elsewhere as well.)
  */
 
+#include <math.h>
 #include "stimjim_context.h"
 
 struct stimjim_ctx {
@@ -20,7 +21,7 @@ static stimjim_context_t stimjim_ctx = { 0 };
 
 // convert mV or uA to dac_code
 static inline int16_t dac_code(const offsets_t off, const bool line, const int32_t amplitude) {
-    return (int16_t)(amplitude / (line ? MICROAMPS_PER_DAC : MILLIVOLTS_PER_DAC)) + (line ? off.current : off.voltage);
+    return (int16_t)lroundf(amplitude / (line ? MICROAMPS_PER_DAC : MILLIVOLTS_PER_DAC)) + (line ? off.current : off.voltage);
 }
 
 // for every stage in pulse train, convert mV or uA to dac code

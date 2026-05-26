@@ -206,7 +206,7 @@ static void cmd_V(const stimjim_context_t *sc, const char *args) {
     { puts(cmd_usage); return; }
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
-    int32_t code = (mv / MILLIVOLTS_PER_DAC) + off.voltage;
+    int32_t code = lroundf(mv / MILLIVOLTS_PER_DAC) + off.voltage;
     if (code < INT16_MIN) code = INT16_MIN;
     if (code > INT16_MAX) code = INT16_MAX;
 
