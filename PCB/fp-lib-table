@@ -1,3 +1,4 @@
 (fp_lib_table
-  (lib (name microstim)(type KiCad)(uri ${KIPRJMOD}/footprints)(options "")(descr ""))
+	(version 7)
+	(lib (name "microstim") (type "KiCad") (uri "${KIPRJMOD}/footprints") (options "") (descr ""))
 )
