@@ -27,10 +27,9 @@ static const uint64_t nldac_mask[2] = { 1LL << NLDAC_A, 1LL << NLDAC_B };
 
 typedef enum {
     STIMULUS_STATE_IDLE,
-    STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH,
+    STIMULUS_STATE_WAIT_STAGE_TRANSITION,
     STIMULUS_STATE_DAC_SETTLING,
     STIMULUS_STATE_ADC_MEASURING,
-    STIMULUS_STATE_CLEANUP
 } stimulus_state_t;
 
 typedef struct {
@@ -276,7 +275,7 @@ __always_inline static inline bool try_cancel_stimulus(stimulus_context_t *sc) {
         while (!pio_spi_is_done(sc[ch].pio_spi));
         pio_spi_deselect_dac(sc[ch].pio_spi);
         dac_latch(nldac_mask[ch]);
-        sc[ch].stimulus_state = STIMULUS_STATE_CLEANUP;
+        complete_stimulus(&sc[ch]);
     }
     return true;
 }
@@ -291,7 +290,7 @@ __always_inline static inline void reset_stimulus_sm(stimulus_context_t *sc) {
     }
     sc->stage_counter = 0;
     sc->pulse_counter = 0;
-    sc->stimulus_state = STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH;
+    sc->stimulus_state = STIMULUS_STATE_WAIT_STAGE_TRANSITION;
 }
 
 __always_inline static inline void flush_stimulus_cmd_queue(void) {
@@ -349,6 +348,22 @@ __always_inline static inline void begin_adc_read(stimulus_context_t *sc) {
     adc_read(sc->pio_spi);
 }
 
+__always_inline static inline void process_adc_result(stimulus_context_t *sc) {
+    int16_t adc_value;
+    adc_get_value(sc->pio_spi, &adc_value);
+    pio_spi_deselect_adc(sc->pio_spi);
+    sc->sr.measured_amplitudes[sc->stage_counter] += adc_value;
+    sc->sr.delivered_stages[sc->stage_counter]++;
+    sc->next_alarm_us += sc->pt_active.stage_duration[sc->stage_counter];
+    if (++sc->stage_counter >= sc->pt_active.n_stages) {
+        sc->stage_counter = 0;
+        sc->pulse_counter++;
+    }
+    if (sc->stage_counter == 0 && sc->pulse_counter >= sc->pt_active.n_pulses)
+        stimulus_ending[sc->channel] = true;
+    sc->stimulus_state = STIMULUS_STATE_WAIT_STAGE_TRANSITION;
+}
+
 __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
 
     if (!pio_spi_is_done(sc->pio_spi)) return false;
@@ -358,12 +373,12 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
         case STIMULUS_STATE_IDLE:
             break;
 
-        case STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH:
+        case STIMULUS_STATE_WAIT_STAGE_TRANSITION:
             if (stage_transitioned[sc->channel]) {
                 stage_transitioned[sc->channel] = false;
                 if (stimulus_ending[sc->channel]) {
                     stimulus_ending[sc->channel] = false;
-                    sc->stimulus_state = STIMULUS_STATE_CLEANUP;
+                    complete_stimulus(sc);
                     break;
                 }
                 uint8_t preload_stage = (sc->stage_counter + 1 < sc->pt_active.n_stages)
@@ -381,26 +396,9 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
             break;
 
         case STIMULUS_STATE_ADC_MEASURING:
-            {
-                int16_t adc_value;
-                adc_get_value(sc->pio_spi, &adc_value);
-                pio_spi_deselect_adc(sc->pio_spi);
-                sc->sr.measured_amplitudes[sc->stage_counter] += adc_value;
-                sc->sr.delivered_stages[sc->stage_counter]++;
-                sc->next_alarm_us += sc->pt_active.stage_duration[sc->stage_counter];
-                if (++sc->stage_counter >= sc->pt_active.n_stages) {
-                    sc->stage_counter = 0;
-                    sc->pulse_counter++;
-                }
-                if (sc->stage_counter == 0 && sc->pulse_counter >= sc->pt_active.n_pulses)
-                    stimulus_ending[sc->channel] = true;
-                sc->stimulus_state = STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH;
-                return true;
-            }
+            process_adc_result(sc);
+            return true;
 
-        case STIMULUS_STATE_CLEANUP:
-            complete_stimulus(sc);
-            break;
     }
     return false;
 }
