@@ -103,7 +103,7 @@ static void dac_init(pio_spi_t *p) {
 
 __always_inline static inline void dac_latch(const uint64_t nldac_mask) {
     gpio_clr_mask64(nldac_mask);
-    __asm volatile("nop\n\t" "nop\n\t" "nop\n\t");
+    __asm volatile("nop\n\t" "nop\n\t" "nop\n\t"); // hold low ≥3 cycles to meet DAC min NLDAC pulse width
     gpio_set_mask64(nldac_mask);
 }
 
@@ -337,6 +337,18 @@ __always_inline static inline void process_manual_cmd_queue(stimulus_context_t *
     }
 }
 
+__always_inline static inline void begin_dac_preload(stimulus_context_t *sc, uint16_t value) {
+    pio_spi_deselect_adc(sc->pio_spi);
+    pio_spi_select_dac(sc->pio_spi);
+    dac_write_output(sc->pio_spi, value);
+}
+
+__always_inline static inline void begin_adc_read(stimulus_context_t *sc) {
+    pio_spi_deselect_dac(sc->pio_spi);
+    pio_spi_select_adc(sc->pio_spi);
+    adc_read(sc->pio_spi);
+}
+
 __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
 
     if (!pio_spi_is_done(sc->pio_spi)) return false;
@@ -354,21 +366,16 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
                     sc->stimulus_state = STIMULUS_STATE_CLEANUP;
                     break;
                 }
-                // preload next stage's DAC value; wraps to 0 for next pulse's first stage
                 uint8_t preload_stage = (sc->stage_counter + 1 < sc->pt_active.n_stages)
                                         ? sc->stage_counter + 1 : 0;
-                pio_spi_deselect_adc(sc->pio_spi);
-                pio_spi_select_dac(sc->pio_spi);
-                dac_write_output(sc->pio_spi, sc->pt_active.stage_amplitude[sc->channel][preload_stage]);
+                begin_dac_preload(sc, sc->pt_active.stage_amplitude[sc->channel][preload_stage]);
                 sc->stimulus_state = STIMULUS_STATE_DAC_SETTLING;
             }
             break;
 
         case STIMULUS_STATE_DAC_SETTLING:
             if (timer0_hw->timerawl - sc->next_alarm_us >= DAC_SETTLE_US) {
-                pio_spi_deselect_dac(sc->pio_spi);
-                pio_spi_select_adc(sc->pio_spi);
-                adc_read(sc->pio_spi);
+                begin_adc_read(sc);
                 sc->stimulus_state = STIMULUS_STATE_ADC_MEASURING;
             }
             break;
@@ -470,21 +477,25 @@ __always_inline static inline void initiate_stimulus(stimulus_context_t *sc, con
         initiate_stimulus_single_ch(&sc[target], pt);
 }
 
-__isr static void __time_critical_func(isr_trigger)(void) {
-    int8_t trig_ch;
+__always_inline static inline int8_t get_triggered_channel(void) {
     if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1)) {
         io_bank0_hw->intr[CHANNEL_IO_A >> 3] = RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1);
-        trig_ch = 0;
+        return 0;
     }
-    else if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_B >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1)) {
+    if (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_B >> 3] & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1)) {
         io_bank0_hw->intr[CHANNEL_IO_B >> 3] = RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1);
-        trig_ch = 1;
+        return 1;
     }
-    else return;
+    return -1;
+}
+
+__isr static void __time_critical_func(isr_trigger)(void) {
+    int8_t trig_ch = get_triggered_channel();
+    if (trig_ch < 0) return;
 
     const pulsetrain_t *pt = &sc[trig_ch].pt_trigger;
     int8_t target = stimulus_target(sc, pt);
-    if (target < 0) return;  // silent reject: target channel(s) busy or pt empty
+    if (target < 0) return;
 
     initiate_stimulus(sc, pt, target);
 }
@@ -543,7 +554,7 @@ void __time_critical_func(main_core1)(void) {
     irq_set_exclusive_handler(TIMER0_IRQ_1, isr_ch1);
     irq_set_exclusive_handler(TIMER0_IRQ_2, isr_sync);
     irq_set_exclusive_handler(IO_IRQ_BANK0, isr_trigger);
-    hw_set_bits(&timer0_hw->inte, 0b111);
+    hw_set_bits(&timer0_hw->inte, 0b111); // enable alarm[0], alarm[1], alarm[2]
     irq_set_enabled(TIMER0_IRQ_0, true);
     irq_set_enabled(TIMER0_IRQ_1, true);
     irq_set_enabled(TIMER0_IRQ_2, true);
