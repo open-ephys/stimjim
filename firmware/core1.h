@@ -19,6 +19,7 @@ typedef struct {
 typedef enum {
     MANUAL_CMD_DAC_SET,
     MANUAL_CMD_ADC_READ,
+    MANUAL_CMD_SET_OUTPUT_MODE,
 } manual_cmd_type_t;
 
 typedef struct {
@@ -26,6 +27,7 @@ typedef struct {
     bool line;
     manual_cmd_type_t type;
     int16_t dac_code;
+    output_mode_t output_mode;
 } manual_cmd_t;
 
 void __time_critical_func(main_core1)(void);

@@ -264,7 +264,9 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3))
     { puts(cmd_usage); return; }
-    set_output_mode((uint8_t)ch, 1 << mode);
+    manual_cmd_t cmd = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode };
+    queue_add_blocking(&q_manual_cmd, &cmd);
+    sio_hw->doorbell_out_set = (1u << 2);
     printf("Ch%d output mode set to %d\n\n", ch, mode);
 }
 

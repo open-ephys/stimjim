@@ -325,6 +325,9 @@ __always_inline static inline void process_manual_cmd_queue(stimulus_context_t *
             pio_spi_deselect_dac(sc[cmd.ch].pio_spi);
             dac_latch(nldac_mask[cmd.ch]);
         }
+        else if (cmd.type == MANUAL_CMD_SET_OUTPUT_MODE) {
+            set_output_mode(cmd.ch, cmd.output_mode);
+        }
         else {
             const uint16_t adc_cfg = ADC_BASE_CONFIG | (cmd.line ? ADC_CURRENT_LINE : 0);
             adc_write_blocking(sc[cmd.ch].pio_spi, adc_cfg);
