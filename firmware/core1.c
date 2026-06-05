@@ -27,10 +27,10 @@ static const uint64_t nldac_mask[2] = { 1LL << NLDAC_A, 1LL << NLDAC_B };
 
 typedef enum {
     STIMULUS_STATE_IDLE,
-    STIMULUS_STATE_ACTIVE_TRANSITIONED,
-    STIMULUS_STATE_ACTIVE_DAC_SETTLING,
-    STIMULUS_STATE_ACTIVE_ADC_READ_INITIATED,
-    STIMULUS_STATE_END
+    STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH,
+    STIMULUS_STATE_DAC_SETTLING,
+    STIMULUS_STATE_ADC_MEASURING,
+    STIMULUS_STATE_CLEANUP
 } stimulus_state_t;
 
 typedef struct {
@@ -47,7 +47,6 @@ typedef struct {
     const uint8_t channel;
     const uint8_t channel_io_pin;
     const uint8_t led_pin;
-    const uint8_t nldac_pin;
 } stimulus_context_t;
 
 
@@ -64,10 +63,10 @@ static pio_spi_t pio_spi[2] = {
 };
 static stimulus_context_t sc[2] = {
     { .channel = 0, .pio_spi = &pio_spi[0],
-      .nldac_pin = NLDAC_A, .led_pin = LED_A, .channel_io_pin = CHANNEL_IO_A,
+      .led_pin = LED_A, .channel_io_pin = CHANNEL_IO_A,
       .stimulus_state = STIMULUS_STATE_IDLE },
     { .channel = 1, .pio_spi = &pio_spi[1],
-      .nldac_pin = NLDAC_B, .led_pin = LED_B, .channel_io_pin = CHANNEL_IO_B,
+      .led_pin = LED_B, .channel_io_pin = CHANNEL_IO_B,
       .stimulus_state = STIMULUS_STATE_IDLE },
 };
 static volatile bool sync_active = false;
@@ -132,8 +131,7 @@ static void measure_offsets(stimulus_context_t *sc, offsets_t *offsets, const of
         pio_spi_deselect_dac(sc[ch].pio_spi);
         dac_latch(nldac_mask[ch]);
     }
-    gpio_put(sc[0].nldac_pin, false);
-    gpio_put(sc[1].nldac_pin, false);
+    gpio_clr_mask64(nldac_mask[0] | nldac_mask[1]);
 
     for (uint8_t line = 0; line < 2; line++) {
         if (line && !(offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_CURRENT)) {
@@ -169,8 +167,7 @@ static void measure_offsets(stimulus_context_t *sc, offsets_t *offsets, const of
         }
     }
 
-    gpio_put(sc[0].nldac_pin, true);
-    gpio_put(sc[1].nldac_pin, true);
+    gpio_set_mask64(nldac_mask[0] | nldac_mask[1]);
     set_output_mode(sc[0].channel, OUTPUT_MODE_GND);
     set_output_mode(sc[1].channel, OUTPUT_MODE_GND);
 }
@@ -261,46 +258,27 @@ __isr static void __time_critical_func(isr_ch1)(void) { isr_stage_transition(1);
 __isr static void __time_critical_func(isr_sync)(void) { isr_stage_transition_sync(); }
 
 __always_inline static inline void clear_cancel_stimulus_requests(void) {
-    sio_hw->doorbell_in_clr = (1u << 0) | (1u << 1);
-}
-
-__always_inline static inline bool stimulus_cancel_requested(const stimulus_context_t *sc) {
-    if (!(sio_hw->doorbell_in_set & (1u << sc->channel))) return false;
-    sio_hw->doorbell_in_clr = 1u << sc->channel;
-    return true;
-}
-
-__always_inline static inline void cancel_stimulus(stimulus_context_t *sc, const uint8_t ch) {
-    timer0_hw->armed = (1u << ch) | (1u << 2);
-    set_output_mode(ch, OUTPUT_MODE_GND);
-    gpio_put(sc[ch].channel_io_pin, false);
-    gpio_put(sc[ch].led_pin, false);
-    pio_spi_deselect_dac(sc[ch].pio_spi);
-    pio_spi_deselect_adc(sc[ch].pio_spi);
-    pio_spi_select_dac(sc[ch].pio_spi);
-    dac_write_output(sc[ch].pio_spi, sc[ch].pt_active.stage_amplitude[ch][sc[ch].pt_active.n_stages - 1]);
-    while (!pio_spi_is_done(sc[ch].pio_spi));
-    pio_spi_deselect_dac(sc[ch].pio_spi);
-    dac_latch(nldac_mask[ch]);
-    sc[ch].stimulus_state = STIMULUS_STATE_END;
-    // If the other channel is still active (sync pair partially cancelled),
-    // transition it from sync timing (alarm[2]) to independent timing.
-    uint8_t other = ch ^ 1;
-    bool other_active = sc[other].stimulus_state != STIMULUS_STATE_IDLE
-                     && sc[other].stimulus_state != STIMULUS_STATE_END;
-    if (other_active && !stage_transitioned[other])
-        schedule_latch(other, sc[other].next_alarm_us);
+    sio_hw->doorbell_in_clr = (1u << 0);
 }
 
 __always_inline static inline bool try_cancel_stimulus(stimulus_context_t *sc) {
-    bool cancelled = false;
+    if (!(sio_hw->doorbell_in_set & (1u << 0))) return false;
+    sio_hw->doorbell_in_clr = (1u << 0);
+    timer0_hw->armed = (1u << 0) | (1u << 1) | (1u << 2);
     for (uint8_t ch = 0; ch < 2; ch++) {
-        if (sc[ch].stimulus_state != STIMULUS_STATE_IDLE && stimulus_cancel_requested(&sc[ch])) {
-            cancel_stimulus(sc, ch);
-            cancelled = true;
-        }
+        if (sc[ch].stimulus_state == STIMULUS_STATE_IDLE) continue;
+        set_output_mode(ch, OUTPUT_MODE_GND);
+        gpio_clr_mask64(gpio_mask[ch]);
+        pio_spi_deselect_dac(sc[ch].pio_spi);
+        pio_spi_deselect_adc(sc[ch].pio_spi);
+        pio_spi_select_dac(sc[ch].pio_spi);
+        dac_write_output(sc[ch].pio_spi, sc[ch].pt_active.stage_amplitude[ch][sc[ch].pt_active.n_stages - 1]);
+        while (!pio_spi_is_done(sc[ch].pio_spi));
+        pio_spi_deselect_dac(sc[ch].pio_spi);
+        dac_latch(nldac_mask[ch]);
+        sc[ch].stimulus_state = STIMULUS_STATE_CLEANUP;
     }
-    return cancelled;
+    return true;
 }
 
 __always_inline static inline void reset_stimulus_sm(stimulus_context_t *sc) {
@@ -313,7 +291,7 @@ __always_inline static inline void reset_stimulus_sm(stimulus_context_t *sc) {
     }
     sc->stage_counter = 0;
     sc->pulse_counter = 0;
-    sc->stimulus_state = STIMULUS_STATE_ACTIVE_TRANSITIONED;
+    sc->stimulus_state = STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH;
 }
 
 __always_inline static inline void flush_stimulus_cmd_queue(void) {
@@ -365,12 +343,12 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
         case STIMULUS_STATE_IDLE:
             break;
 
-        case STIMULUS_STATE_ACTIVE_TRANSITIONED:
+        case STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH:
             if (stage_transitioned[sc->channel]) {
                 stage_transitioned[sc->channel] = false;
                 if (stimulus_ending[sc->channel]) {
                     stimulus_ending[sc->channel] = false;
-                    sc->stimulus_state = STIMULUS_STATE_END;
+                    sc->stimulus_state = STIMULUS_STATE_CLEANUP;
                     break;
                 }
                 // preload next stage's DAC value; wraps to 0 for next pulse's first stage
@@ -379,20 +357,20 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
                 pio_spi_deselect_adc(sc->pio_spi);
                 pio_spi_select_dac(sc->pio_spi);
                 dac_write_output(sc->pio_spi, sc->pt_active.stage_amplitude[sc->channel][preload_stage]);
-                sc->stimulus_state = STIMULUS_STATE_ACTIVE_DAC_SETTLING;
+                sc->stimulus_state = STIMULUS_STATE_DAC_SETTLING;
             }
             break;
 
-        case STIMULUS_STATE_ACTIVE_DAC_SETTLING:
+        case STIMULUS_STATE_DAC_SETTLING:
             if (timer0_hw->timerawl - sc->next_alarm_us >= DAC_SETTLE_US) {
                 pio_spi_deselect_dac(sc->pio_spi);
                 pio_spi_select_adc(sc->pio_spi);
                 adc_read(sc->pio_spi);
-                sc->stimulus_state = STIMULUS_STATE_ACTIVE_ADC_READ_INITIATED;
+                sc->stimulus_state = STIMULUS_STATE_ADC_MEASURING;
             }
             break;
 
-        case STIMULUS_STATE_ACTIVE_ADC_READ_INITIATED:
+        case STIMULUS_STATE_ADC_MEASURING:
             {
                 int16_t adc_value;
                 adc_get_value(sc->pio_spi, &adc_value);
@@ -406,11 +384,11 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
                 }
                 if (sc->stage_counter == 0 && sc->pulse_counter >= sc->pt_active.n_pulses)
                     stimulus_ending[sc->channel] = true;
-                sc->stimulus_state = STIMULUS_STATE_ACTIVE_TRANSITIONED;
+                sc->stimulus_state = STIMULUS_STATE_PRELOAD_DAC_WAIT_LATCH;
                 return true;
             }
 
-        case STIMULUS_STATE_END:
+        case STIMULUS_STATE_CLEANUP:
             complete_stimulus(sc);
             break;
     }
@@ -438,7 +416,7 @@ __always_inline static inline void initiate_stimulus_single_ch(stimulus_context_
     reset_stimulus_sm(sc);
 }
 
-__always_inline static inline void initiate_stimulus_lockstep(stimulus_context_t *sc, const pulsetrain_t *pt) {
+__always_inline static inline void initiate_stimulus_sync(stimulus_context_t *sc, const pulsetrain_t *pt) {
     stimulus_ending[0] = stimulus_ending[1] = false;
 
     pio_spi_wait_done(sc[0].pio_spi);
@@ -469,7 +447,7 @@ __always_inline static inline bool both_channels_idle(const stimulus_context_t *
     return sc[0].stimulus_state == STIMULUS_STATE_IDLE && sc[1].stimulus_state == STIMULUS_STATE_IDLE;
 }
 
-// returns -1 (no stim), 2 (lockstep), 0 or 1 (single channel)
+// returns -1 (no stim), 2 (sync), 0 or 1 (single channel)
 __always_inline static inline int8_t stimulus_target(const stimulus_context_t *sc, const pulsetrain_t *pt) {
     if ((pt->output_mode[0] & OUTPUT_MODE_ACTIVE) && (pt->output_mode[1] & OUTPUT_MODE_ACTIVE))
         return both_channels_idle(sc) ? 2 : -1;
@@ -480,16 +458,13 @@ __always_inline static inline int8_t stimulus_target(const stimulus_context_t *s
     return -1;
 }
 
-__always_inline static inline void initiate_stimulus(stimulus_context_t *sc, bool *sync, const pulsetrain_t *pt, const int8_t target) {
+__always_inline static inline void initiate_stimulus(stimulus_context_t *sc, const pulsetrain_t *pt, const int8_t target) {
     clear_cancel_stimulus_requests();
-    if (target == 2) {
-        initiate_stimulus_lockstep(sc, pt);
-        *sync = true;
-    }
-    else {
+    sync_active = (target == 2);
+    if (target == 2)
+        initiate_stimulus_sync(sc, pt);
+    else
         initiate_stimulus_single_ch(&sc[target], pt);
-        *sync = false;
-    }
 }
 
 __isr static void __time_critical_func(isr_trigger)(void) {
@@ -508,9 +483,7 @@ __isr static void __time_critical_func(isr_trigger)(void) {
     int8_t target = stimulus_target(sc, pt);
     if (target < 0) return;  // silent reject: target channel(s) busy or pt empty
 
-    bool sync_local;
-    initiate_stimulus(sc, &sync_local, pt, target);
-    sync_active = sync_local;
+    initiate_stimulus(sc, pt, target);
 }
 
 __always_inline static inline void preload_cmd_dac(stimulus_context_t *sc, const pulsetrain_t *pt, int8_t target) {
@@ -539,19 +512,17 @@ __always_inline static inline bool try_initiate_cmd(stimulus_context_t *sc) {
         return false;
     }
     preload_cmd_dac(sc, &pt_cmd, target);
-    bool sync_local;
-    initiate_stimulus(sc, &sync_local, &pt_cmd, target);
-    sync_active = sync_local;
+    initiate_stimulus(sc, &pt_cmd, target);
     restore_interrupts(save);
     return true;
 }
 
 __always_inline static inline void process_stimulus_trigger_queue(stimulus_context_t *sc) {
-    bool updated[2] = { false, false };
-    while (inline_queue_try_remove(&q_stimulus_trigger[0], &sc[0].pt_trigger)) updated[0] = true;
-    while (inline_queue_try_remove(&q_stimulus_trigger[1], &sc[1].pt_trigger)) updated[1] = true;
-    if (updated[0]) preload_trigger_dac(&sc[0]);
-    if (updated[1]) preload_trigger_dac(&sc[1]);
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        bool updated = false;
+        while (inline_queue_try_remove(&q_stimulus_trigger[ch], &sc[ch].pt_trigger)) updated = true;
+        if (updated) preload_trigger_dac(&sc[ch]);
+    }
 }
 
 void __time_critical_func(main_core1)(void) {

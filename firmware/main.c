@@ -310,19 +310,11 @@ static void cmd_D(const stimjim_context_t *sc, const char *args) {
 // cancel command
 
 static void cmd_X(const char *args) {
-    static const char cmd_usage[] = "X usage: X[<ch>]\n";
+    static const char cmd_usage[] = "X usage: X\n";
 
-    if (*args == '\0') {
-        sio_hw->doorbell_out_set = (1u << 0) | (1u << 1);
-        puts("Both channels cancelled\n");
-        return;
-    }
-    int32_t ch = 0;
-    const char *p = args;
-    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1))
-    { puts(cmd_usage); return; }
-    sio_hw->doorbell_out_set = (1u << ch);
-    printf("Channel %d cancelled\n\n", ch);
+    if (*args != '\0') { puts(cmd_usage); return; }
+    sio_hw->doorbell_out_set = (1u << 0);
+    puts("Stimulus cancelled.\n");
 }
 
 // ============================================================
