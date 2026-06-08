@@ -275,7 +275,7 @@ __always_inline static inline bool try_cancel_stimulus(stimulus_context_t *sc) {
         while (!pio_spi_is_done(sc[ch].pio_spi));
         pio_spi_deselect_dac(sc[ch].pio_spi);
         dac_latch(nldac_mask[ch]);
-        complete_stimulus(&sc[ch]);
+        end_stimulus(&sc[ch]);
     }
     return true;
 }
@@ -307,7 +307,7 @@ __always_inline static inline void preload_trigger_dac(stimulus_context_t *sc) {
     pio_spi_wait_done(sc->pio_spi);
 }
 
-__always_inline static inline void complete_stimulus(stimulus_context_t *sc) {
+__always_inline static inline void end_stimulus(stimulus_context_t *sc) {
     inline_queue_try_add(&q_stimulus_result, &sc->sr);
     flush_stimulus_cmd_queue();
     sc->stimulus_state = STIMULUS_STATE_IDLE;
@@ -336,10 +336,12 @@ __always_inline static inline void process_manual_cmd_queue(stimulus_context_t *
     }
 }
 
-__always_inline static inline void begin_dac_preload(stimulus_context_t *sc, uint16_t value) {
+__always_inline static inline void begin_next_stage_dac_preload(stimulus_context_t *sc) {
+    uint8_t preload_stage = (sc->stage_counter + 1 < sc->pt_active.n_stages)
+                            ? sc->stage_counter + 1 : 0;
     pio_spi_deselect_adc(sc->pio_spi);
     pio_spi_select_dac(sc->pio_spi);
-    dac_write_output(sc->pio_spi, value);
+    dac_write_output(sc->pio_spi, sc->pt_active.stage_amplitude[sc->channel][preload_stage]);
 }
 
 __always_inline static inline void begin_adc_read(stimulus_context_t *sc) {
@@ -377,13 +379,10 @@ __always_inline static inline bool advance_stimulus(stimulus_context_t *sc) {
             if (stage_transitioned[sc->channel]) {
                 stage_transitioned[sc->channel] = false;
                 if (stimulus_ending[sc->channel]) {
-                    stimulus_ending[sc->channel] = false;
-                    complete_stimulus(sc);
+                    end_stimulus(sc);
                     break;
                 }
-                uint8_t preload_stage = (sc->stage_counter + 1 < sc->pt_active.n_stages)
-                                        ? sc->stage_counter + 1 : 0;
-                begin_dac_preload(sc, sc->pt_active.stage_amplitude[sc->channel][preload_stage]);
+                begin_next_stage_dac_preload(sc);
                 sc->stimulus_state = STIMULUS_STATE_DAC_SETTLING;
             }
             break;
