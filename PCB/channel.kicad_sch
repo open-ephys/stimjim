@@ -11016,6 +11016,17 @@
 				)
 			)
 		)
+		(property "Tolerance" "1%"
+			(at 213.36 76.2 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "811664b7-5661-43c2-947a-0f7f288b9bb4")
 		)
@@ -11774,7 +11785,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 238.76 88.9 90)
 			(hide yes)
 			(show_name no)
@@ -14873,7 +14884,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 229.87 41.91 90)
 			(hide yes)
 			(show_name no)
@@ -15884,7 +15895,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 240.03 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -19801,7 +19812,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 254 41.91 90)
 			(hide yes)
 			(show_name no)
