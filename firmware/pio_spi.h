@@ -23,7 +23,6 @@ typedef struct {
 // not time-critical functions for initialization
 
 void pio_spi_init(pio_spi_t *pio_spi_ch);
-bool dac_write_config(pio_spi_t *ch, uint32_t src);
 
 // time-critical inline functions for pulse train timing
 
@@ -56,45 +55,13 @@ __always_inline static inline void pio_spi_select_adc(pio_spi_t *ch) {
     gpio_put(ch->cs_adc, 0);
 }
 
-__always_inline static inline void pio_spi_deselect_dac(pio_spi_t *ch) {
+__always_inline static inline void pio_spi_deselect_dac(const pio_spi_t *ch) {
     gpio_put(ch->cs_dac, 1);
     pio_sm_set_enabled(ch->pio, SM_DAC, false);
 }
 
-__always_inline static inline void pio_spi_deselect_adc(pio_spi_t *ch) {
+__always_inline static inline void pio_spi_deselect_adc(const pio_spi_t *ch) {
     gpio_put(ch->cs_adc, 1);
     pio_sm_set_enabled(ch->pio, SM_ADC, false);
 }
 
-__always_inline static inline bool adc_get_value(const pio_spi_t *ch, int16_t *dst) {
-    if (pio_sm_is_rx_fifo_empty(ch->pio, ch->sm_active)) return false;
-    *dst = ((int16_t)((uint16_t)pio_sm_get(ch->pio, ch->sm_active) << 3)) >> 3; // sign-extend
-    return true;
-}
-
-__always_inline static inline bool adc_read(pio_spi_t *ch) {
-    if (pio_sm_is_tx_fifo_full(ch->pio, ch->sm_active))
-        return false;
-    pio_sm_put(ch->pio, ch->sm_active, 0);
-    pio_sm_set_enabled(ch->pio, ch->sm_active, true);
-    return true;
-}
-
-__always_inline static inline bool adc_write(pio_spi_t *ch, const uint16_t src) {
-    if (pio_sm_is_tx_fifo_full(ch->pio, ch->sm_active)) 
-        return false;
-
-    pio_sm_put(ch->pio, ch->sm_active, (uint32_t)src << 16);
-    pio_sm_set_enabled(ch->pio, ch->sm_active, true);
-    return true;
-}
-
-// dac_write_config is the more general case of dac_write_output which only
-// accepts 16-bit numbers. The benefit of using dac_write_output is that you
-// don't have to cast the src argument with (uint16_t) to transmit negative
-// values correctly.
-__always_inline static inline bool dac_write_output(pio_spi_t *ch, int16_t src) {
-    pio_sm_put(ch->pio, ch->sm_active, (uint16_t)src << 8);
-    pio_sm_set_enabled(ch->pio, ch->sm_active, true);
-    return true;
-}

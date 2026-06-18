@@ -17,12 +17,11 @@
 
 #define BUF_LEN 1024
 
-queue_t q_offsets_tx, q_offsets_rx, q_stimulus_result, q_manual_cmd, q_adc_result;
-queue_t q_stimulus_cmd, q_stimulus_trigger[2];
+queue_t q_core1_cmd, q_offsets_rx, q_stimulus_result, q_adc_result;
 
-// ============================================================
+// =============================================================================
 // STRING PARSER FUNCTIONS
-// ============================================================
+// =============================================================================
 
 static bool is_delimiter(const char c) {
     return c == ',' || c == ';' || c == ' ';
@@ -53,9 +52,9 @@ static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *nam
     return false;
 }
 
-// ============================================================
+// =============================================================================
 // HELPER FUNCTIONS
-// ============================================================
+// =============================================================================
 
 static void print_offsets(const stimjim_context_t *sc) {
     for (uint8_t ch = 0; ch < 2; ch++) {
@@ -67,8 +66,11 @@ static void print_offsets(const stimjim_context_t *sc) {
 }
 
 static void set_trigger_pulsetrain(const stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
-    pulsetrain_t pt_conv = stimjim_ctx_convert_pt(sc, idx);
-    queue_add_blocking(&q_stimulus_trigger[ch], &pt_conv);
+    core1_cmd_t cmd = {
+        .type = CORE1_CMD_TRIGGER_CONFIG,
+        .trigger_config = { .ch = ch, .pt = stimjim_ctx_convert_pt(sc, idx) },
+    };
+    queue_add_blocking(&q_core1_cmd, &cmd);
 }
 
 static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
@@ -78,9 +80,9 @@ static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
     }
 }
 
-// ============================================================
+// =============================================================================
 // USER COMMAND FUNCTIONS
-// ============================================================
+// =============================================================================
 
 // commands related to configuring or initiating/triggering pulse trains
 
@@ -165,8 +167,11 @@ static void cmd_TU(const stimjim_context_t *sc, const char *args) {
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", 0, MAX_PULSETRAINS - 1))
     { puts(cmd_usage); return; }
-    pulsetrain_t pt = stimjim_ctx_convert_pt(sc, (int8_t)idx);
-    queue_add_blocking(&q_stimulus_cmd, &pt);
+    core1_cmd_t cmd = {
+        .type = CORE1_CMD_STIMULUS,
+        .stimulus = stimjim_ctx_convert_pt(sc, (int8_t)idx),
+    };
+    queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Started PulseTrain[%d].\n\n", idx);
 }
@@ -210,8 +215,9 @@ static void cmd_V(const stimjim_context_t *sc, const char *args) {
     if (code < INT16_MIN) code = INT16_MIN;
     if (code > INT16_MAX) code = INT16_MAX;
 
-    manual_cmd_t cmd = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = (int16_t)code };
-    queue_add_blocking(&q_manual_cmd, &cmd);
+    core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
+        .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = (int16_t)code } };
+    queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to %d mV (DAC code %d).\n\n", ch, mv, code);
 }
@@ -226,8 +232,9 @@ static void cmd_A(const char *args) {
      || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX))
     { puts(cmd_usage); return; }
 
-    manual_cmd_t cmd = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code };
-    queue_add_blocking(&q_manual_cmd, &cmd);
+    core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
+        .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
+    queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to DAC code %d.\n\n", ch, code);
 }
@@ -241,8 +248,9 @@ static void cmd_E(const stimjim_context_t *sc, const char *args) {
      || !try_parse_i32_in_range(&p, &line, "line", 0, 1))
     { puts(cmd_usage); return; }
 
-    manual_cmd_t cmd = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line };
-    queue_add_blocking(&q_manual_cmd, &cmd);
+    core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
+        .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
+    queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
 
     int16_t val;
@@ -264,8 +272,9 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3))
     { puts(cmd_usage); return; }
-    manual_cmd_t cmd = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode };
-    queue_add_blocking(&q_manual_cmd, &cmd);
+    core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
+        .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
+    queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = (1u << 2);
     printf("Ch%d output mode set to %d\n\n", ch, mode);
 }
@@ -319,9 +328,9 @@ static void cmd_X(const char *args) {
     puts("Stimulus cancelled.\n");
 }
 
-// ============================================================
+// =============================================================================
 // MAIN WHILE LOOP FUNCTIONS
-// ============================================================
+// =============================================================================
 
 static char *read_serial_line(void) {
     static char buf[BUF_LEN];
@@ -371,26 +380,29 @@ static void process_core1_input(const stimjim_context_t *sc) {
     stimulus_result_t sr;
     if (!queue_try_remove(&q_stimulus_result, &sr)) return;
 
-    if (sr.rejected) {
-        printf("Stimulus rejected: channel(s) busy.\n\n");
+    if (sr.cancelled) {
+        printf("Stimulus cancelled.\n\n");
         return;
     }
 
     static const char units[2][3] = { "mV", "uA" };
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
-    bool is_current = sr.output_mode & OUTPUT_MODE_CURRENT;
-    printf("Channel %d pulse train terminated. Delivered:\n", sr.ch);
-    float adc_offset = stimjim_ctx_get_offsets(sc, sr.ch).adc;
-    for (uint8_t i = 0; i < sr.n_stages; i++) {
-        if (sr.delivered_stages[i]) {
-            float adc_val = ((float)sr.measured_amplitudes[i] / (float)sr.delivered_stages[i]) - adc_offset;
-            sr.measured_amplitudes[i] = lroundf(adc_val * scale[is_current]);
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        if (!(sr.output_mode[ch] & OUTPUT_MODE_ACTIVE)) continue;
+        bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
+        printf("Channel %d pulse train terminated. Delivered:\n", ch);
+        float adc_offset = stimjim_ctx_get_offsets(sc, ch).adc;
+        for (uint8_t i = 0; i < sr.n_stages; i++) {
+            if (sr.delivered_stages[i]) {
+                float adc_val = ((float)sr.measured_amplitudes[ch][i] / (float)sr.delivered_stages[i]) - adc_offset;
+                sr.measured_amplitudes[ch][i] = lroundf(adc_val * scale[is_current]);
+            }
+            if (i < sr.n_stages - 1)
+                printf("  %dx Stage %d: %6ld %s\n", sr.delivered_stages[i], i, sr.measured_amplitudes[ch][i], units[is_current]);
+            else
+                printf("  %dx Inter-pulse gap: %6ld %s\n\n", sr.delivered_stages[i], sr.measured_amplitudes[ch][i], units[is_current]);
         }
-        if (i < sr.n_stages - 1)
-            printf("  %dx Stage %d: %6ld %s\n", sr.delivered_stages[i], i, sr.measured_amplitudes[i], units[is_current]);
-        else
-            printf("  %dx Inter-pulse gap: %6ld %s\n\n", sr.delivered_stages[i], sr.measured_amplitudes[i], units[is_current]);
     }
 }
 
@@ -409,13 +421,9 @@ int main(void) {
     gpio_init(CHANNEL_IO_A);
     gpio_init(CHANNEL_IO_B);
 
-    queue_init(&q_offsets_tx, sizeof(offsets_tx_t), 1);
+    queue_init(&q_core1_cmd, sizeof(core1_cmd_t), 8);
     queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
-    queue_init(&q_stimulus_cmd, sizeof(pulsetrain_t), 2);
-    queue_init(&q_stimulus_trigger[0], sizeof(pulsetrain_t), 5);
-    queue_init(&q_stimulus_trigger[1], sizeof(pulsetrain_t), 5);
     queue_init(&q_stimulus_result, sizeof(stimulus_result_t), 32);
-    queue_init(&q_manual_cmd, sizeof(manual_cmd_t), 5); 
     queue_init(&q_adc_result, sizeof(int16_t), 5);
 
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
@@ -423,7 +431,7 @@ int main(void) {
     if (multicore_fifo_pop_blocking() != CORE_HANDSHAKE_MESSAGE)
         return EXIT_FAILURE;
 
-    stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_offsets_tx, &q_offsets_rx);
+    stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_core1_cmd, &q_offsets_rx);
 
     while (!tud_cdc_connected()) sleep_ms(100);
 

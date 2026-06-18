@@ -8,12 +8,13 @@
 
 #include <math.h>
 #include "stimjim_context.h"
+#include "core1.h"
 
 struct stimjim_ctx {
     channel_io_t channel_io_pins[2];
     offsets_t  offsets[2];
     pulsetrain_t pulsetrains[MAX_PULSETRAINS];
-    queue_t *q_offsets_tx, *q_offsets_rx;
+    queue_t *q_core1_cmd, *q_offsets_rx;
 };
 
 // single static instance
@@ -55,8 +56,8 @@ pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const int8_t p
 
 // init
 
-stimjim_context_t *stimjim_ctx_init(queue_t *q_offsets_tx, queue_t *q_offsets_rx) {
-    stimjim_ctx.q_offsets_tx = q_offsets_tx;
+stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx) {
+    stimjim_ctx.q_core1_cmd = q_core1_cmd;
     stimjim_ctx.q_offsets_rx = q_offsets_rx;
     for (uint8_t ch = 0; ch < 2; ch++) 
         stimjim_ctx_set_channel_io(&stimjim_ctx, ch, -1, GPIO_OUT);
@@ -106,6 +107,7 @@ void stimjim_ctx_set_pulsetrain(stimjim_context_t *stimjim_ctx, const uint8_t pt
 }
 
 void stimjim_ctx_set_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration) {
-    queue_add_blocking(stimjim_ctx->q_offsets_tx, offsets_calibration);
+    core1_cmd_t cmd = { .type = CORE1_CMD_OFFSETS, .offsets = *offsets_calibration };
+    queue_add_blocking(stimjim_ctx->q_core1_cmd, &cmd);
     queue_remove_blocking(stimjim_ctx->q_offsets_rx, &stimjim_ctx->offsets);
 }

@@ -55,7 +55,7 @@ __always_inline static inline void set_output_mode(uint8_t ch, output_mode_t mod
     gpio_put(oe1_pin[ch], mode & (OUTPUT_MODE_FLOAT | OUTPUT_MODE_GND));
 }
 
-stimjim_context_t *stimjim_ctx_init(queue_t *q_offsets_tx, queue_t *q_offsets_rx);
+stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx);
 
 const channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *ctx, const uint8_t ch);
 const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *ctx, const int8_t pt_index);

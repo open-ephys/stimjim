@@ -32,6 +32,8 @@ add_executable(main
     pio_spi.c
     stimjim_context.c
     core1.c
+    adc.c
+    dac.c
     )
 
 pico_enable_stdio_usb(main 1)
