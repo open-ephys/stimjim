@@ -17,11 +17,7 @@
 
 #define BUF_LEN 1024
 
-queue_t q_core1_cmd, q_offsets_rx, q_stimulus_result, q_adc_result;
-
-// =============================================================================
-// STRING PARSER FUNCTIONS
-// =============================================================================
+queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 
 static bool is_delimiter(const char c) {
     return c == ',' || c == ';' || c == ' ';
@@ -52,10 +48,6 @@ static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *nam
     return false;
 }
 
-// =============================================================================
-// HELPER FUNCTIONS
-// =============================================================================
-
 static void print_offsets(const stimjim_context_t *sc) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         offsets_t off = stimjim_ctx_get_offsets(sc, ch);
@@ -79,12 +71,6 @@ static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
         set_trigger_pulsetrain(sc, ch, io.idx);
     }
 }
-
-// =============================================================================
-// USER COMMAND FUNCTIONS
-// =============================================================================
-
-// commands related to configuring or initiating/triggering pulse trains
 
 static void cmd_S(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] =
@@ -199,8 +185,6 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     }
 }
 
-// commands related to manual channel I/O
-
 static void cmd_V(const stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "V usage: V<ch>,<mV>\n";
 
@@ -279,8 +263,6 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
     printf("Ch%d output mode set to %d\n\n", ch, mode);
 }
 
-// commands related to calibration
-
 static void cmd_B(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "B usage: B\n";
 
@@ -318,8 +300,6 @@ static void cmd_D(const stimjim_context_t *sc, const char *args) {
     print_offsets(sc);
 }
 
-// cancel command
-
 static void cmd_X(const char *args) {
     static const char cmd_usage[] = "X usage: X\n";
 
@@ -327,10 +307,6 @@ static void cmd_X(const char *args) {
     sio_hw->doorbell_out_set = (1u << 0);
     puts("Stimulus cancelled.\n");
 }
-
-// =============================================================================
-// MAIN WHILE LOOP FUNCTIONS
-// =============================================================================
 
 static char *read_serial_line(void) {
     static char buf[BUF_LEN];
@@ -350,7 +326,7 @@ static char *read_serial_line(void) {
     return buf;
 }
 
-static void process_serial_line(stimjim_context_t *sc, char *line) {
+static void handle_serial_line(stimjim_context_t *sc, char *line) {
     const char cmd = line[0];
     char *args = line + 1;
 
@@ -371,14 +347,14 @@ static void process_serial_line(stimjim_context_t *sc, char *line) {
     }
 }
 
-static void process_user_input(stimjim_context_t *sc) {
+static void handle_user_input(stimjim_context_t *sc) {
     char *line = read_serial_line();
-    if (line) process_serial_line(sc, line);
+    if (line) handle_serial_line(sc, line);
 }
 
-static void process_core1_input(const stimjim_context_t *sc) {
-    stimulus_result_t sr;
-    if (!queue_try_remove(&q_stimulus_result, &sr)) return;
+static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
+    core1_stim_telemetry_t sr;
+    if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
     if (sr.cancelled) {
         printf("Stimulus cancelled.\n\n");
@@ -389,7 +365,7 @@ static void process_core1_input(const stimjim_context_t *sc) {
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
     for (uint8_t ch = 0; ch < 2; ch++) {
-        if (!(sr.output_mode[ch] & OUTPUT_MODE_ACTIVE)) continue;
+        if (!(sr.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK)) continue;
         bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
         printf("Channel %d pulse train terminated. Delivered:\n", ch);
         float adc_offset = stimjim_ctx_get_offsets(sc, ch).adc;
@@ -423,7 +399,7 @@ int main(void) {
 
     queue_init(&q_core1_cmd, sizeof(core1_cmd_t), 8);
     queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
-    queue_init(&q_stimulus_result, sizeof(stimulus_result_t), 32);
+    queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 32);
     queue_init(&q_adc_result, sizeof(int16_t), 5);
 
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
@@ -439,7 +415,7 @@ int main(void) {
     print_offsets(stimjim_ctx);
 
     while (true) {
-        process_user_input(stimjim_ctx);
-        process_core1_input(stimjim_ctx);
+        handle_user_input(stimjim_ctx);
+        handle_stimulus_telemetry(stimjim_ctx);
     }
 }

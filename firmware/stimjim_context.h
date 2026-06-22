@@ -21,11 +21,11 @@ typedef enum {
     OUTPUT_MODE_GND     = 1 << 3,
 } output_mode_t;
 
-#define OUTPUT_MODE_ACTIVE (OUTPUT_MODE_VOLTAGE | OUTPUT_MODE_CURRENT)
+#define OUTPUT_MODE_ACTIVE_MASK (OUTPUT_MODE_VOLTAGE | OUTPUT_MODE_CURRENT)
 
 typedef struct { 
-    bool dir; // HIGH = trigger input, LOW = sync output
-    int8_t idx; // pulse train that should be delivered when channel is triggered 
+    bool dir;   // HIGH = trigger input, LOW = sync output
+    int8_t idx; // index of pulse train that should be delivered upon trigger
 } channel_io_t;
 
 typedef enum {

@@ -7,7 +7,7 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 #define CSB_A         41u
 #define OE0_A         38u
 #define OE1_A         37u
-#define LED_A         03u
+#define LED_A         02u
 #define CHANNEL_IO_A  33u
 #define SPI_SCK_A     46u
 #define SPI_MOSI_A    47u
@@ -19,7 +19,7 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 #define CSB_B         17u
 #define OE0_B         19u
 #define OE1_B         18u
-#define LED_B         02u
+#define LED_B         03u
 #define CHANNEL_IO_B  34u
 #define SPI_SCK_B     22u
 #define SPI_MOSI_B    23u
