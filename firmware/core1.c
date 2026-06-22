@@ -152,15 +152,13 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
     };
 }
 
-// Set only scalars. Setting an array to {0} implicitly calls memset() which
-// exists can cause jitter due to XIP-cache misses
+// Scalars only. Zeroing the arrays compiles to memset() (a flash call) in the
+// stage-0 window; pulsetrain_loop assigns on the first pulse instead.
 __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, core1_stim_telemetry_t *st) {
     st->n_stages       = pt->n_stages;
     st->output_mode[0] = pt->output_mode[0];
     st->output_mode[1] = pt->output_mode[1];
     st->cancelled      = false;
-    for (uint8_t s = 0; s < pt->n_stages; s++)
-        st->measured_amplitudes[0][s] = st->measured_amplitudes[1][s] = st->delivered_stages[s] = 0;
 }
 
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1_stim_telemetry_t *sr, uint32_t stage_start_cyc) {
@@ -183,12 +181,19 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < dac_settle_cyc)
                 if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
 
-            // Read ADCs (blocking)
+            // Read ADCs (blocking). Assign on the first pulse, accumulate after,
+            // so the telemetry arrays need no pre-zeroing memset.
             int16_t vals[2];
             adcs_read_get_value_blocking(vals);
-            sr->measured_amplitudes[0][stage] += vals[0];
-            sr->measured_amplitudes[1][stage] += vals[1];
-            sr->delivered_stages[stage]++;
+            if (pulse == 0) {
+                sr->measured_amplitudes[0][stage] = vals[0];
+                sr->measured_amplitudes[1][stage] = vals[1];
+                sr->delivered_stages[stage]       = 1;
+            } else {
+                sr->measured_amplitudes[0][stage] += vals[0];
+                sr->measured_amplitudes[1][stage] += vals[1];
+                sr->delivered_stages[stage]++;
+            }
 
             // Check for cancel ('X') commands while waiting for stage to end
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < stage_dur_cyc)
