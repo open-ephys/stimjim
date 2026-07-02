@@ -7,3 +7,5 @@ resulting DXF. Instead, I export the outline of the extruded part which doesn't
 present this buggy behavior. panel-outline.SLDPRT is exported to
 panel-outline.DXF which is subsequently imported into the KiCAD PCB panel files
 as a graphic.
+
+The channel-design.SLDPRT is used to create the silkscreen design for each channel.
