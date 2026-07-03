@@ -123,6 +123,10 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     }
 
     pt.n_pulses = duration / pt.period;
+    if (pt.n_pulses == 0) {
+        puts("Invalid pulse train: total duration is shorter than one period (0 pulses).\n");
+        return;
+    }
 
     bool short_pulse = (pt.period - stage_sum) < 20u;
     for (uint8_t i = 0; !short_pulse && i < pt.n_stages; i++)
@@ -358,6 +362,11 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 
     if (sr.cancelled) {
         printf("Stimulus cancelled.\n\n");
+        return;
+    }
+
+    if (sr.delivered_stages[0] == 0) {
+        printf("No pulses delivered (empty or uninitialized pulse train).\n\n");
         return;
     }
 

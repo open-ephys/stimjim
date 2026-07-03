@@ -122,6 +122,11 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
     }
 
     gpio_set_mask64(nldac_mask);
+
+    // Leave the DACs latched at 0 (the sweep left them at the last swept code).
+    dacs_write_blocking(0, 0);
+    dacs_latch();
+
     set_output_mode(0, OUTPUT_MODE_GND);
     set_output_mode(1, OUTPUT_MODE_GND);
 }
@@ -152,13 +157,12 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
     };
 }
 
-// Scalars only. Zeroing the arrays compiles to memset() (a flash call) in the
-// stage-0 window; pulsetrain_loop assigns on the first pulse instead.
 __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, core1_stim_telemetry_t *st) {
-    st->n_stages       = pt->n_stages;
+    st->n_stages = pt->n_stages;
+    st->delivered_stages[0] = 0;
     st->output_mode[0] = pt->output_mode[0];
     st->output_mode[1] = pt->output_mode[1];
-    st->cancelled      = false;
+    st->cancelled = false;
 }
 
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1_stim_telemetry_t *sr, uint32_t stage_start_cyc) {
@@ -215,10 +219,15 @@ __always_inline static inline uint16_t pt_adc_cfg(const pulsetrain_t *pt, uint8_
     return ADC_BASE_CONFIG | ((pt->output_mode[ch] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0);
 }
 
-__always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
+// Clear latched rising edges on the trigger inputs.
+__always_inline static inline void clear_trigger_edges(void) {
+    for (uint8_t ch = 0; ch < 2; ch++) {
+        uint8_t pin = channel_io_pins[ch];
+        io_bank0_hw->intr[pin >> 3] = RISING_EDGE_INTERRUPT_BIT(pin, 1);
+    }
+}
 
-    // Return if pulse train isn't initialized
-    if (pt->n_pulses == 0 || pt->n_stages == 0) return;
+__always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
 
     // Clear cancel doorbell
     sio_hw->doorbell_in_clr = 1u;
@@ -279,23 +288,39 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
 
     // Send telemetry about the delivered pulsetrain to core0
     inline_queue_try_add(&q_stimulus_telemetry, &st);
+
+    clear_trigger_edges();
 }
 
-// Discard any rising edges on the trigger inputs so that triggers which
-// occurred while handling commands or stimulus delivery are ignored.
-__always_inline static inline void clear_trigger_edges(void) {
+// Returns the channel (0 or 1) whose trigger input has a latched rising edge,
+// or -1 if none. Channel 0 takes priority if both rising edges arrive on both
+// channels simultaneously
+__always_inline static inline int8_t check_pending_trigger_ch(void) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         uint8_t pin = channel_io_pins[ch];
-        io_bank0_hw->intr[pin >> 3] = RISING_EDGE_INTERRUPT_BIT(pin, 1);
+        if (io_bank0_hw->proc1_irq_ctrl.ints[pin >> 3] & RISING_EDGE_INTERRUPT_BIT(pin, 1))
+            return (int8_t)ch;
     }
+    return -1;
 }
 
-// S/R (TRIGGER_CONFIG) and B/C/D (OFFSETS) are processed.
-// Stimulus requests (U/T) and manual commands (A/M/V/E) received during a stimulus are discarded.
-__always_inline static inline void handle_cmd_queue_during_stimulus(pulsetrain_t pt_trigger[2]) {
+typedef enum { CMD_QUEUE_IDLE, CMD_QUEUE_AFTER_STIM } cmd_queue_mode_t;
+
+// IDLE: Apply all commands in queue, return the first queued stimulus, or NULL.
+// AFTER_STIM: Process all commands in queue except discard queued stimuli.
+// Always returns NULL because multiple stimuli can't be subsequently queued.
+__always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t pt_trigger[2], cmd_queue_mode_t mode) {
+    static pulsetrain_t stimulus;   // single-threaded; consumed before the next call
     core1_cmd_t cmd;
+
     while (inline_queue_try_remove(&q_core1_cmd, &cmd)) {
         switch (cmd.type) {
+            case CORE1_CMD_STIMULUS:
+                if (mode == CMD_QUEUE_IDLE) {
+                    stimulus = cmd.stimulus;
+                    return &stimulus;
+                }
+                break;  // queued behind the running stimulus: discard
             case CORE1_CMD_TRIGGER_CONFIG:
                 pt_trigger[cmd.trigger_config.ch] = cmd.trigger_config.pt;
                 break;
@@ -305,75 +330,29 @@ __always_inline static inline void handle_cmd_queue_during_stimulus(pulsetrain_t
                 queue_add_blocking(&q_offsets_rx, offsets);
                 break;
             }
-            default: break;  // discard CORE1_CMD_STIMULUS and CORE1_CMD_MANUAL
-        }
-    }
-}
-
-__always_inline static inline void handle_cmd_queue(pulsetrain_t pt_trigger[2]) {
-    core1_cmd_t cmd;
-    core1_cmd_t latest_stimulus;
-    bool has_stimulus = false;
-
-    if (!inline_queue_try_remove(&q_core1_cmd, &cmd))
-        return;
-
-    do {
-        if (cmd.type == CORE1_CMD_STIMULUS) {
-            latest_stimulus = cmd;
-            has_stimulus = true;
-        } else {
-            switch (cmd.type) {
-                case CORE1_CMD_TRIGGER_CONFIG:
-                    pt_trigger[cmd.trigger_config.ch] = cmd.trigger_config.pt;
-                    break;
-                case CORE1_CMD_OFFSETS: {
-                    offsets_t offsets[2];
-                    measure_offsets(offsets, cmd.offsets);
-                    queue_add_blocking(&q_offsets_rx, offsets);
-                    break;
-                }
-                case CORE1_CMD_MANUAL: {
-                    manual_cmd_t *m = &cmd.manual;
+            case CORE1_CMD_MANUAL: {
+                manual_cmd_t *m = &cmd.manual;
+                if (m->type == MANUAL_CMD_ADC_READ) {
+                    const uint16_t adc_cfg = ADC_BASE_CONFIG | (m->line ? ADC_CURRENT_LINE : 0);
+                    adc_write_blocking(m->ch, adc_cfg);
+                    int16_t val = adc_read_blocking(m->ch);
+                    queue_add_blocking(&q_adc_result, &val);
+                } 
+                else {
                     if (m->type == MANUAL_CMD_DAC_SET) {
                         dac_write_blocking(m->ch, (uint16_t)m->dac_code);
                         dacs_latch();
-                    } else if (m->type == MANUAL_CMD_SET_OUTPUT_MODE) {
+                    } 
+                    else {
                         set_output_mode(m->ch, m->output_mode);
-                    } else {
-                        const uint16_t adc_cfg = ADC_BASE_CONFIG | (m->line ? ADC_CURRENT_LINE : 0);
-                        adc_write_blocking(m->ch, adc_cfg);
-                        int16_t val = adc_read_blocking(m->ch);
-                        queue_add_blocking(&q_adc_result, &val);
                     }
-                    break;
                 }
-                default: break;
+                break;
             }
-        }
-    } while (inline_queue_try_remove(&q_core1_cmd, &cmd));
-
-    if (has_stimulus) {
-        run_pulsetrain(&latest_stimulus.stimulus);
-        handle_cmd_queue_during_stimulus(pt_trigger);
-    }
-
-    // Ignore any trigger that occurred while handling the user command
-    clear_trigger_edges();
-}
-
-__always_inline static inline void handle_triggers(pulsetrain_t pt_trigger[2]) {
-    for (uint8_t ch = 0; ch < 2; ch++) {
-        uint8_t pin = channel_io_pins[ch];
-        uint32_t bit = RISING_EDGE_INTERRUPT_BIT(pin, 1);
-        if (io_bank0_hw->proc1_irq_ctrl.ints[pin >> 3] & bit) {
-            run_pulsetrain(&pt_trigger[ch]);
-            handle_cmd_queue_during_stimulus(pt_trigger);
-            // Ignore any trigger that occurred during the triggered stimulus
-            clear_trigger_edges();
-            break;
+            default: break;
         }
     }
+    return NULL;
 }
 
 void __time_critical_func(main_core1)(void) {
@@ -399,7 +378,16 @@ void __time_critical_func(main_core1)(void) {
     pulsetrain_t pt_trigger[2] = {0};
 
     while (true) {
-        handle_cmd_queue(pt_trigger);
-        handle_triggers(pt_trigger);
+        // If there is no stimulus queued, check triggers
+        const pulsetrain_t *pt = handle_cmd_queue(pt_trigger, CMD_QUEUE_IDLE);
+        if (!pt) {
+            int8_t ch = check_pending_trigger_ch();
+            if (ch >= 0)
+                pt = &pt_trigger[ch];
+        }
+        if (pt) {
+            run_pulsetrain(pt);
+            handle_cmd_queue(pt_trigger, CMD_QUEUE_AFTER_STIM);
+        }
     }
 }
