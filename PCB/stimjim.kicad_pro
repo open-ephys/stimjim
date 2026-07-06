@@ -655,7 +655,7 @@
       "method": 0,
       "sort_order": 0
     },
-    "bom_export_filename": "${PROJECTNAME}.csv",
+    "bom_export_filename": "manufacturing\\bom\\stimjim BOM.csv",
     "bom_fmt_presets": [],
     "bom_fmt_settings": {
       "field_delimiter": ",",
@@ -672,6 +672,18 @@
       "fields_ordered": [
         {
           "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Qty",
+          "name": "${QUANTITY}",
+          "show": true
+        },
+        {
+          "group_by": false,
           "label": "Reference",
           "name": "Reference",
           "show": true
@@ -683,34 +695,22 @@
           "show": true
         },
         {
+          "group_by": true,
+          "label": "Tolerance",
+          "name": "Tolerance",
+          "show": true
+        },
+        {
           "group_by": false,
           "label": "Datasheet",
           "name": "Datasheet",
-          "show": true
-        },
-        {
-          "group_by": false,
-          "label": "Footprint",
-          "name": "Footprint",
-          "show": true
-        },
-        {
-          "group_by": false,
-          "label": "Qty",
-          "name": "${QUANTITY}",
-          "show": true
+          "show": false
         },
         {
           "group_by": true,
-          "label": "DNP",
-          "name": "${DNP}",
+          "label": "Footprint",
+          "name": "Footprint",
           "show": true
-        },
-        {
-          "group_by": false,
-          "label": "#",
-          "name": "${ITEM_NUMBER}",
-          "show": false
         },
         {
           "group_by": false,
@@ -731,28 +731,46 @@
           "show": false
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "TempCo",
           "name": "TempCo",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Tolerance",
-          "name": "Tolerance",
           "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Voltage",
           "name": "Voltage",
           "show": true
         },
         {
+          "group_by": true,
+          "label": "DNP",
+          "name": "${DNP}",
+          "show": true
+        },
+        {
+          "group_by": true,
+          "label": "OEPSPN",
+          "name": "OEPSPN",
+          "show": true
+        },
+        {
+          "group_by": true,
+          "label": "MPN",
+          "name": "MPN",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "LCSC",
+          "name": "LCSC",
+          "show": false
+        },
+        {
           "group_by": false,
           "label": "Description",
           "name": "Description",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -764,24 +782,6 @@
           "group_by": false,
           "label": "KLC_S4.2_VREG_LX",
           "name": "KLC_S4.2_VREG_LX",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "MPN",
-          "name": "MPN",
-          "show": true
-        },
-        {
-          "group_by": false,
-          "label": "OEPSPN",
-          "name": "OEPSPN",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "LCSC",
-          "name": "LCSC",
           "show": false
         },
         {

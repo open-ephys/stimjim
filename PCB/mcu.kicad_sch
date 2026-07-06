@@ -15273,7 +15273,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" "CONNECTOR:   HEADER 2.54MM R/A 2x8POS   [302-R161] [TH]"
 			(at 71.12 246.38 0)
 			(hide yes)
 			(show_name no)
@@ -15307,6 +15307,17 @@
 			)
 		)
 		(property "MPN" "302-R161"
+			(at 71.12 246.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070152"
 			(at 71.12 246.38 0)
 			(hide yes)
 			(show_name no)
@@ -15427,7 +15438,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±1% 0.100W   [RC0603FR-0710KL] [SMD]"
 			(at 81.28 96.52 0)
 			(hide yes)
 			(show_name no)
@@ -15493,7 +15504,29 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-0710KL"
+			(at 81.28 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020133"
+			(at 81.28 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
 			(at 81.28 96.52 0)
 			(hide yes)
 			(show_name no)
@@ -15577,8 +15610,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 217.17 227.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 217.17 227.33 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 217.17 227.33 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15661,7 +15716,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 106.68 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -15694,7 +15749,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
 			(at 106.68 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -15706,6 +15761,28 @@
 			)
 		)
 		(property "Voltage" "16V"
+			(at 106.68 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
+			(at 106.68 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
 			(at 106.68 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -16022,8 +16099,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 175.26 227.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 175.26 227.33 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 175.26 227.33 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16261,7 +16360,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 85.09 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -16348,7 +16447,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 85.09 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 85.09 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -16428,7 +16538,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 22pF 50V ±5% C0G/NP0   [CL05C220JB51PNC] [SMD]"
 			(at 66.04 149.86 0)
 			(hide yes)
 			(show_name no)
@@ -16461,7 +16571,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL05C220JB51PNC"
+			(at 66.04 149.86 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010080"
 			(at 66.04 149.86 90)
 			(hide yes)
 			(show_name no)
@@ -16542,7 +16663,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 110.49 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -16629,7 +16750,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 110.49 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 110.49 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -16708,7 +16840,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 100Ω ±1% 0.333W   [CRCW0603100RFKEAHP] [SMD]"
 			(at 105.41 157.48 0)
 			(hide yes)
 			(show_name no)
@@ -16785,7 +16917,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRCW0603100RFKEAHP"
+			(at 105.41 157.48 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020042"
 			(at 105.41 157.48 90)
 			(hide yes)
 			(show_name no)
@@ -17019,7 +17162,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 121.92 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -17073,7 +17216,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 121.92 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -17084,7 +17227,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 121.92 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -17179,8 +17322,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 217.17 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 217.17 255.27 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 217.17 255.27 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17266,8 +17431,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 137.16 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 137.16 255.27 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 137.16 255.27 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17428,7 +17615,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 97.79 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -17515,7 +17702,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 97.79 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 97.79 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -17595,7 +17793,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 233.68 157.48 0)
 			(hide yes)
 			(show_name no)
@@ -17649,7 +17847,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 233.68 157.48 0)
 			(hide yes)
 			(show_name no)
@@ -17660,7 +17858,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 233.68 157.48 0)
 			(hide yes)
 			(show_name no)
@@ -17752,7 +17950,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 132.08 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -17839,7 +18037,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
+			(at 132.08 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
 			(at 132.08 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -17921,7 +18130,7 @@
 				)
 			)
 		)
-		(property "Description" "A microcontroller by Raspberry Pi, dual CPU architecture (ARM Cortex-M33 / RISC-V Hazard3), 150MHz, 2MB flash, 520KB SRAM, 12 PIO state machines, VQFN-80"
+		(property "Description" "IC:   MCU ARM RP2354B0A4   [SC1512-A4] [QFN-80]"
 			(at 135.89 134.62 0)
 			(hide yes)
 			(show_name no)
@@ -17947,6 +18156,28 @@
 			(at 135.89 137.16 0)
 			(hide yes)
 			(show_name yes)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "SC1512-A4"
+			(at 135.89 134.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080220"
+			(at 135.89 134.62 0)
+			(hide yes)
+			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
@@ -18261,7 +18492,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "CONNECTOR:   SWITCH TACTILE SPST-NO 0.05A 12V   [PTS645VH58-2 LFS] [TH]"
 			(at 74.93 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -18348,6 +18579,17 @@
 				)
 			)
 		)
+		(property "OEPSPN" "OEPS070114"
+			(at 74.93 101.6 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "8bc2e348-d625-4289-a3fa-da21849cea5d")
 		)
@@ -18419,7 +18661,7 @@
 				)
 			)
 		)
-		(property "Description" "Inductor"
+		(property "Description" "INDUCTOR:   FIXED INDUCTOR SMD 3.3uH 2.1A 140mΩ   [AOTA-B201610S3R3-101-T] [0806]"
 			(at 140.97 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -18453,6 +18695,17 @@
 			)
 		)
 		(property "MPN" "AOTA-B201610S3R3-101-T"
+			(at 140.97 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS040036"
 			(at 140.97 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -18613,8 +18866,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 137.16 227.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 137.16 227.33 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 137.16 227.33 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -18697,7 +18972,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 77.47 176.53 0)
 			(hide yes)
 			(show_name no)
@@ -18730,7 +19005,29 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 77.47 176.53 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 77.47 176.53 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "TempCo" "X7R"
 			(at 77.47 176.53 0)
 			(hide yes)
 			(show_name no)
@@ -18811,7 +19108,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 63.5 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -18898,7 +19195,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 63.5 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 63.5 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -18977,7 +19285,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 201.93 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -19031,7 +19339,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 201.93 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -19042,7 +19350,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 201.93 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -19444,7 +19752,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 160.02 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -19498,7 +19806,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 160.02 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -19509,7 +19817,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 160.02 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -19599,7 +19907,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 240.03 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -19653,7 +19961,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 240.03 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -19664,7 +19972,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 240.03 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -19913,7 +20221,7 @@
 				)
 			)
 		)
-		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+		(property "Description" "CONNECTOR:   BNC JACK 50ohm R/A   [0731375003] [TH]"
 			(at 243.84 157.48 0)
 			(hide yes)
 			(show_name no)
@@ -19947,6 +20255,17 @@
 			)
 		)
 		(property "MPN" "0731375003"
+			(at 243.84 157.48 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070151"
 			(at 243.84 157.48 0)
 			(hide yes)
 			(show_name no)
@@ -20104,7 +20423,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 196.85 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -20158,7 +20477,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 196.85 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -20169,7 +20488,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 196.85 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -20417,7 +20736,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 27Ω ±1% 0.063W   [RMCF0402FT27R0] [SMD]"
 			(at 106.68 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -20450,7 +20769,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RMCF0402FT27R0"
+			(at 106.68 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020170"
 			(at 106.68 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -20690,8 +21020,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 255.27 227.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 255.27 227.33 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 255.27 227.33 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -20777,8 +21129,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 255.27 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 255.27 255.27 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 255.27 255.27 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -20859,7 +21233,7 @@
 				)
 			)
 		)
-		(property "Description" "128Mbit / 16MiB Serial Flash Memory, Standard/Dual/Quad SPI, 2.7-3.6V, SOIC-8"
+		(property "Description" "IC:   FLASH 128MBIT SPI/QUAD   [W25Q128JVSIQ] [8-SOIC]"
 			(at 71.628 213.106 0)
 			(hide yes)
 			(show_name no)
@@ -20892,7 +21266,18 @@
 				)
 			)
 		)
-		(property "MPN" "W25Q128JVS"
+		(property "MPN" "W25Q128JVSIQ"
+			(at 71.12 196.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080163"
 			(at 71.12 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -20991,7 +21376,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 104.14 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -21078,7 +21463,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 104.14 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 104.14 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -21157,7 +21553,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 200Ω ±1% 0.100W (OEPS J30 017)   [RC0603FR-07200RL] [SMD]"
 			(at 186.69 96.52 0)
 			(hide yes)
 			(show_name no)
@@ -21190,7 +21586,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-07200RL"
+			(at 186.69 96.52 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020141"
 			(at 186.69 96.52 90)
 			(hide yes)
 			(show_name no)
@@ -21348,7 +21755,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 1kΩ ±0.1% 0.100W   [RG1608P-102-B-T5] [SMD]"
 			(at 105.41 149.86 0)
 			(hide yes)
 			(show_name no)
@@ -21425,7 +21832,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-102-B-T5"
+			(at 105.41 149.86 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020215"
 			(at 105.41 149.86 90)
 			(hide yes)
 			(show_name no)
@@ -21504,7 +21922,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 121.92 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -21558,7 +21976,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 121.92 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -21569,7 +21987,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 121.92 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -21738,7 +22156,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 27Ω ±1% 0.063W   [RMCF0402FT27R0] [SMD]"
 			(at 96.52 111.76 0)
 			(hide yes)
 			(show_name no)
@@ -21814,7 +22232,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RMCF0402FT27R0"
+			(at 96.52 111.76 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020170"
 			(at 96.52 111.76 90)
 			(hide yes)
 			(show_name no)
@@ -21974,8 +22403,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 181.61 172.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 181.61 172.72 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 181.61 172.72 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -22213,7 +22664,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 22pF 50V ±5% C0G/NP0   [CL05C220JB51PNC] [SMD]"
 			(at 66.04 139.7 0)
 			(hide yes)
 			(show_name no)
@@ -22246,7 +22697,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL05C220JB51PNC"
+			(at 66.04 139.7 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010080"
 			(at 66.04 139.7 90)
 			(hide yes)
 			(show_name no)
@@ -22325,7 +22787,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 201.93 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -22379,7 +22841,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 201.93 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -22390,7 +22852,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 201.93 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -22481,7 +22943,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "DIODE:   LED TH Green 565nm 20mA R/A   [SSF-LXH100GD-01] [TH]"
 			(at 196.85 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -22526,6 +22988,17 @@
 			)
 		)
 		(property "MPN" "SSF-LXH100GD-01"
+			(at 196.85 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030055"
 			(at 196.85 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -22604,7 +23077,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 100Ω ±1% 0.333W   [CRCW0603100RFKEAHP] [SMD]"
 			(at 105.41 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -22681,7 +23154,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRCW0603100RFKEAHP"
+			(at 105.41 160.02 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020042"
 			(at 105.41 160.02 90)
 			(hide yes)
 			(show_name no)
@@ -22762,7 +23246,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 72.39 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -22849,7 +23333,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 72.39 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 72.39 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -23009,7 +23504,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 167.64 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -23096,7 +23591,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 167.64 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 167.64 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -23175,7 +23681,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 160.02 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -23229,7 +23735,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 160.02 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -23240,7 +23746,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 160.02 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -23333,7 +23839,7 @@
 				)
 			)
 		)
-		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+		(property "Description" "CONNECTOR:   BNC JACK 50ohm R/A   [0731375003] [TH]"
 			(at 207.01 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -23367,6 +23873,17 @@
 			)
 		)
 		(property "MPN" "0731375003"
+			(at 207.01 172.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070151"
 			(at 207.01 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -23448,7 +23965,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 180.34 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -23535,7 +24052,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
+			(at 180.34 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
 			(at 180.34 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -23773,7 +24301,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 78.74 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -23860,7 +24388,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 78.74 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 78.74 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -23940,7 +24479,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±1% 0.100W   [RC0603FR-0710KL] [SMD]"
 			(at 34.29 104.14 0)
 			(hide yes)
 			(show_name no)
@@ -24006,7 +24545,29 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-0710KL"
+			(at 34.29 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020133"
+			(at 34.29 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" ""
 			(at 34.29 104.14 0)
 			(hide yes)
 			(show_name no)
@@ -24086,7 +24647,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 27Ω ±1% 0.063W   [RMCF0402FT27R0] [SMD]"
 			(at 96.52 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -24162,7 +24723,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RMCF0402FT27R0"
+			(at 96.52 109.22 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020170"
 			(at 96.52 109.22 90)
 			(hide yes)
 			(show_name no)
@@ -24478,7 +25050,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 180.34 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -24565,7 +25137,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
+			(at 180.34 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
 			(at 180.34 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -24881,7 +25464,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 173.99 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -24968,7 +25551,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 173.99 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 173.99 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -25048,7 +25642,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "DIODE:   LED TH Green 565nm 20mA R/A   [SSF-LXH100GD-01] [TH]"
 			(at 196.85 96.52 0)
 			(hide yes)
 			(show_name no)
@@ -25093,6 +25687,17 @@
 			)
 		)
 		(property "MPN" "SSF-LXH100GD-01"
+			(at 196.85 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030055"
 			(at 196.85 96.52 0)
 			(hide yes)
 			(show_name no)
@@ -25252,7 +25857,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "CONNECTOR:   SWITCH TACTILE SPST-NO TOP ACTUATED   [TS04-66-50-BK-160-SMT] [SMD]"
 			(at 34.29 118.11 0)
 			(hide yes)
 			(show_name no)
@@ -25339,6 +25944,17 @@
 				)
 			)
 		)
+		(property "OEPSPN" "OEPS070115"
+			(at 34.29 118.11 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "67c4ebd8-e9a4-481b-8de5-958f17b3b050")
 		)
@@ -25410,8 +26026,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 218.44 157.48 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 218.44 157.48 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 218.44 157.48 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -25572,7 +26210,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 91.44 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -25659,7 +26297,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 91.44 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 91.44 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -26287,7 +26936,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 116.84 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -26374,7 +27023,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
+			(at 116.84 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
 			(at 116.84 46.99 0)
 			(hide yes)
 			(show_name no)
@@ -26453,7 +27113,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 240.03 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -26507,7 +27167,7 @@
 				)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 240.03 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -26518,7 +27178,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 240.03 227.33 0)
 			(hide yes)
 			(show_name no)
@@ -26770,8 +27430,30 @@
 				)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 175.26 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 175.26 255.27 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 175.26 255.27 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -26852,7 +27534,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 200Ω ±1% 0.100W (OEPS J30 017)   [RC0603FR-07200RL] [SMD]"
 			(at 186.69 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -26885,7 +27567,18 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-07200RL"
+			(at 186.69 88.9 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020141"
 			(at 186.69 88.9 90)
 			(hide yes)
 			(show_name no)
@@ -27044,7 +27737,7 @@
 				)
 			)
 		)
-		(property "Description" "Four pin crystal, GND on pins 2 and 4"
+		(property "Description" "OTHER:   Crystal 12 MHz ±20ppm 12pF 100Ohms   [ABM8AIG-12.000MHZ-12-2Z-T3] [SMD]"
 			(at 78.74 144.78 0)
 			(hide yes)
 			(show_name no)
@@ -27121,6 +27814,17 @@
 			)
 		)
 		(property "MPN" "ABM8AIG-12.000MHZ-12-2Z-T3"
+			(at 78.74 144.78 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS100059"
 			(at 78.74 144.78 90)
 			(hide yes)
 			(show_name no)

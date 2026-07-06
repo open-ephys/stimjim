@@ -197,7 +197,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   OPAMP GP 1 CIRCUIT   [OPA197IDR] [8-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -236,12 +236,25 @@
 				)
 			)
 		)
-		(property "MPN" "OPA197IDR "
+		(property "MPN" "OPA197IDR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "cb576f90-9ad6-479f-97e0-5d2f72bd6d81")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080229"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6a0b5c90-56ba-40e9-9b1d-90cc303c0c6a")
 			(effects
 				(font
 					(size 1 1)
@@ -600,7 +613,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -639,12 +652,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "02a627d8-8e0b-4371-b7bd-c79076106f6e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f3d9e2df-1473-4a4f-9e52-de2e83be87a2")
 			(effects
 				(font
 					(size 1 1)
@@ -790,7 +816,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 0Ω 1A   [RCS06030000Z0EA] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -799,6 +825,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "RCS06030000Z0EA"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3f67317b-4a8e-4eb1-a4c0-b5b98fa51591")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020151"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e64f7d34-2fce-4dd6-92bd-2f4e3db9a673")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -941,7 +993,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -980,12 +1032,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "cc639b3b-0b4f-46fd-b981-fda1f6a7e292")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a22e3f35-696b-4226-805c-3874e187891b")
 			(effects
 				(font
 					(size 1 1)
@@ -1131,7 +1196,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1170,12 +1235,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ffa5d94e-a920-4331-b14a-7c6dbcfb3af4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cedc085a-7c11-400b-90d0-bc9b42f69512")
 			(effects
 				(font
 					(size 1 1)
@@ -1320,7 +1398,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±1% 0.100W   [RC0603FR-0710KL] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1397,12 +1475,38 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-0710KL"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "630a0c1f-b3da-4692-8300-8de751e5b783")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020133"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7fb689ac-d3c1-4b52-b7b8-90e84f8bba08")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "df355173-826e-47b8-b280-463a9a2ae5f7")
 			(effects
 				(font
 					(size 1 1)
@@ -1548,7 +1652,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1587,12 +1691,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "6e1462a5-8438-4311-9cfa-1a1776e2bd6b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "28a28f9e-d42b-44a0-b5d8-c67d8efba4d4")
 			(effects
 				(font
 					(size 1 1)
@@ -1738,7 +1855,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1777,12 +1894,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "466303ca-a838-417b-bdc3-e9b67fae3c4a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "72c2cad3-bdf8-4945-81d7-0e44c86c695a")
 			(effects
 				(font
 					(size 1 1)
@@ -1928,7 +2058,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1967,12 +2097,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3462944f-e050-468c-a4f3-8b3029111764")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b280cab7-b48a-4782-b3e7-377c7469d44d")
 			(effects
 				(font
 					(size 1 1)
@@ -2118,7 +2261,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   DIGITAL ISOLATOR 6 Channel    [ISO7760DWR] [16-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2157,12 +2300,25 @@
 				)
 			)
 		)
-		(property "MPN" "ISO7760DWR "
+		(property "MPN" "ISO7760DWR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0accede1-0efb-47ad-b0d8-ff0cc3af6f4b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080228"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9e4aa29c-c1a7-4392-bfe3-36475b843d12")
 			(effects
 				(font
 					(size 1 1)
@@ -2614,7 +2770,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2653,12 +2809,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "da13a582-d0a5-4f17-88f6-9efb79d38e3f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1a26de2c-ad08-433c-9adb-7a0f892f1257")
 			(effects
 				(font
 					(size 1 1)
@@ -2804,7 +2973,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2843,12 +3012,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9e881d7d-5f5b-4271-9c59-8fb7f0c9a3c0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6f1ad3a2-576a-47ee-aa7c-f88d4bf84c5a")
 			(effects
 				(font
 					(size 1 1)
@@ -2995,7 +3177,7 @@
 				)
 			)
 		)
-		(property "Description" "Positive 100mA 30V Linear Regulator, Fixed Output 5V, SO-8"
+		(property "Description" "IC:   LDO 5V 100mA   [MC78L05ACDR2G] [8-SOIC]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3040,6 +3222,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "5409b370-67a8-40a4-b9ae-51cd333998f8")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080226"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e92ea049-0de8-42de-b1e4-0f9412c91586")
 			(effects
 				(font
 					(size 1 1)
@@ -3409,7 +3604,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   DIGITAL ISOLATOR 4 Channel    [ISO7741DWR] [16-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3454,6 +3649,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "aa3937bf-35e9-4654-9b9d-2916182a71a6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080227"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "77d7ee25-239e-47e6-958b-5451a403f025")
 			(effects
 				(font
 					(size 1 1)
@@ -3905,7 +4113,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   OPAMP GP 1 CIRCUIT   [OPA197IDR] [8-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3944,12 +4152,25 @@
 				)
 			)
 		)
-		(property "MPN" "OPA197IDR "
+		(property "MPN" "OPA197IDR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "323c236d-05fb-4be0-aa66-da566fe2a8c1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080229"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a9e2c7ca-9fa6-49ae-83e9-5afa289f0512")
 			(effects
 				(font
 					(size 1 1)
@@ -4308,7 +4529,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   VREF 2.5V 0.8% 5mA   [AD1582ARTZ-REEL7] [SOT-23-3]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4347,12 +4568,25 @@
 				)
 			)
 		)
-		(property "MPN" "AD1582ARTZ-REEL"
+		(property "MPN" "AD1582ARTZ-REEL7"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "56680995-54d1-4eda-9402-13de3e3d0e91")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080224"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b33acf01-c1b5-4d01-bc11-3b8f56e58f75")
 			(effects
 				(font
 					(size 1 1)
@@ -4721,7 +4955,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   DAC 16BIT   [AD5752AREZ] [24-TSSOP]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4766,6 +5000,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "365a2044-add5-4362-a39f-b85a740415b9")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080091"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "81dee27f-4451-4c6b-95af-c4df01540d44")
 			(effects
 				(font
 					(size 1 1)
@@ -5238,7 +5485,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5277,7 +5524,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-103-B-T5"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5296,6 +5543,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b6361d68-1b43-47ab-8add-71adacec2570")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020235"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d71532ed-995b-4f3f-a511-9d12997e551f")
 			(effects
 				(font
 					(size 1 1)
@@ -5441,7 +5701,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5480,12 +5740,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "5bb105c4-4c80-4eb7-b045-dc7f8bd8e639")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e0c81543-e719-40d8-8164-4bcb40fdf4d0")
 			(effects
 				(font
 					(size 1 1)
@@ -5631,7 +5904,7 @@
 				)
 			)
 		)
-		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+		(property "Description" "CONNECTOR:   BNC JACK 50ohm R/A   [0731375003] [TH]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5676,6 +5949,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "2bda89c7-9f09-4e93-b05d-c69ae9f3a146")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070151"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "83df0acd-cabd-45e4-becb-71e07347f5c3")
 			(effects
 				(font
 					(size 1 1)
@@ -6086,7 +6372,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   DIGITAL ISOLATOR 4 Channel    [ISO7741DWR] [16-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6131,6 +6417,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "fb600ef0-69b1-478f-a4eb-452ac2cf95aa")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080227"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f924657a-74ee-4358-945d-eb18c7ee9ea2")
 			(effects
 				(font
 					(size 1 1)
@@ -6582,7 +6881,7 @@
 				)
 			)
 		)
-		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+		(property "Description" "CONNECTOR:   BNC JACK 50ohm R/A   [0731375003] [TH]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -6627,6 +6926,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "7bb5526e-8109-4339-aa45-008619791e13")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070151"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "842c2c52-3fac-491d-9f0a-28d9250f0f72")
 			(effects
 				(font
 					(size 1 1)
@@ -7037,7 +7349,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7076,7 +7388,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7095,6 +7407,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "668e36d4-8549-409b-b36f-6b81b630b30b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "95c13370-d056-4cc2-bb88-0fd65e22caa2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b33f25b0-a776-4405-9ebd-a90c109cbc76")
 			(effects
 				(font
 					(size 1 1)
@@ -7241,7 +7579,7 @@
 				)
 			)
 		)
-		(property "Description" "Positive 100mA 30V Linear Regulator, Fixed Output 5V, SO-8"
+		(property "Description" "IC:   LDO 5V 100mA   [MC78L05ACDR2G] [8-SOIC]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7286,6 +7624,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "dd6c571d-eb1d-4d8a-be0d-9746266c1850")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080226"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c4318ed2-23bf-4928-b822-1a6323d112b5")
 			(effects
 				(font
 					(size 1 1)
@@ -7804,7 +8155,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -7843,12 +8194,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "d4b53183-c96b-4ad4-a2fb-7dad39e621a8")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6d555310-f776-4fa1-81f9-3334c420ecb3")
 			(effects
 				(font
 					(size 1 1)
@@ -8143,7 +8507,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8182,7 +8546,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8201,6 +8565,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "090c61dd-9753-4411-b32f-ec885ba203d4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "efbf2e71-76a0-4465-888b-96612757d135")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "40ce28d5-09ab-400d-9411-5e5864ba4e80")
 			(effects
 				(font
 					(size 1 1)
@@ -8346,7 +8736,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8385,7 +8775,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8404,6 +8794,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "286f97fe-b9c1-4c48-9bcd-65fe0c8b171d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6d578cfb-5a8e-4086-a578-e9298f8c9314")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "209e7f21-deb7-469a-89a2-537f4fc9bf91")
 			(effects
 				(font
 					(size 1 1)
@@ -8549,7 +8965,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   ADC 14BIT SAR 2 channels   [AD7321BRUZ-REEL7] [14-TSSOP]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8588,12 +9004,25 @@
 				)
 			)
 		)
-		(property "MPN" "AD7321BRUZ-REEL7 "
+		(property "MPN" "AD7321BRUZ-REEL7"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "2315979d-2481-40be-a3c9-0883fcd00280")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080225"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3612fc73-9813-44d8-9266-b230b25ee845")
 			(effects
 				(font
 					(size 1 1)
@@ -9022,7 +9451,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9061,12 +9490,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "515685ae-b286-4681-8402-73b506a06982")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "319c3cc7-01bf-4a62-a665-0fe8e7d8653e")
 			(effects
 				(font
 					(size 1 1)
@@ -9212,7 +9654,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9251,12 +9693,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3dc611d0-96d0-4f1a-bce6-e11a1a26b280")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a3f5d72a-f7e7-4a1d-a889-e8ca69c2d83b")
 			(effects
 				(font
 					(size 1 1)
@@ -9402,7 +9857,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9441,12 +9896,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "855b3701-3638-4074-9d6c-93f4fe85868e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "21129346-e9a9-4992-a2a0-c2798affb381")
 			(effects
 				(font
 					(size 1 1)
@@ -9890,7 +10358,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 3kΩ ±0.1% 0.100W   [RG1608P-302-B-T5] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9909,6 +10377,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "137fdf44-906e-4340-b8e0-a9f57c3a7387")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "RG1608P-302-B-T5"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2e5ee55c-734e-43a8-8b55-709e13ca01b6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020234"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a9c8088d-cd2c-4998-b524-5bd9f55fd7bc")
 			(effects
 				(font
 					(size 1 1)
@@ -10054,7 +10548,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10093,12 +10587,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9f695011-7497-4bd3-b044-d55920955a28")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b9059446-7589-4814-855f-3f26ed72852b")
 			(effects
 				(font
 					(size 1 1)
@@ -10242,7 +10749,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "OTHER:   DC DC CONVERTER +/-12V TO +/-15V 3W   [CC3-0512DF-E] [Populated PCB]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10287,6 +10794,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "34af02ec-145e-4759-bd41-7257ebf71755")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS100043"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3aac65b3-52c2-4eef-bd37-7dcd2d197357")
 			(effects
 				(font
 					(size 1 1)
@@ -10493,7 +11013,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10532,7 +11052,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10551,6 +11071,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3a21d3ba-07d8-4c5f-8643-89c53b921e55")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "67644bc1-5f0b-4487-b964-7402d754eda3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9688f2b9-5cc5-43eb-a988-d4316a83869e")
 			(effects
 				(font
 					(size 1 1)
@@ -10696,7 +11242,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10735,12 +11281,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9f69682c-5d35-48b2-9316-67e330727745")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "861a46fd-664c-4e60-a454-4bb318bad3aa")
 			(effects
 				(font
 					(size 1 1)
@@ -10886,7 +11445,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   VREF 2.5V 0.8% 5mA   [AD1582ARTZ-REEL7] [SOT-23-3]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10925,12 +11484,25 @@
 				)
 			)
 		)
-		(property "MPN" "AD1582ARTZ-REEL"
+		(property "MPN" "AD1582ARTZ-REEL7"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9cd35310-235c-43d6-8dcc-ced425f61501")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080224"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d9b27356-dbbb-4d47-a81a-977832a2b151")
 			(effects
 				(font
 					(size 1 1)
@@ -11299,7 +11871,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10nF 50V ±10% X7R   [C1608X7R1H103K080AA] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11338,12 +11910,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1608X7R1H103K080AA"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "5a2d06e6-cced-4b89-bdcf-6423dc9bee9a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010074"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3db3b015-b1cd-4045-bf84-b0e7a96ec3d4")
 			(effects
 				(font
 					(size 1 1)
@@ -11489,7 +12074,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11528,12 +12113,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "839c5021-f856-471d-8b08-e15abc2ccfe0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c6717712-7778-44dd-bbe7-1178b7b15bce")
 			(effects
 				(font
 					(size 1 1)
@@ -11679,7 +12277,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 360Ω ±0.1% 0.100W   [RG1608P-361-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11718,7 +12316,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-361-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11737,6 +12335,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "11866732-da23-42bb-b20c-dace28890404")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020231"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "72cad85d-a619-4268-9c56-93bb4e867815")
 			(effects
 				(font
 					(size 1 1)
@@ -11882,7 +12493,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11921,7 +12532,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-4991-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -11940,6 +12551,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "825a2a4f-af7c-448a-a842-1fbc7420b988")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020233"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "66276d66-8a09-469d-a930-e697ca9c6a39")
 			(effects
 				(font
 					(size 1 1)
@@ -12085,7 +12709,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12124,12 +12748,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ad5ee207-b3d9-485e-aa8e-72f7a16600ed")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a4cb0704-0e53-4d86-b2a9-34bafd113aca")
 			(effects
 				(font
 					(size 1 1)
@@ -12275,7 +12912,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12314,12 +12951,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ea276abb-6e65-4416-b0e1-7e778d859176")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "42a44567-6412-48fe-9b50-529deb84077e")
 			(effects
 				(font
 					(size 1 1)
@@ -12465,7 +13115,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12504,7 +13154,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12523,6 +13173,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "fa95a7ea-b3e3-41db-bd42-7aec670eb85d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "92e2d0ab-9a9c-45b1-9421-29c9abaa8711")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "75b2c2a4-0339-4d66-a737-99374caa3ab8")
 			(effects
 				(font
 					(size 1 1)
@@ -12668,7 +13344,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12707,12 +13383,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3819bc32-9feb-4447-ad65-0b56e3aad8af")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "70d933c6-2b09-4bc7-907b-d823df6f5df4")
 			(effects
 				(font
 					(size 1 1)
@@ -12858,7 +13547,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 3kΩ ±0.1% 0.100W   [RG1608P-302-B-T5] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12877,6 +13566,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "a9735ed3-6c7c-4cdc-8a35-aa5ccca13978")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "RG1608P-302-B-T5"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7aba8fed-e51e-4d17-970f-c1e0c8e04353")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020234"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "90c3207a-0f0f-43c2-9c1b-d083a492eda4")
 			(effects
 				(font
 					(size 1 1)
@@ -13022,7 +13737,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13061,12 +13776,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "12adc461-ebfa-40f6-aedf-49adf4386101")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "38a50455-9654-4d8e-9b9e-78c03e326aa5")
 			(effects
 				(font
 					(size 1 1)
@@ -13212,7 +13940,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10nF 50V ±10% X7R   [C1608X7R1H103K080AA] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13251,12 +13979,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1608X7R1H103K080AA"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c8466786-8e19-4849-a9d5-9da99fdcfafa")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010074"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9835ad3b-1d6c-4767-8787-c75be8f334c8")
 			(effects
 				(font
 					(size 1 1)
@@ -13402,7 +14143,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 0Ω 1A   [RCS06030000Z0EA] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13411,6 +14152,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "RCS06030000Z0EA"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7c039b0f-885a-4405-9aeb-d42a5b919622")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020151"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "56835d4d-c4ab-4a42-a186-c63ff46db164")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -13553,7 +14320,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13592,12 +14359,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "79f20be3-edd4-4a87-b197-571d56bca830")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ca698fae-c8f3-4c0c-97e4-7c43b4663765")
 			(effects
 				(font
 					(size 1 1)
@@ -13743,7 +14523,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13782,7 +14562,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13801,6 +14581,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "16ebd5f2-b687-4dca-b025-e6853b1687c6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3ec051ac-6d5f-4cf0-85fc-7c7eb07a00a1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d367109a-ef2a-4002-93d6-78f7457a226f")
 			(effects
 				(font
 					(size 1 1)
@@ -13946,7 +14752,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 100Ω ±0.1% 0.100W   [RG1608P-101-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13985,7 +14791,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-101-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14004,6 +14810,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0b588cad-abf2-46ab-a2c3-6f42716961be")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020232"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "09f71438-5351-4586-9b23-7354a53a7584")
 			(effects
 				(font
 					(size 1 1)
@@ -14149,7 +14968,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   ADC 14BIT SAR 2 channels   [AD7321BRUZ-REEL7] [14-TSSOP]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14188,12 +15007,25 @@
 				)
 			)
 		)
-		(property "MPN" "AD7321BRUZ-REEL7 "
+		(property "MPN" "AD7321BRUZ-REEL7"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3d866f04-0145-4ba9-8674-569ad840562d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080225"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c03309c0-6bbc-4246-a0f0-ad171ffb54aa")
 			(effects
 				(font
 					(size 1 1)
@@ -14622,7 +15454,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   OPAMP GP 1 CIRCUIT   [OPA197IDR] [8-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -14661,12 +15493,25 @@
 				)
 			)
 		)
-		(property "MPN" "OPA197IDR "
+		(property "MPN" "OPA197IDR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "354dde1c-808c-4391-a72f-6c07751a2b9b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080229"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4a0cf844-052d-4c4d-8647-28168ea4c5c6")
 			(effects
 				(font
 					(size 1 1)
@@ -15025,7 +15870,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10nF 50V ±10% X7R   [C1608X7R1H103K080AA] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15064,12 +15909,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1608X7R1H103K080AA"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "59a77a6e-cc7d-4f0c-abc0-ca0a556b425f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010074"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "dee1fa72-1ba3-4b58-b84b-b53edc2d8688")
 			(effects
 				(font
 					(size 1 1)
@@ -15215,7 +16073,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15254,7 +16112,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15273,6 +16131,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "1eb5246b-f444-4f41-891a-978086036901")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "dd73a90e-8cc0-4336-b0c2-215f840b0792")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "eee883be-5f16-46b9-87df-2f5677fee0a5")
 			(effects
 				(font
 					(size 1 1)
@@ -15418,7 +16302,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15457,12 +16341,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "13a362f6-dff7-4f58-b61e-89d7ba92b0e2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "722c2f64-fab2-40c2-bec3-14b2364abe76")
 			(effects
 				(font
 					(size 1 1)
@@ -15608,7 +16505,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15647,7 +16544,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-4991-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15666,6 +16563,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ebcac7f2-79ef-48cd-9010-143eb8668a90")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020233"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3aafde2c-b01d-41da-b463-8c1f07846a6b")
 			(effects
 				(font
 					(size 1 1)
@@ -15811,7 +16721,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -15850,12 +16760,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e6cbdebb-bcb3-4ff6-9cfc-7f39ff4d184b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e156be3a-01db-4b74-8015-2b0eefb2bad0")
 			(effects
 				(font
 					(size 1 1)
@@ -16001,7 +16924,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16040,12 +16963,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "bd9e6c5e-e160-48b5-b71d-9c893a6bf062")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ed184edb-4a49-4c1c-a359-6f3783b3ed8c")
 			(effects
 				(font
 					(size 1 1)
@@ -16191,7 +17127,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16230,12 +17166,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c70a5043-f8d1-4dd9-bd14-ba8bfaf91da5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9f263555-48e5-420e-aee1-e8772985386c")
 			(effects
 				(font
 					(size 1 1)
@@ -16381,7 +17330,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16420,12 +17369,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "35497fc4-89da-49df-959e-a7f59c1ca9cc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "44f52e62-78ce-457b-a8ff-5d1fb5214bde")
 			(effects
 				(font
 					(size 1 1)
@@ -16571,7 +17533,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 360Ω ±0.1% 0.100W   [RG1608P-361-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16610,7 +17572,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-361-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16629,6 +17591,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c8f13428-1ad7-48f1-afb2-605db5b9ff90")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020231"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2052e0af-1036-4151-bdfa-da42daf55f7a")
 			(effects
 				(font
 					(size 1 1)
@@ -16774,7 +17749,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16813,12 +17788,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "221aaf78-22f9-4fb9-ae3b-e84da1baf295")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f509b844-6490-4596-8974-4e8867ba8852")
 			(effects
 				(font
 					(size 1 1)
@@ -16964,7 +17952,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17003,7 +17991,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-103-B-T5"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17022,6 +18010,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "86c1ba1a-13a1-4ee9-ae99-59dd06794514")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020235"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "91818569-ad8b-492d-94b3-9ee2ea89a469")
 			(effects
 				(font
 					(size 1 1)
@@ -17167,7 +18168,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   DIGITAL ISOLATOR 6 Channel    [ISO7760DWR] [16-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17206,12 +18207,25 @@
 				)
 			)
 		)
-		(property "MPN" "ISO7760DWR "
+		(property "MPN" "ISO7760DWR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "46d6b3b6-e6e0-4895-be4f-06a7e54784f5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080228"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5e785f20-af2e-4487-b998-7b524af62d47")
 			(effects
 				(font
 					(size 1 1)
@@ -17663,7 +18677,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 100Ω ±0.1% 0.100W   [RG1608P-101-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17702,7 +18716,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-101-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17721,6 +18735,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "bf5c062e-9aee-4b97-b7f2-905c1c425c2a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020232"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7ff07566-fa85-4bf0-8488-a8bb36e3667a")
 			(effects
 				(font
 					(size 1 1)
@@ -17866,7 +18893,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17905,7 +18932,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17924,6 +18951,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9ecacd58-6752-4503-9915-97066f8ceace")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8d67b7d5-1f32-48ab-9309-6c99a466ba45")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "eb4f9a40-181e-4162-b412-09c88feacef7")
 			(effects
 				(font
 					(size 1 1)
@@ -18069,7 +19122,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18108,12 +19161,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "7c22c383-57ae-452e-b281-b9dce97ec564")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c4051764-76cf-4acf-9bfb-2605b4004d8d")
 			(effects
 				(font
 					(size 1 1)
@@ -18259,7 +19325,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 1kΩ ±0.1% 0.100W   [RG1608P-102-B-T5] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18298,7 +19364,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-102-B-T5"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18317,6 +19383,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "fa25639a-5b05-43e1-9441-af613e9116b2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020215"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "31873107-fb0a-4cb4-b2a6-a29aa2310570")
 			(effects
 				(font
 					(size 1 1)
@@ -18462,7 +19541,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   DAC 16BIT   [AD5752AREZ] [24-TSSOP]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18507,6 +19586,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "6915a473-18c4-447d-b4bd-3a2d36644c7b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080091"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f6911d27-1dc9-4db0-a6e7-1296341043df")
 			(effects
 				(font
 					(size 1 1)
@@ -18979,7 +20071,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19018,7 +20110,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19037,6 +20129,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8596b781-5eb6-4b0d-8a50-4eec3adbe737")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "32c6cb4e-2a82-4f8a-a548-21e1d4de754e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0af744e0-7635-4424-9bd0-2fe49713e506")
 			(effects
 				(font
 					(size 1 1)
@@ -19182,7 +20300,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   MULTIPLEXER 2 X 4:1   [DG409DYZ-T] [16-SOIC]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19227,6 +20345,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "1a6f507f-ecc1-48c5-93f4-a509fc66bb50")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080223"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "532ec287-5188-4016-8369-de042f7e2f64")
 			(effects
 				(font
 					(size 1 1)
@@ -19677,7 +20808,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19716,12 +20847,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3cdb5594-cb88-4ab1-bac3-84ffbafd89cc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e0be1f9c-981b-43a8-b235-5908403c24fb")
 			(effects
 				(font
 					(size 1 1)
@@ -19867,7 +21011,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 1kΩ ±0.1% 0.100W   [RG1608P-102-B-T5] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19906,7 +21050,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-102-B-T5"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -19925,6 +21069,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "5f36a6de-3057-4507-9ff5-21c883907da2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020215"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f099855e-594d-4847-ae7a-6740f6b87cbb")
 			(effects
 				(font
 					(size 1 1)
@@ -20070,7 +21227,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20109,12 +21266,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "92f71ad6-9a56-4d1a-b935-a92b2e8772dc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ce590e83-9e8f-4132-9d51-b132075922d4")
 			(effects
 				(font
 					(size 1 1)
@@ -20260,7 +21430,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20299,12 +21469,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c11ba88d-5f47-4730-bb9f-d87f730914ae")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "abf8f305-cb24-4df5-bb73-2b56f78f40b8")
 			(effects
 				(font
 					(size 1 1)
@@ -20450,7 +21633,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20489,12 +21672,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "dfc603fb-8180-48ae-b498-c41f51654cfe")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "bed937f1-4e8e-41c0-b0a6-f10536ac1da9")
 			(effects
 				(font
 					(size 1 1)
@@ -20640,7 +21836,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20679,7 +21875,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20698,6 +21894,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "2af322c4-4bce-4d9f-ba89-d8e709963023")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3b73c804-cba6-4c6b-aaa6-e85cb6e7ea01")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ff7de8c2-a711-47aa-ba16-689b7db80190")
 			(effects
 				(font
 					(size 1 1)
@@ -20843,7 +22065,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   MULTIPLEXER 2 X 4:1   [DG409DYZ-T] [16-SOIC]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20888,6 +22110,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "7eea6856-06d0-4e0a-b99d-e240b3ee65b2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080223"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ab2425cb-ad97-49da-8ec6-c427741e4b1d")
 			(effects
 				(font
 					(size 1 1)
@@ -21336,7 +22571,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "OTHER:   DC DC CONVERTER +/-12V TO +/-15V 3W   [CC3-0512DF-E] [Populated PCB]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21381,6 +22616,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f9ef2771-6af7-4898-a7a3-e5e4b8040965")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS100043"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3c4987dd-e184-4637-82ff-dfedd1c8ee9c")
 			(effects
 				(font
 					(size 1 1)
@@ -21587,7 +22835,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10nF 50V ±10% X7R   [C1608X7R1H103K080AA] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21626,12 +22874,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1608X7R1H103K080AA"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c8c8abac-74aa-4096-b0df-7c118f7a68c2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010074"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "81302e42-8f53-451c-9863-8c1080fa9383")
 			(effects
 				(font
 					(size 1 1)
@@ -21777,7 +23038,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±1% 0.100W   [RC0603FR-0710KL] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21816,7 +23077,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-0710KL"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -21829,12 +23090,25 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "aba0e9aa-94ef-41eb-909e-58870b929d2b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020133"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0adeeca0-9728-4f11-8d97-c373aff532b1")
 			(effects
 				(font
 					(size 1 1)
@@ -21980,7 +23254,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±1% 0.100W   [RC0603FR-0710KL] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22019,7 +23293,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-0710KL"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -22032,12 +23306,25 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "99ae0913-a7fd-4416-b0a6-e3d9a3bdf742")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020133"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ae42e0cd-96b4-4bb0-982a-108c17609072")
 			(effects
 				(font
 					(size 1 1)
@@ -28016,7 +29303,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -28119,12 +29406,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "296af0b8-b29f-485a-b842-4de69202c746")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "93e27106-c33c-47fe-be58-a97697f251a1")
 			(effects
 				(font
 					(size 1 1)
@@ -28269,7 +29569,7 @@
 				)
 			)
 		)
-		(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
+		(property "Description" "IC:   LDO 3.3V 600mA   [AP2112K-3.3TRG1] [SOT-23-5]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -28359,12 +29659,25 @@
 				)
 			)
 		)
-		(property "MPN" "AP2112K-3.3"
+		(property "MPN" "AP2112K-3.3TRG1"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "09f0868c-85e9-4292-b523-527169bc25d8")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080155"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5cef1d64-3067-43dd-8a50-e46d70305e67")
 			(effects
 				(font
 					(size 1 1)
@@ -28752,7 +30065,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -28760,6 +30073,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "44d245c8-ead9-48c3-ae46-54a42915aa33")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b8258a38-bbec-47ed-b64e-1f18f779dce1")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -29101,7 +30440,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -29138,12 +30477,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0ea03eaf-0206-4b18-970c-d4dfaedef3db")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "51033765-640d-4590-bfea-8761f78d4ca2")
 			(effects
 				(font
 					(size 1 1)
@@ -29286,7 +30638,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 4.7uF 25V ±10% X5R (OEPS J05 009)   [GRM188R61E475KE11D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -29302,6 +30654,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "528a71cd-033a-469e-84a9-022d80266506")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R61E475KE11D"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "92ea68e7-e37e-45b5-8db1-73c090fe04b0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010047"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6ae192e7-b16e-46dd-b33d-f14532904b55")
 			(effects
 				(font
 					(size 1 1)
@@ -29446,7 +30824,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -29549,12 +30927,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "cdc4cd13-b4f4-494c-999d-193064c397d4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "29f2ffe9-43cb-440f-95bd-9ac9c3fee58b")
 			(effects
 				(font
 					(size 1 1)
@@ -29699,7 +31090,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 27Ω ±1% 0.063W   [RMCF0402FT27R0] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -29789,12 +31180,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RMCF0402FT27R0"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b7db8214-3486-4e45-9e96-bf532d428e76")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020170"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4518447b-233b-4932-ba8f-c2f721aa01f9")
 			(effects
 				(font
 					(size 1 1)
@@ -29939,7 +31343,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±1% 0.100W   [RC0603FR-0710KL] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -30016,12 +31420,38 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-0710KL"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "302dad2d-6ac6-4a07-99e3-131855a1373d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020133"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1b94a2c0-48a3-4c22-a688-1d5393539358")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Tolerance" ""
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "07fcdadc-a261-4614-b6d2-3723bc8278dd")
 			(effects
 				(font
 					(size 1 1)
@@ -30166,7 +31596,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 200Ω ±1% 0.100W (OEPS J30 017)   [RC0603FR-07200RL] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -30204,12 +31634,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-07200RL"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "21ad0ab6-15c9-4592-ab13-71b46d83f29d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020141"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "39d9e64e-03fe-4a8d-9ca8-b10c74356c5d")
 			(effects
 				(font
 					(size 1 1)
@@ -30353,7 +31796,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -30361,6 +31804,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5c38200f-7d43-4e42-bccc-a29da293f183")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2d71192a-93cf-4da5-a910-511aa7dd85d0")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -30502,7 +31971,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 27Ω ±1% 0.063W   [RMCF0402FT27R0] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -30540,12 +32009,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RMCF0402FT27R0"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ce7a4289-622a-45f1-a44f-c040b6550846")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020170"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b8e68947-10f8-43bb-8bb6-eddc02e968a0")
 			(effects
 				(font
 					(size 1 1)
@@ -30690,7 +32172,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 27Ω ±1% 0.063W   [RMCF0402FT27R0] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -30780,12 +32262,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RMCF0402FT27R0"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "00d06547-7834-4283-b1d9-141a11bc7b9d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020170"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5d44aabd-a052-4142-b3d1-fcd441d70798")
 			(effects
 				(font
 					(size 1 1)
@@ -30929,7 +32424,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -30967,12 +32462,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f82ef9a0-6765-41a6-9489-e616b6bf1fdc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "01a6e5ac-aa19-47ea-9fd6-75caef8b5929")
 			(effects
 				(font
 					(size 1 1)
@@ -31118,7 +32626,7 @@
 				)
 			)
 		)
-		(property "Description" "Four pin crystal, GND on pins 2 and 4"
+		(property "Description" "OTHER:   Crystal 12 MHz ±20ppm 12pF 100Ohms   [ABM8AIG-12.000MHZ-12-2Z-T3] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -31215,6 +32723,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0b2aec1f-5ef1-47d0-b96e-2e9ab3df38f1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS100059"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c900c6cb-fb2d-4b27-b56f-061c252c8c07")
 			(effects
 				(font
 					(size 1 1)
@@ -31483,7 +33004,7 @@
 				)
 			)
 		)
-		(property "Description" "32MHz, 1000V/μs Gain Selectable Amplifier"
+		(property "Description" "IC:   OPAMP PGA 1 CIRCUIT   [LT1995CMS#PBF] [10-MSOP]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -31491,6 +33012,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "LT1995CMS#PBF"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f2e57129-9a83-4015-9fa2-736fa2566778")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080221"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8a3c7a78-302a-4320-87ea-8168ae645329")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -31875,7 +33422,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 22pF 50V ±5% C0G/NP0   [CL05C220JB51PNC] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -31913,12 +33460,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL05C220JB51PNC"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "d97d49ab-d69e-4f05-88ee-ff5c0f7eb207")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010080"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "35de5a3e-e382-489c-becb-e162e6f93ac6")
 			(effects
 				(font
 					(size 1 1)
@@ -32063,7 +33623,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -32166,12 +33726,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "2966dbaf-1292-416a-919b-2bc229392e3a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "58ebcae8-3523-404a-aa76-3268a39b7fef")
 			(effects
 				(font
 					(size 1 1)
@@ -32317,7 +33890,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   OPAMP GP 1 CIRCUIT   [OPA197IDR] [8-SOIC]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -32356,12 +33929,25 @@
 				)
 			)
 		)
-		(property "MPN" "OPA197IDR "
+		(property "MPN" "OPA197IDR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "cd8d4f4b-aed7-4801-a288-1da9fcb979c0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080229"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e4eebfe2-a172-4bb7-b44f-a83372c5fc48")
 			(effects
 				(font
 					(size 1 1)
@@ -32718,7 +34304,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -32756,12 +34342,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "7623d426-cabc-42de-aadf-e8739e4a84c0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5beb65ee-3200-4f27-82b0-61470f1613e7")
 			(effects
 				(font
 					(size 1 1)
@@ -32904,7 +34503,7 @@
 				)
 			)
 		)
-		(property "Description" "32MHz, 1000V/μs Gain Selectable Amplifier"
+		(property "Description" "IC:   OPAMP PGA 1 CIRCUIT   [LT1995CMS#PBF] [10-MSOP]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -32912,6 +34511,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "LT1995CMS#PBF"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d37b0a58-dcfb-4201-a204-07d88b97e28f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080221"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "33095c45-e2c3-4a62-ade8-4e0633095541")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -33296,7 +34921,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -33334,12 +34959,38 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "77892e72-7e5c-43f8-9cfc-57a0fad5defd")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "34afe7d2-995e-495a-adcd-111bf5e440dd")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X7R"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e802cbdb-3f05-46ca-a179-b761447348ba")
 			(effects
 				(font
 					(size 1 1)
@@ -33484,7 +35135,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -33587,12 +35238,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8ef2d4e3-9631-4150-ab67-613010373590")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e8237a5b-dc6d-48cd-b3cd-79ce97f2390d")
 			(effects
 				(font
 					(size 1 1)
@@ -33737,7 +35401,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 100Ω ±1% 0.333W   [CRCW0603100RFKEAHP] [SMD]"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -33827,12 +35491,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRCW0603100RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "5f51d36d-c61d-4f2f-abf3-c273621ea458")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020042"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d052b751-8edd-4436-b472-01736a5a6532")
 			(effects
 				(font
 					(size 1 1)
@@ -33975,7 +35652,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10pF 50V ±5% C0G   [C0603C100J5GACTU] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -33991,6 +35668,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "dbb42abb-32d6-4636-964a-b339f6987fdf")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "C0603C100J5GACTU"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7fca77bf-64d8-4451-bcb3-fe814a0279d0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010096"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6cdfb4a5-13cd-40b0-992f-5a46e7de4ac3")
 			(effects
 				(font
 					(size 1 1)
@@ -34135,7 +35838,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -34173,7 +35876,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -34192,6 +35895,32 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0f934ec8-3561-4c0f-ae51-38e5d245b20d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a0a227ae-422c-4f3d-a874-ea88cea1151e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "TempCo" "X5R"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6de431a6-82e7-4340-86db-ac7ad40c6cfc")
 			(effects
 				(font
 					(size 1 1)
@@ -34335,7 +36064,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   OPAMP GP 1 CIRCUIT   [OPA197IDR] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -34373,12 +36102,25 @@
 				)
 			)
 		)
-		(property "MPN" "OPA197IDR "
+		(property "MPN" "OPA197IDR"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "84551e59-df9f-4717-8109-bd70420157b1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080229"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c7f4dc7f-77b8-4ee5-83db-00fcffd46f14")
 			(effects
 				(font
 					(size 1 1)
@@ -34736,7 +36478,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -34826,7 +36568,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -34845,6 +36587,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f5c95fb9-b141-4797-be6a-58a70ee77f47")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ade1b692-c681-4bfa-8b94-a69f3205c366")
 			(effects
 				(font
 					(size 1 1)
@@ -34966,7 +36721,7 @@
 				)
 			)
 		)
-		(property "Value" "SMTRA_M3-7-5ET"
+		(property "Value" "SMTRAM3-7-5ET"
 			(at -0.1 -5.8 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -34992,7 +36747,7 @@
 				)
 			)
 		)
-		(property "Description" "Mounting Hole with connection"
+		(property "Description" "OTHER:   SURFACE MOUNT R'ANGLE M3   [SMTRAM3-7-5ET] [Other]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -35031,12 +36786,25 @@
 				)
 			)
 		)
-		(property "MPN" "SMTRA_M3-7-5ET"
+		(property "MPN" "SMTRAM3-7-5ET"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e67f0166-784f-47e9-8cf1-51fb06f2323d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS100089"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "415e9c5c-3f8c-4221-b948-740531cc6599")
 			(effects
 				(font
 					(size 1 1)
@@ -35433,7 +37201,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "DIODE:   LED TH Green 565nm 20mA R/A   [SSF-LXH100GD-01] [TH]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -35491,6 +37259,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f9f7b054-c68a-4af3-88ab-020ed4f9b9c5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030055"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6b11a1cf-2071-4282-bb67-66501852e2c2")
 			(effects
 				(font
 					(size 1 1)
@@ -35620,7 +37401,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" "CONNECTOR:   HEADER VERT 3POS 1MM   [BM03B-SRSS-TB] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -35716,6 +37497,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b19e8910-e9e4-4832-8ca3-dc77b25d6483")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070121"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "71481eaf-89bc-446c-91e6-4a1a25938713")
 			(effects
 				(font
 					(size 1 1)
@@ -36155,7 +37949,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -36192,12 +37986,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9592a419-654f-47b0-a92e-da71db58d71f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c8b99df8-54f0-49a4-b228-49814b994793")
 			(effects
 				(font
 					(size 1 1)
@@ -36342,7 +38149,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -36445,12 +38252,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "914b7a9b-003f-45bb-a035-c886f6b0793e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1032c763-c565-442b-9526-d9273897d92d")
 			(effects
 				(font
 					(size 1 1)
@@ -36595,7 +38415,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 100Ω ±1% 0.333W   [CRCW0603100RFKEAHP] [SMD]"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -36685,12 +38505,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRCW0603100RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "cec125a1-538b-4a41-b557-399d7a870864")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020042"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c003e32d-2544-4f14-b06a-e27eefad58bb")
 			(effects
 				(font
 					(size 1 1)
@@ -38267,7 +40100,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -38275,6 +40108,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "729b529d-63e8-420a-a0d8-2844e61cc492")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9fa4ff0d-1898-413e-b7b4-0cb4ef047fc2")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -38419,7 +40278,7 @@
 				)
 			)
 		)
-		(property "Description" "Inductor"
+		(property "Description" "INDUCTOR:   FIXED INDUCTOR SMD 3.3uH 2.1A 140mΩ   [AOTA-B201610S3R3-101-T] [0806]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -38464,6 +40323,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9733fdf4-c821-4142-8e00-59a61e0e7f0b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS040036"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "705e86a9-344a-4204-9fb8-455ea1ba66f4")
 			(effects
 				(font
 					(size 1 1)
@@ -38649,7 +40521,7 @@
 				)
 			)
 		)
-		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+		(property "Description" "CONNECTOR:   BNC JACK 50ohm R/A   [0731375003] [TH]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -38694,6 +40566,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "74660ae4-aeff-4ac9-904b-6b0ed6a60f68")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070151"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6b4769e4-7b87-4c0d-b0b4-04ff2c8eda78")
 			(effects
 				(font
 					(size 1 1)
@@ -39102,7 +40987,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" "CONNECTOR:   HEADER 2.54MM R/A 2x8POS   [302-R161] [TH]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -39146,6 +41031,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "d3b5298d-dc37-437d-bc96-1a24aeb0841d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070152"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d398be59-c343-4fcb-98d6-170a1061e27f")
 			(effects
 				(font
 					(size 1 1)
@@ -39820,7 +41718,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -39923,12 +41821,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e050be99-bd40-4d5d-b1f2-4f182ff5cfe0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "27ce577a-c518-4bf1-a404-bdaf366e382a")
 			(effects
 				(font
 					(size 1 1)
@@ -40073,7 +41984,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -40176,12 +42087,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "23c3adcd-2f3f-4778-a559-5100942f74fc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2a2abc8a-2ae0-4267-ae5b-f5b3bc3fc7d9")
 			(effects
 				(font
 					(size 1 1)
@@ -40325,7 +42249,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -40363,12 +42287,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "33f54b7e-7100-445c-945a-23fb6acf6439")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9fd1054d-ee05-478c-9c43-15473bde7ad1")
 			(effects
 				(font
 					(size 1 1)
@@ -40513,7 +42450,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 200Ω ±1% 0.100W (OEPS J30 017)   [RC0603FR-07200RL] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -40551,12 +42488,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-07200RL"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "4af6ba03-4e35-4539-a80b-90fac88fde40")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020141"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "608cca5f-5ef0-4abb-a34d-829f5544da77")
 			(effects
 				(font
 					(size 1 1)
@@ -40699,7 +42649,7 @@
 				)
 			)
 		)
-		(property "Description" "Low Power, Instumentation Amplifier, SOIC-8"
+		(property "Description" "IC:   INST AMP 1 CIRCUIT   [AD8421BRZ-R7] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -40715,6 +42665,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "4192ae57-027d-4a6e-9a23-bd4b724a1827")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "AD8421BRZ-R7"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a4d29312-5d8e-4943-b3b8-aea03a28ca22")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080222"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "45c54f39-189c-47d0-b58f-568bb96c1702")
 			(effects
 				(font
 					(size 1 1)
@@ -41081,7 +43057,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -41119,12 +43095,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8ab0a9b2-b327-41dd-8c67-6992411ed8f4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0bb94ffd-0346-4aec-a8bf-c8424e9d3256")
 			(effects
 				(font
 					(size 1 1)
@@ -41269,7 +43258,7 @@
 				)
 			)
 		)
-		(property "Description" "128Mbit / 16MiB Serial Flash Memory, Standard/Dual/Quad SPI, 2.7-3.6V, SOIC-8"
+		(property "Description" "IC:   FLASH 128MBIT SPI/QUAD   [W25Q128JVSIQ] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -41307,12 +43296,25 @@
 				)
 			)
 		)
-		(property "MPN" "W25Q128JVS"
+		(property "MPN" "W25Q128JVSIQ"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "79aca10f-8e5d-4071-ac5f-84c9e176a405")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080163"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "eabce02d-1b52-47c0-aadc-ad502a1a3e86")
 			(effects
 				(font
 					(size 1 1)
@@ -41679,7 +43681,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -41716,12 +43718,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "61912185-4ed9-43d5-9302-6a7c70ed91e3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f952c89e-e5d9-44c4-9fc8-9c3bfa2ba035")
 			(effects
 				(font
 					(size 1 1)
@@ -41866,7 +43881,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -41969,12 +43984,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e1c8a191-dbb0-4894-a39d-467cfed58c91")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "50353626-4c02-4511-a99b-2c0d1b93a4da")
 			(effects
 				(font
 					(size 1 1)
@@ -42119,7 +44147,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, double row, 02x04, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" "CONNECTOR:   HEADER VERT 2x5POS 2.54MM   [10129383-910002ALF] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -42215,6 +44243,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "1eacfcb2-83b4-4282-8b2c-ccca30b194d7")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070120"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "50c130a6-4315-49e5-bdf4-ccb244ff3f4a")
 			(effects
 				(font
 					(size 1 1)
@@ -42801,7 +44842,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -42809,6 +44850,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b02ce711-ff5b-4ae0-9cdb-2a164899bcc5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e1d39e59-7c99-4a05-bad9-83c191ed3ee1")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -42950,7 +45017,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -43053,12 +45120,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "a80495ed-40e8-4946-9fd9-626075095c99")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "25ac1d56-ed98-4154-a67c-2a1c70f1f3e9")
 			(effects
 				(font
 					(size 1 1)
@@ -43201,7 +45281,7 @@
 				)
 			)
 		)
-		(property "Description" "Low Power, Instumentation Amplifier, SOIC-8"
+		(property "Description" "IC:   INST AMP 1 CIRCUIT   [AD8421BRZ-R7] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -43217,6 +45297,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "9a0eb130-dec4-4473-a1fe-75e63f122e46")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "AD8421BRZ-R7"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "42ce10e5-f07a-45f6-9d40-1d10a3db6e7c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080222"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5ceea5d1-0d69-4c5a-b04b-afdc0ab077fc")
 			(effects
 				(font
 					(size 1 1)
@@ -43585,7 +45691,7 @@
 				)
 			)
 		)
-		(property "Description" "4-Channel ESD Protection for Super-Speed USB 3.0 Interface, USON-10"
+		(property "Description" "DIODE:   TVS DIODE 5.5VWM 14VC   [TPD4E05U06DQAR] [10-UFDFN]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -43624,12 +45730,25 @@
 				)
 			)
 		)
-		(property "MPN" "TPD4E05U06DQA"
+		(property "MPN" "TPD4E05U06DQAR"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "a22a9eec-d9f2-4c6e-9bad-103e4e71a524")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030037"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "21d06235-7643-4751-b029-e391f064853a")
 			(effects
 				(font
 					(size 1 1)
@@ -43936,7 +46055,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 1kΩ ±0.1% 0.100W   [RG1608P-102-B-T5] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -44026,12 +46145,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RG1608P-102-B-T5"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8462c38f-cc91-4cc6-863e-0f1997c40b90")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020215"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b3dcad99-a77e-4b1a-a3b9-9f8339ac4630")
 			(effects
 				(font
 					(size 1 1)
@@ -44174,7 +46306,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10pF 50V ±5% C0G   [C0603C100J5GACTU] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -44190,6 +46322,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "ee342ac5-495d-4e57-9521-d5ceaa61567d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "C0603C100J5GACTU"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2b151cf8-3510-49b1-a27c-e6230802d038")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010096"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5132cff7-3b5c-43bf-b03a-12728ec37a92")
 			(effects
 				(font
 					(size 1 1)
@@ -44332,7 +46490,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 0603 100nF 100V ±10% X7R   [GRM188R72A104KA35D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -44369,12 +46527,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM188R72A104KA35D"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ac501f91-354a-414c-a512-85d728ec7877")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010009"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c37fce8a-fcc0-4d23-8658-a27e8564dfcb")
 			(effects
 				(font
 					(size 1 1)
@@ -44519,7 +46690,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 22pF 50V ±5% C0G/NP0   [CL05C220JB51PNC] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -44557,12 +46728,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL05C220JB51PNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "cfbd7a11-5f38-4b31-a0bf-43870fc224d3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010080"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "55386d06-d0fc-45b8-b33a-29a50e4fa11e")
 			(effects
 				(font
 					(size 1 1)
@@ -44709,7 +46893,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "DIODE:   LED TH Green 565nm 20mA R/A   [SSF-LXH100GD-01] [TH]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -44767,6 +46951,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3074c646-79e7-4b92-abe7-fb1bdf0fb9a6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030055"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "58e77acd-f002-4afa-84e9-539776572230")
 			(effects
 				(font
 					(size 1 1)
@@ -44894,7 +47091,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 4.7uF 25V ±10% X5R (OEPS J05 009)   [GRM188R61E475KE11D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -44910,6 +47107,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "90ff07c2-46ae-44c3-9cdb-593ef39e9da2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R61E475KE11D"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3d50aabe-f787-4748-9318-801d7a575756")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010047"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "09613c13-4ced-440f-9478-340c38c99c13")
 			(effects
 				(font
 					(size 1 1)
@@ -45054,7 +47277,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -45157,12 +47380,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c01fefba-568e-4ea0-9f2c-5a34b79c4003")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9417d322-1731-4606-b4fe-ec334ee1a18b")
 			(effects
 				(font
 					(size 1 1)
@@ -45308,7 +47544,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "CONNECTOR:   SWITCH TACTILE SPST-NO 0.05A 12V   [PTS645VH58-2 LFS] [TH]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -45405,6 +47641,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "255d63f0-bc6f-4024-87ae-9d6758ca5176")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070114"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "89705037-1f25-4eb6-a830-30150afc212d")
 			(effects
 				(font
 					(size 1 1)
@@ -45804,7 +48053,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 4.7uF 25V ±10% X5R (OEPS J05 009)   [GRM188R61E475KE11D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -45820,6 +48069,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "f319637b-6caf-424b-adef-d5c6b3efcba2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R61E475KE11D"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a3202475-065f-4eb4-beca-04ed5cea3139")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010047"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2fce2f84-809c-4d55-8452-d4328ac29bb6")
 			(effects
 				(font
 					(size 1 1)
@@ -45963,7 +48238,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -45971,6 +48246,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4898b719-5c00-44e0-91ce-36002e235f14")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7e1fa817-ee22-4b2a-8be3-f72476398421")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -46112,7 +48413,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "CONNECTOR:   SWITCH TACTILE SPST-NO TOP ACTUATED   [TS04-66-50-BK-160-SMT] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -46209,6 +48510,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "319b3d75-091d-41ce-8281-a72736407ec1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070115"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "38897539-8b89-42aa-bda3-3b1c5f52755e")
 			(effects
 				(font
 					(size 1 1)
@@ -46469,7 +48783,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -46477,6 +48791,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d348d940-3c0b-4fc0-a508-3e56066c4691")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "59590a61-4ec7-4a51-b9fb-340e129071fb")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -46616,7 +48956,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 4.7uF 25V ±10% X5R (OEPS J05 009)   [GRM188R61E475KE11D] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -46632,6 +48972,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "c07bec2b-2ffa-4d2e-9040-8a03797e2073")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R61E475KE11D"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b522b3ae-b490-4a80-8723-876c0ab7d1ff")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010047"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "425cf61d-f4a4-44b0-8e78-be4d6986ebec")
 			(effects
 				(font
 					(size 1 1)
@@ -46779,7 +49145,7 @@
 				)
 			)
 		)
-		(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
+		(property "Description" "CONNECTOR:   USB2.0 TYPE C 24P SMD R/A   [USB4105-GF-A] [SMD/TH]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -46876,6 +49242,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f4ed7fc8-38d4-4478-afcc-e5a6fcb7ff36")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070105"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ba66953b-d3f9-458a-b011-642e170bd457")
 			(effects
 				(font
 					(size 1 1)
@@ -47251,7 +49630,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "IC:   OPAMP GP 1 CIRCUIT   [OPA197IDR] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -47289,12 +49668,25 @@
 				)
 			)
 		)
-		(property "MPN" "OPA197IDR "
+		(property "MPN" "OPA197IDR"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b4106541-1f7d-4757-a81a-918ab7059f1e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080229"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "edacb0db-03e7-4318-b0cf-9e39d0a0365a")
 			(effects
 				(font
 					(size 1 1)
@@ -48076,7 +50468,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -48179,12 +50571,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "6d88a0ee-5531-4a06-b5f5-f2599026fa46")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8b02526c-9cd4-4f67-89aa-0103ad9fd28b")
 			(effects
 				(font
 					(size 1 1)
@@ -48331,7 +50736,7 @@
 				)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "DIODE:   LED TH Green 565nm 20mA R/A   [SSF-LXH100GD-01] [TH]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -48389,6 +50794,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8d6b250e-76a2-4734-ae74-520c3ebc35f1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS030055"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6648a799-546a-4ac8-85bc-eb17527bf340")
 			(effects
 				(font
 					(size 1 1)
@@ -48518,7 +50936,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 5.1kΩ ±1% 0.100W   [ERJ-2RKF5101X] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -48608,12 +51026,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ-2RKF5101X"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b7cb178a-7304-412c-b83b-f0bbf379e29e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020173"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f2047a33-f03e-4a17-be37-c5d79457a732")
 			(effects
 				(font
 					(size 1 1)
@@ -48757,7 +51188,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -48765,6 +51196,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "134e8ee2-4359-45f7-9cbe-c8971777ef8c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cf644afe-89df-43f0-8993-022c328a68e6")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -48905,7 +51362,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 10uF 35V ±20% X5R   [GRM188R6YA106MA73J] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -48913,6 +51370,32 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "GRM188R6YA106MA73J"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c0daa7b3-c515-4531-aa20-72618670176d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010093"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c8e6a093-ff29-4aba-8cd1-162aa12c9a72")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 			)
@@ -49055,7 +51538,7 @@
 				)
 			)
 		)
-		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+		(property "Description" "CONNECTOR:   BNC JACK 50ohm R/A   [0731375003] [TH]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -49100,6 +51583,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "82dafcab-16a0-4440-94c5-375b8b93d33d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS070151"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f39045c1-2356-4189-af9b-8b5415aaa612")
 			(effects
 				(font
 					(size 1 1)
@@ -49509,7 +52005,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0603 1uF 25V ±10% X5R   [CL10A105KA8NNNC] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -49599,7 +52095,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CL10A105KA8NNNC"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -49618,6 +52114,19 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e4841287-ebf6-40f7-b8dd-66af5f4ce20d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010022"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a5304cf1-4b52-4255-84c8-57b387f85848")
 			(effects
 				(font
 					(size 1 1)
@@ -49762,7 +52271,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -49865,12 +52374,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "e5166185-ae60-471e-a825-0aee345a485d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "46dc679d-e84a-4153-9708-0e825c80d5d2")
 			(effects
 				(font
 					(size 1 1)
@@ -50015,7 +52537,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 4.7uF 16V ±20% X5R   [KGM05CR51C475MH] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -50118,12 +52640,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "KGM05CR51C475MH"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "90f269e7-0266-4eb9-8978-cd6210f5d3f3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010097"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5e63ef52-689f-478c-b12e-4b5cfca117e3")
 			(effects
 				(font
 					(size 1 1)
@@ -50268,7 +52803,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0603 200Ω ±1% 0.100W (OEPS J30 017)   [RC0603FR-07200RL] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -50306,12 +52841,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "RC0603FR-07200RL"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "60df3edb-5aac-4fac-897c-7c6127482e78")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020141"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e1f1714e-796c-46b8-b77f-dca4c957e218")
 			(effects
 				(font
 					(size 1 1)
@@ -50456,7 +53004,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "CAPACITOR:   SMD CER 0402 100nF 25V ±10% X7R (OEPS H02 001)   [C1005X7R1E104K050BB] [SMD]"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -50559,12 +53107,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C1005X7R1E104K050BB"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "3ba7530d-ba6a-4f5d-823b-4567604fef69")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS010050"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1fa8fb15-fa7f-47c8-80ee-65b6e94a6306")
 			(effects
 				(font
 					(size 1 1)
@@ -50707,7 +53268,7 @@
 				)
 			)
 		)
-		(property "Description" "A microcontroller by Raspberry Pi, dual CPU architecture (ARM Cortex-M33 / RISC-V Hazard3), 150MHz, 2MB flash, 520KB SRAM, 12 PIO state machines, VQFN-80"
+		(property "Description" "IC:   MCU ARM RP2354B0A4   [SC1512-A4] [QFN-80]"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -50723,6 +53284,32 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "6fd1abc9-5004-4849-bc80-4e9e4c7a4163")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "SC1512-A4"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "15461edc-1449-4d78-927d-433fcab24e64")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS080220"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e5e7cb34-1681-4fe8-ad15-f3a450dfc7e3")
 			(effects
 				(font
 					(size 1 1)
@@ -51991,7 +54578,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0402 5.1kΩ ±1% 0.100W   [ERJ-2RKF5101X] [SMD]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -52081,12 +54668,25 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ-2RKF5101X"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "669b019a-d138-4c2f-a269-203bfa4e62e4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "OEPSPN" "OEPS020173"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a1c14c5b-9272-411c-b203-02a28cb1b323")
 			(effects
 				(font
 					(size 1 1)
@@ -52234,7 +54834,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small US symbol"
+		(property "Description" "RESISTOR:   SMD 1210 2.2MΩ ±5% 0.5W   [CRGCQ1210J2M2] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -52275,12 +54875,26 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRGCQ1210J2M2"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "26330d5c-acf8-4dd6-b8c6-1a6460d4d45e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS020230"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "7b4de68b-df3e-4030-80af-03078a1343f5")
 			(effects
 				(font
 					(size 1 1)
@@ -52430,7 +55044,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "DNP: Do Not Populate (DNI)"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -52471,12 +55085,26 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "DNP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "5f96b5ba-4a10-4d40-9422-8b1a09ce2b2a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS000000"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "1d17bde9-853c-4683-9420-fb3fd8628f53")
 			(effects
 				(font
 					(size 1 1)
@@ -52626,7 +55254,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 1206 10uF 35V ±10% X5R   [GRT319R6YA106KE01D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -52667,7 +55295,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRT319R6YA106KE01D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -52687,6 +55315,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "4e591123-1b86-492d-ab7f-341dd5e0b29e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS010094"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "f20c7989-daa8-4ef0-bc61-036e4e45dbd7")
 			(effects
 				(font
 					(size 1 1)
@@ -52836,7 +55478,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 1206 10uF 35V ±10% X5R   [GRT319R6YA106KE01D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -52877,7 +55519,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRT319R6YA106KE01D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -52897,6 +55539,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "840453ca-0171-4ac0-90a8-a889e2f7afde")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS010094"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "174bdcc1-8a12-4b43-a456-b7cfd19854ef")
 			(effects
 				(font
 					(size 1 1)
@@ -53046,7 +55702,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 1206 10uF 35V ±10% X5R   [GRT319R6YA106KE01D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -53087,7 +55743,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRT319R6YA106KE01D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -53107,6 +55763,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "f207ec8a-2d3a-4e39-a91e-be48f2948ece")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS010094"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "dc6a3750-170a-43b1-af71-50057891830c")
 			(effects
 				(font
 					(size 1 1)
@@ -53256,7 +55926,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 1206 10uF 35V ±10% X5R   [GRT319R6YA106KE01D] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -53297,7 +55967,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRT319R6YA106KE01D"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -53317,6 +55987,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "5edc5d77-cfbc-4e5d-a85d-9acee80702c1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS010094"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "c6f157d3-73f8-4195-87d1-4b97c49208a9")
 			(effects
 				(font
 					(size 1 1)
@@ -53466,7 +56150,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 1206 10uF 35V ±10% X5R   [GRT319R6YA106KE01D] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -53507,7 +56191,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRT319R6YA106KE01D"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -53527,6 +56211,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "e7bf0f76-577b-45fa-bd7b-0e3e1fec5892")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS010094"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "7e1842aa-6c96-4055-8c39-6b6a338f2b60")
 			(effects
 				(font
 					(size 1 1)
@@ -53676,7 +56374,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "CAPACITOR:   SMD CER 1206 10uF 35V ±10% X5R   [GRT319R6YA106KE01D] [SMD]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -53717,7 +56415,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRT319R6YA106KE01D"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -53737,6 +56435,20 @@
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "0c21a61e-f8c3-4dc3-adf1-f1b8308f07c6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS010094"
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "5e3e9b81-16ff-4604-bf5f-818b0de082c6")
 			(effects
 				(font
 					(size 1 1)
@@ -53886,7 +56598,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor, small US symbol"
+		(property "Description" "RESISTOR:   SMD 1210 2.2MΩ ±5% 0.5W   [CRGCQ1210J2M2] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -53927,12 +56639,26 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRGCQ1210J2M2"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "3dda573e-7283-4127-b35e-a11e1330258d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS020230"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "e4ecbddd-635e-4192-a168-6f0ceeabb380")
 			(effects
 				(font
 					(size 1 1)
@@ -54082,7 +56808,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "DNP: Do Not Populate (DNI)"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -54123,12 +56849,26 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "DNP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "85952cc9-4fe2-462a-b17f-399b1fb2db8c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS000000"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "8a03ebfe-dce3-4c0e-abce-75c0c8e747bc")
 			(effects
 				(font
 					(size 1 1)
@@ -54278,7 +57018,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -54347,7 +57087,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -54361,7 +57101,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -54531,7 +57271,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -54540,6 +57280,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "b8908792-beeb-4e4d-95d0-9fb7ff4acc93")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "a6586866-5d8b-414d-b994-c6abc16a07d8")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -54891,7 +57659,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -54900,6 +57668,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "81c6e9eb-6ad7-4a7a-a588-b4b01821a33e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "7913acbd-175c-478d-9600-a66f280dbb69")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -55251,7 +58047,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -55260,6 +58056,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "bdb090a7-c48a-4993-9ad8-6faee4af1881")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "5fdc8f24-9793-4908-b6b9-24005ac8396e")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -55611,7 +58435,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -55620,6 +58444,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "9966ffa7-f0f2-4154-8f29-5dce3c32df0c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "5ed98bf3-f8ba-4b9e-bf1a-3e36e860653b")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -55971,7 +58823,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -55980,6 +58832,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "5c71143d-050b-481d-aa2c-a982fb55c1f1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "baad9e53-24b4-4078-a360-5332a63dc3ae")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -56331,7 +59211,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -56340,6 +59220,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "3e6924c2-562d-468d-a586-d7ff5ee5e487")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "1560bbe9-6ecd-4017-9d7c-8c2ae8c151d3")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -56690,7 +59598,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -56759,7 +59667,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -56773,7 +59681,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -56943,7 +59851,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -56952,6 +59860,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "3441ab75-5085-4a4a-b4db-556e59d19630")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "2555260f-0e89-48b5-8ea7-fc25a7e03149")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -57302,7 +60238,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -57371,7 +60307,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -57385,7 +60321,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -57554,7 +60490,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -57623,7 +60559,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -57637,7 +60573,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -57807,7 +60743,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -57816,6 +60752,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "f67c1bc1-5b9a-4f16-92f8-4396f9e60f00")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "3982506e-e67f-4af7-8963-5d618e9b34bf")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -58166,7 +61130,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -58235,7 +61199,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -58249,7 +61213,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -58418,7 +61382,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -58487,7 +61451,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -58501,7 +61465,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -58670,7 +61634,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -58739,7 +61703,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -58753,7 +61717,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -58922,7 +61886,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -58991,7 +61955,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -59005,7 +61969,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -59175,7 +62139,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -59184,6 +62148,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "52e25d8b-1cd0-4a10-85ef-22b1d0f0bd67")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "96b5aaec-c1e3-4026-996c-0a4b8a1310cb")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -59534,7 +62526,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -59603,7 +62595,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -59617,7 +62609,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -59787,7 +62779,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+		(property "Description" "DIODE:   DIODE SCHOTTKY 30V 340mA ARRAY   [BAT54SW] [TH]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -59796,6 +62788,34 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "BAT54SW"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "eb2d45a5-2f80-4d20-a8ab-33bef8712f63")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "OEPSPN" "OEPS030056"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "0c249d0d-d960-4929-bd1e-6a07efeed42d")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -60146,7 +63166,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Resistor, US symbol"
+		(property "Description" "RESISTOR:   SMD 0805 270Ω ±1% 0.500W   [CRCW0805270RFKEAHP] [SMD]"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -60215,7 +63235,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "TNPW1206100RBEEA"
+		(property "MPN" "CRCW0805270RFKEAHP"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -60229,7 +63249,7 @@
 				(justify mirror)
 			)
 		)
-		(property "OEPSPN" "OEPS020172"
+		(property "OEPSPN" "OEPS020024"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "B.Fab")
