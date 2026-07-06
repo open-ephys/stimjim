@@ -67,42 +67,6 @@
           "part is supposed to be on board edge"
         ],
         [
-          "drill_out_of_range|163550000|129050000|70016c2b-2d80-4169-8361-2bf1ff05aa9b|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|163550000|130500000|1cdc12c4-9c15-4b08-a45d-b04c6bc0382e|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|163550000|131950000|2c713d37-e37c-4149-90db-ad72800ff993|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|165000000|129050000|c43eb0ea-f9de-473b-9c6f-fcf906503b54|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|165000000|130500000|640825b9-ae51-4beb-aae1-ac627884fe35|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|165000000|131950000|749a29b1-e2a2-4627-bac5-ca461bd198fc|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|166450000|129050000|3bee8b2c-88bb-4f46-bcac-fbabc338f402|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|166450000|130500000|62da47cc-010c-4acf-a6c6-46b37187b5c0|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
-          "drill_out_of_range|166450000|131950000|13f77c95-29b1-4d0c-a1d8-0421ecbe8ae8|00000000-0000-0000-0000-000000000000",
-          "make exception for thermal via size to stitch GND and use the KiCAD-provided RP235xB footprint"
-        ],
-        [
           "footprint_type_mismatch|186000000|167987500|59d3f9fe-07d9-45b4-bbce-993e8e7e5fe2|00000000-0000-0000-0000-000000000000",
           ""
         ]

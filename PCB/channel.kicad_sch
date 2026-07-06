@@ -6042,7 +6042,7 @@
 	)
 	(text "DAC"
 		(exclude_from_sim no)
-		(at 106.68 75.946 0)
+		(at 110.998 75.946 0)
 		(effects
 			(font
 				(size 1.27 1.27)
