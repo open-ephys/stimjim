@@ -10530,7 +10530,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "01c7cce1-a561-4145-b86a-763b7e3775c8")
 		(property "Reference" "TP31"
@@ -11183,7 +11183,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "0dddee08-e502-4ac1-a132-3942ba74467e")
 		(property "Reference" "TP38"
@@ -12188,7 +12188,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "2b607f10-e1b8-491b-8d0b-aec13d4018c1")
 		(property "Reference" "TP39"
@@ -12793,7 +12793,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "356fe76b-cb5b-4db1-99ad-bcabe7d9ea61")
 		(property "Reference" "TP41"
@@ -13259,7 +13259,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "438f15d0-071c-4c74-bd37-d0db1c36b601")
 		(property "Reference" "TP32"
@@ -14205,7 +14205,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "673269a6-1bf5-4e02-b709-33b417dd160d")
 		(property "Reference" "TP33"
@@ -14320,7 +14320,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "69059c9f-aa68-4b10-8ca6-bc001407f1b2")
 		(property "Reference" "TP17"
@@ -14551,7 +14551,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "729aed8e-ab24-4ca9-a514-bcc557c44c65")
 		(property "Reference" "TP30"
@@ -15154,7 +15154,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "8e7ff13c-f66d-49eb-9245-95aa294f35c6")
 		(property "Reference" "TP26"
@@ -15267,7 +15267,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "8f1194c4-fb52-430c-8ec2-7d6f5588511b")
 		(property "Reference" "TP40"
@@ -16743,7 +16743,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "b2369378-947f-4b6e-af3d-4707589fefd5")
 		(property "Reference" "TP18"
@@ -16940,7 +16940,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "b462ac85-0c50-4bff-bf0f-a5a590847018")
 		(property "Reference" "TP28"
@@ -17173,7 +17173,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "be113ff3-44c1-4121-93e9-f7c855e48dab")
 		(property "Reference" "TP24"
@@ -17615,7 +17615,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "c0b343e4-0c57-49a2-bc5d-09122c34b856")
 		(property "Reference" "TP37"
@@ -18632,7 +18632,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "e0ad2614-b93d-4782-8c31-8606edf6737c")
 		(property "Reference" "TP20"
@@ -19969,7 +19969,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "f5520174-9752-4952-866d-e81036c771e3")
 		(property "Reference" "TP34"
@@ -20282,7 +20282,7 @@
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "ff2ebcb1-940b-4b01-a4f4-59f9a27e6afb")
 		(property "Reference" "TP22"
