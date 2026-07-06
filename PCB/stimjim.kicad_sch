@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "StimJim")
-		(rev "B")
+		(rev "C")
 		(comment 1 "Nate Cermak")
 		(comment 2 "Jonathan Newman")
 		(comment 3 "Cris Sharp")
