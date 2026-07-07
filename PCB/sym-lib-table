@@ -1,4 +1,5 @@
 (sym_lib_table
-  (lib (name "stimjimlib")(type "KiCad")(uri "${KIPRJMOD}/stimjim.kicad_sym")(options "")(descr ""))
-  (lib (name "teensy")(type "KiCad")(uri "${KIPRJMOD}/teensy.kicad_sym")(options "")(descr ""))
+	(version 7)
+	(lib (name "stimjimlib") (type "KiCad") (uri "${KIPRJMOD}/stimjim.kicad_sym") (options "") (descr ""))
+	(lib (name "teensy") (type "KiCad") (uri "${KIPRJMOD}/teensy.kicad_sym") (options "") (descr ""))
 )

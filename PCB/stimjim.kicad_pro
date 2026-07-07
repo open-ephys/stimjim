@@ -3,6 +3,8 @@
     "3dviewports": [],
     "design_settings": {
       "defaults": {
+        "apply_defaults_to_fp_barcodes": false,
+        "apply_defaults_to_fp_dimensions": false,
         "apply_defaults_to_fp_fields": false,
         "apply_defaults_to_fp_shapes": false,
         "apply_defaults_to_fp_text": false,
@@ -49,7 +51,7 @@
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.2
+          "min_clearance": 0.3
         }
       },
       "diff_pair_dimensions": [
@@ -61,16 +63,12 @@
       ],
       "drc_exclusions": [
         [
-          "copper_edge_clearance|182250000|167987500|00000000-0000-0000-0000-00005c8cd27f|6394f76f-1d5d-443f-94bf-1340e1695f0e",
-          "grounding thread should be at edge of board"
+          "copper_edge_clearance|182250000|167987500|00000000-0000-0000-0000-00005c8cd27f|43582ac5-439a-41b9-947a-693e9a2a03fd",
+          "part is supposed to be on board edge"
         ],
         [
           "footprint_type_mismatch|186000000|167987500|59d3f9fe-07d9-45b4-bbce-993e8e7e5fe2|00000000-0000-0000-0000-000000000000",
           ""
-        ],
-        [
-          "lib_footprint_mismatch|165000000|130500000|f75b126e-d367-47d5-91ae-636ff66d5bce|00000000-0000-0000-0000-000000000000",
-          "made GND stitching holes bigger so that the board's minimum hole size constraint is not violated and also to minimize the diversity of hole sizes"
         ]
       ],
       "meta": {
@@ -92,6 +90,7 @@
         "extra_footprint": "warning",
         "footprint": "error",
         "footprint_filters_mismatch": "ignore",
+        "footprint_symbol_field_mismatch": "warning",
         "footprint_symbol_mismatch": "warning",
         "footprint_type_mismatch": "error",
         "hole_clearance": "error",
@@ -110,6 +109,7 @@
         "mirrored_text_on_front_layer": "warning",
         "missing_courtyard": "ignore",
         "missing_footprint": "warning",
+        "missing_tuning_profile": "warning",
         "net_conflict": "warning",
         "nonmirrored_text_on_back_layer": "warning",
         "npth_inside_courtyard": "ignore",
@@ -129,9 +129,12 @@
         "too_many_vias": "error",
         "track_angle": "error",
         "track_dangling": "warning",
+        "track_not_centered_on_via": "ignore",
+        "track_on_post_machined_layer": "error",
         "track_segment_length": "error",
         "track_width": "error",
         "tracks_crossing": "error",
+        "tuning_profile_track_geometries": "ignore",
         "unconnected_items": "error",
         "unresolved_variable": "error",
         "via_dangling": "warning",
@@ -258,22 +261,58 @@
       "zones_use_no_outline": true
     },
     "ipc2581": {
+      "bom_rev": "",
       "dist": "",
       "distpn": "",
       "internal_id": "",
       "mfg": "",
-      "mpn": ""
+      "mpn": "",
+      "sch_revision": "C"
     },
     "layer_pairs": [],
     "layer_presets": [],
     "viewports": []
   },
   "boards": [],
+  "component_class_settings": {
+    "assignments": [],
+    "meta": {
+      "version": 0
+    },
+    "sheet_component_classes": {
+      "enabled": false
+    }
+  },
   "cvpcb": {
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      [
+        "ground_pin_not_ground|584200|1016000|c28fd531-a4a3-4843-98b5-efdeed3b8e3a|00000000-0000-0000-0000-000000000000|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/2937a0f3-214e-4877-b3a7-58c2a7e96868|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/2937a0f3-214e-4877-b3a7-58c2a7e96868|",
+        "Cannot connect to GND net bc it's isolated"
+      ],
+      [
+        "ground_pin_not_ground|584200|1016000|c28fd531-a4a3-4843-98b5-efdeed3b8e3a|00000000-0000-0000-0000-000000000000|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/3764685c-4b15-41a6-9ec5-08d20557b528|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/3764685c-4b15-41a6-9ec5-08d20557b528|",
+        "Cannot connect to GND net bc it's isolated"
+      ],
+      [
+        "ground_pin_not_ground|584200|1244600|4aa0f6c1-bf0b-400c-a523-c2061a99d376|00000000-0000-0000-0000-000000000000|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/2937a0f3-214e-4877-b3a7-58c2a7e96868|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/2937a0f3-214e-4877-b3a7-58c2a7e96868|",
+        "Cannot connect to GND net bc it's isolated"
+      ],
+      [
+        "ground_pin_not_ground|584200|1244600|4aa0f6c1-bf0b-400c-a523-c2061a99d376|00000000-0000-0000-0000-000000000000|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/3764685c-4b15-41a6-9ec5-08d20557b528|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/3764685c-4b15-41a6-9ec5-08d20557b528|",
+        "Cannot connect to GND net bc it's isolated"
+      ],
+      [
+        "ground_pin_not_ground|584200|1244600|e3c63046-7621-43e2-a45b-05159840eef3|00000000-0000-0000-0000-000000000000|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/2937a0f3-214e-4877-b3a7-58c2a7e96868|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/2937a0f3-214e-4877-b3a7-58c2a7e96868|",
+        "Cannot connect to GND net bc it's isolated"
+      ],
+      [
+        "ground_pin_not_ground|584200|1244600|e3c63046-7621-43e2-a45b-05159840eef3|00000000-0000-0000-0000-000000000000|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/3764685c-4b15-41a6-9ec5-08d20557b528|/47d0dc91-2bd7-478f-bec1-bf62d0379f8e/3764685c-4b15-41a6-9ec5-08d20557b528|",
+        "Cannot connect to GND net bc it's isolated"
+      ]
+    ],
     "meta": {
       "version": 0
     },
@@ -459,11 +498,14 @@
       "duplicate_sheet_names": "error",
       "endpoint_off_grid": "warning",
       "extra_units": "error",
+      "field_name_whitespace": "warning",
       "footprint_filter": "ignore",
       "footprint_link_issues": "warning",
       "four_way_junction": "ignore",
       "global_label_dangling": "warning",
+      "ground_pin_not_ground": "warning",
       "hier_label_mismatch": "error",
+      "isolated_pin_label": "warning",
       "label_dangling": "error",
       "label_multiple_wires": "warning",
       "lib_symbol_issues": "warning",
@@ -486,6 +528,7 @@
       "similar_power": "warning",
       "simulation_model_issue": "ignore",
       "single_global_label": "ignore",
+      "stacked_pin_name": "warning",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
       "undefined_netclass": "error",
@@ -518,6 +561,7 @@
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
+        "tuning_profile": "",
         "via_diameter": 0.5,
         "via_drill": 0.3,
         "wire_width": 6
@@ -535,13 +579,14 @@
         "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
+        "tuning_profile": "",
         "via_diameter": 1.0,
         "via_drill": 0.5,
         "wire_width": 6
       }
     ],
     "meta": {
-      "version": 4
+      "version": 5
     },
     "net_colors": null,
     "netclass_assignments": {
@@ -570,7 +615,11 @@
   },
   "schematic": {
     "annotate_start_num": 0,
-    "bom_export_filename": "${PROJECTNAME}.csv",
+    "annotation": {
+      "method": 0,
+      "sort_order": 0
+    },
+    "bom_export_filename": "manufacturing\\bom\\stimjim BOM.csv",
     "bom_fmt_presets": [],
     "bom_fmt_settings": {
       "field_delimiter": ",",
@@ -587,6 +636,18 @@
       "fields_ordered": [
         {
           "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Qty",
+          "name": "${QUANTITY}",
+          "show": true
+        },
+        {
+          "group_by": false,
           "label": "Reference",
           "name": "Reference",
           "show": true
@@ -598,34 +659,22 @@
           "show": true
         },
         {
+          "group_by": true,
+          "label": "Tolerance",
+          "name": "Tolerance",
+          "show": true
+        },
+        {
           "group_by": false,
           "label": "Datasheet",
           "name": "Datasheet",
-          "show": true
-        },
-        {
-          "group_by": false,
-          "label": "Footprint",
-          "name": "Footprint",
-          "show": true
-        },
-        {
-          "group_by": false,
-          "label": "Qty",
-          "name": "${QUANTITY}",
-          "show": true
+          "show": false
         },
         {
           "group_by": true,
-          "label": "DNP",
-          "name": "${DNP}",
+          "label": "Footprint",
+          "name": "Footprint",
           "show": true
-        },
-        {
-          "group_by": false,
-          "label": "#",
-          "name": "${ITEM_NUMBER}",
-          "show": false
         },
         {
           "group_by": false,
@@ -646,28 +695,46 @@
           "show": false
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "TempCo",
           "name": "TempCo",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Tolerance",
-          "name": "Tolerance",
           "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Voltage",
           "name": "Voltage",
           "show": true
         },
         {
+          "group_by": true,
+          "label": "DNP",
+          "name": "${DNP}",
+          "show": true
+        },
+        {
+          "group_by": true,
+          "label": "OEPSPN",
+          "name": "OEPSPN",
+          "show": true
+        },
+        {
+          "group_by": true,
+          "label": "MPN",
+          "name": "MPN",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "LCSC",
+          "name": "LCSC",
+          "show": false
+        },
+        {
           "group_by": false,
           "label": "Description",
           "name": "Description",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -679,24 +746,6 @@
           "group_by": false,
           "label": "KLC_S4.2_VREG_LX",
           "name": "KLC_S4.2_VREG_LX",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "MPN",
-          "name": "MPN",
-          "show": true
-        },
-        {
-          "group_by": false,
-          "label": "OEPSPN",
-          "name": "OEPSPN",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "LCSC",
-          "name": "LCSC",
           "show": false
         },
         {
@@ -719,6 +768,7 @@
       "sort_asc": true,
       "sort_field": "Reference"
     },
+    "bus_aliases": {},
     "connection_grid_size": 50.0,
     "drawing": {
       "dashed_lines_dash_length_ratio": 12.0,
@@ -726,6 +776,7 @@
       "default_line_thickness": 6.0,
       "default_text_size": 50.0,
       "field_names": [],
+      "hop_over_size_choice": 0,
       "intersheets_ref_own_page": false,
       "intersheets_ref_prefix": "",
       "intersheets_ref_short": false,
@@ -758,6 +809,7 @@
     },
     "page_layout_descr_file": "",
     "plot_directory": "./",
+    "reuse_designators": true,
     "space_save_all_events": true,
     "spice_adjust_passive_values": false,
     "spice_current_sheet_as_root": false,
@@ -767,12 +819,21 @@
     "spice_save_all_dissipations": false,
     "spice_save_all_voltages": false,
     "subpart_first_id": 65,
-    "subpart_id_separator": 0
+    "subpart_id_separator": 0,
+    "top_level_sheets": [
+      {
+        "filename": "stimjim.kicad_sch",
+        "name": "stimjim",
+        "uuid": "47d0dc91-2bd7-478f-bec1-bf62d0379f8e"
+      }
+    ],
+    "used_designators": "",
+    "variants": []
   },
   "sheets": [
     [
       "47d0dc91-2bd7-478f-bec1-bf62d0379f8e",
-      "Root"
+      "stimjim"
     ],
     [
       "4b4021f2-7f05-4fd5-aa86-5f497eba9a1f",
@@ -787,5 +848,11 @@
       "channel_1"
     ]
   ],
-  "text_variables": {}
+  "text_variables": {},
+  "tuning_profiles": {
+    "meta": {
+      "version": 0
+    },
+    "tuning_profiles_impedance_geometric": []
+  }
 }
