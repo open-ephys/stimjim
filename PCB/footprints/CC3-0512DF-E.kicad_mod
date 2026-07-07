@@ -1,0 +1,177 @@
+(footprint "CC3-0512DF-E"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "U2"
+		(at 4 -4.5 0)
+		(layer "F.SilkS")
+		(uuid "bb4dc21b-150f-4b23-8540-2f756d6c45e6")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "CC3-0512DF-E"
+		(at 8 -2 0)
+		(layer "F.Fab")
+		(uuid "cb8f347a-ea89-4c51-9c2a-82d718428183")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" "https://product.tdk.com/system/files/dam/doc/product/power/switching-power/dc-dc-converter/catalog/cc-e_e.pdf"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "ae71ba2a-a882-44e2-b5c7-bf80e66d1717")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "913d3196-2d7b-45b8-977c-9205a9243c0e")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_line
+		(start 0 -16)
+		(end 23 -16)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "cb369831-a56b-4b56-85b8-906080677cf2")
+	)
+	(fp_line
+		(start 0 0)
+		(end 0 -16)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "333bdb92-0496-4bb9-baf7-560b2018c35d")
+	)
+	(fp_line
+		(start 23 -16)
+		(end 23 0)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "de16ea0a-31d4-4b81-bbc9-0404ffd2aa2c")
+	)
+	(fp_line
+		(start 23 0)
+		(end 0 0)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ab2e450f-d1e8-458f-8cfd-1bf5eef02e97")
+	)
+	(pad "1" thru_hole circle
+		(at 0 -13.08)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "357d4f9e-5a2e-4b35-81a1-4521fe3bdc61")
+	)
+	(pad "2" thru_hole circle
+		(at 0 -5.46)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "434e8729-a32d-40eb-a35b-1e61bb0993f3")
+	)
+	(pad "3" thru_hole circle
+		(at 0 -2.92)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "f5e90aef-f8ac-475e-af44-39409d0ee5e5")
+	)
+	(pad "4" thru_hole circle
+		(at 23 -2.92)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "5714709a-f11d-43a8-bf0b-fa624f68b51d")
+	)
+	(pad "5" thru_hole circle
+		(at 23 -5.46)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "26e23637-398e-4f08-8f69-6cdf47ba1611")
+	)
+	(pad "6" thru_hole circle
+		(at 23 -10.54)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "cae205bf-524a-4c95-9007-eb8a0abbe3b4")
+	)
+	(pad "7" thru_hole circle
+		(at 23 -13.08)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "4b02f765-7344-4a56-bc78-74f7047947e3")
+	)
+	(pad "a" thru_hole circle
+		(at 2.5 0)
+		(size 2.5 2.5)
+		(drill 1.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "1e29506b-343e-44e7-9fbc-140a9a28ef9d")
+	)
+	(pad "a" thru_hole circle
+		(at 20.5 -16)
+		(size 2.5 2.5)
+		(drill 1.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "a7189198-905d-4afd-b004-3e858c4e08dc")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/footprints/cc3-f-e_outline.STEP"
+		(offset
+			(xyz 11.5 8 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
+)
