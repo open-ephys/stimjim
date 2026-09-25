@@ -8,6 +8,7 @@
 #define DAC_RANGE_PM10V   4u
 #define DAC_REG_POWER     0x10u
 #define DAC_POWER_ON      1u
+#define DAC_REG_CTRL       0x18u
 #define DAC_CFG(reg, val) (((uint32_t)(reg) << 16) | (uint32_t)(val))
 
 __always_inline static inline void dacs_latch(void) {
