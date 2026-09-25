@@ -24,7 +24,7 @@ typedef enum {
 #define OUTPUT_MODE_ACTIVE_MASK (OUTPUT_MODE_VOLTAGE | OUTPUT_MODE_CURRENT)
 
 typedef struct { 
-    bool dir;   // HIGH = trigger input, LOW = sync output
+    bool dir;   // GPIO_OUT (1) = sync output, GPIO_IN (0) = trigger input
     int8_t idx; // index of pulse train that should be delivered upon trigger
 } channel_io_t;
 
