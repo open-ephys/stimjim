@@ -5,12 +5,13 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <hardware/structs/bus_ctrl.h>
 #include <hardware/gpio.h>
 #include <pico/multicore.h>
+#include <pico/stdlib.h>
 #include <pico/util/queue.h>
-#include <tusb.h>
 
 #include "core1.h"
 #include "stimjim_context.h"
@@ -422,8 +423,7 @@ int main(void) {
 
     stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_core1_cmd, &q_offsets_rx);
 
-    while (!tud_cdc_connected()) sleep_ms(100);
-
+    sleep_ms(3000);
     printf("StimJim %s\n\n", FIRMWARE_VERSION);
     print_offsets(stimjim_ctx);
 
