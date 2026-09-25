@@ -309,7 +309,7 @@ static void cmd_X(const char *args) {
 
     if (*args != '\0') { puts(cmd_usage); return; }
     sio_hw->doorbell_out_set = (1u << 0);
-    puts("Stimulus cancelled.\n");
+    puts("Cancel requested.\n");
 }
 
 static char *read_serial_line(void) {
