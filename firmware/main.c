@@ -103,7 +103,11 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     while (*p == ';' || *p == ' ') {
         if (*p == ';') p++;
         while (*p == ' ') p++;
-        if (!*p || pt.n_stages >= MAX_STAGES) break;
+        if (!*p) break;
+        if (pt.n_stages >= MAX_STAGES) {
+            printf("Invalid pulse train: more than %d stages.\n\n", MAX_STAGES);
+            return;
+        }
         char field_name[32];
         snprintf(field_name, sizeof(field_name), "amp0 stage[%d]", pt.n_stages);
         if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -amp_limit[0], amp_limit[0])) return;
