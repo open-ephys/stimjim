@@ -18,7 +18,7 @@
 
 #define BUF_LEN 1024
 
-queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
+queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result, q_discarded;
 
 static bool is_delimiter(const char c) {
     return c == ',' || c == ';';
@@ -180,11 +180,11 @@ static void cmd_TU(const stimjim_context_t *sc, const char *args) {
     { puts(cmd_usage); return; }
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
-        .stimulus = stimjim_ctx_convert_pt(sc, (int8_t)idx),
+        .stimulus = { .idx = (uint8_t)idx, .pt = stimjim_ctx_convert_pt(sc, (int8_t)idx) },
     };
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("Started PulseTrain[%d].\n", idx);
+    printf("PulseTrain[%d] requested.\n", idx);
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
@@ -418,6 +418,15 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     }
 }
 
+static void handle_discarded_requests(const stimjim_context_t *sc) {
+    uint8_t idx;
+    if (!queue_try_remove(&q_discarded, &idx)) return;
+
+    while (!queue_is_empty(&q_stimulus_telemetry))
+        handle_stimulus_telemetry(sc);
+    printf("PulseTrain[%d] discarded: a stimulus was already running.\n", idx);
+}
+
 int main(void) {
     if (!stdio_init_all())
         return EXIT_FAILURE;
@@ -437,6 +446,7 @@ int main(void) {
     queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
     queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 32);
     queue_init(&q_adc_result, sizeof(int16_t), 5);
+    queue_init(&q_discarded, sizeof(uint8_t), 8);
 
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
     multicore_launch_core1(main_core1);
@@ -452,5 +462,6 @@ int main(void) {
     while (true) {
         handle_user_input(stimjim_ctx);
         handle_stimulus_telemetry(stimjim_ctx);
+        handle_discarded_requests(stimjim_ctx);
     }
 }

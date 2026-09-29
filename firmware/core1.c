@@ -321,10 +321,12 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
         switch (cmd.type) {
             case CORE1_CMD_STIMULUS:
                 if (mode == CMD_QUEUE_IDLE) {
-                    stimulus = cmd.stimulus;
+                    stimulus = cmd.stimulus.pt;
                     return &stimulus;
                 }
-                break;  // queued behind the running stimulus: discard
+                // queued behind the running stimulus: discard and report it
+                inline_queue_try_add(&q_discarded, &cmd.stimulus.idx);
+                break;
             case CORE1_CMD_TRIGGER_CONFIG:
                 pt_trigger[cmd.trigger_config.ch] = cmd.trigger_config.pt;
                 break;
