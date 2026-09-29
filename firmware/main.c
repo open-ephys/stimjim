@@ -353,7 +353,8 @@ static char *read_serial_line(void) {
 static void handle_serial_line(stimjim_context_t *sc, char *line) {
     line = (char *)skip_ws(line);
     const char cmd = line[0];
-    const char *args = cmd ? skip_ws(line + 1) : line;
+    if (!cmd) return;
+    const char *args = skip_ws(line + 1);
 
     switch (cmd) {
         case 'S': cmd_S(sc, args); break;
