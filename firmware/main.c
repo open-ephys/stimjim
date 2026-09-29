@@ -285,7 +285,7 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = (1u << 2);
-    printf("Ch%d output mode set to %d\n", ch, mode);
+    printf("Set channel %d to mode %d.\n", ch, mode);
 }
 
 static void cmd_B(stimjim_context_t *sc, const char *args) {
