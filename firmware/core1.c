@@ -116,8 +116,9 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
 
     gpio_set_mask64(nldac_mask);
 
-    // Leave the DACs latched at 0 (the sweep left them at the last swept code).
-    dacs_write_blocking(0, 0);
+    // Leave the DACs latched at the current offset (zero current), as the
+    // Teensy did after boot; the sweep left them at the last swept code.
+    dacs_write_blocking((uint16_t)(int16_t)offsets[0].current, (uint16_t)(int16_t)offsets[1].current);
     dacs_latch();
 
     set_output_mode(0, OUTPUT_MODE_GND);
