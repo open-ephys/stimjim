@@ -178,8 +178,9 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1
                 (uint16_t)pt->stage_amplitude[0][next_stage],
                 (uint16_t)pt->stage_amplitude[1][next_stage]);
 
-            // Calculate duration of stage in clock cycles
-            uint32_t stage_dur_cyc = pt->stage_duration[stage] * cycles_per_us;
+            // Calculate duration of stage in clock cycles. This can exceed the
+            // range of the 32-bit cycle counter for long inter-pulse gaps.
+            uint64_t stage_dur_cyc = (uint64_t)pt->stage_duration[stage] * cycles_per_us;
 
             // Check for cancel ('X') commands while waiting for DAC to settle
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < dac_settle_cyc)
@@ -199,8 +200,17 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1
                 sr->delivered_stages[stage]++;
             }
 
+            // Wait out stages longer than INT32_MAX cycles in chunks the 32-bit
+            // cycle counter can measure
+            while (stage_dur_cyc > INT32_MAX) {
+                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX)
+                    if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+                stage_start_cyc += INT32_MAX;
+                stage_dur_cyc   -= INT32_MAX;
+            }
+
             // Check for cancel ('X') commands while waiting for stage to end
-            while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < stage_dur_cyc)
+            while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc)
                 if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
 
             // Don't latch on the last stage of the last pulse
@@ -208,7 +218,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1
                 dacs_latch();
 
             // Accumulate clock cycles of next stage transition
-            stage_start_cyc += stage_dur_cyc;
+            stage_start_cyc += (uint32_t)stage_dur_cyc;
         }
     }
     return false;
