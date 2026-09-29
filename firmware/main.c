@@ -21,14 +21,19 @@
 queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 
 static bool is_delimiter(const char c) {
-    return c == ',' || c == ';' || c == ' ';
+    return c == ',' || c == ';';
+}
+
+static const char *skip_ws(const char *p) {
+    while (*p == ' ' || *p == '\t')
+        p++;
+    return p;
 }
 
 static void parse_skip(const char **p) {
+    *p = skip_ws(*p);
     if (**p == ',')
-        (*p)++;
-    while (**p == ' ')
-        (*p)++;
+        *p = skip_ws(*p + 1);
 }
 
 static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *name, const int32_t min, const int32_t max) {
@@ -36,10 +41,11 @@ static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *nam
 
     char *ep;
     long long val = strtoll(*p, &ep, 10);
-    bool ok = (ep != *p) && (*ep == '\0' || is_delimiter(*ep)) && (val >= min) && (val <= max);
+    const char *next = skip_ws(ep);
+    bool ok = (ep != *p) && (*next == '\0' || is_delimiter(*next)) && (val >= min) && (val <= max);
     if (ok) {
         *out = (int32_t)val;
-        *p = ep;
+        *p = next;
         return true;
     }
 
@@ -117,9 +123,8 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         else                                               amp_limit[ch] = 0;
     }
 
-    while (*p == ';' || *p == ' ') {
-        if (*p == ';') p++;
-        while (*p == ' ') p++;
+    while (*p == ';') {
+        p = skip_ws(p + 1);
         if (!*p) break;
         if (pt.n_stages >= MAX_STAGES) {
             printf("Invalid pulse train: more than %d stages.\n", MAX_STAGES);
@@ -347,8 +352,9 @@ static char *read_serial_line(void) {
 }
 
 static void handle_serial_line(stimjim_context_t *sc, char *line) {
+    line = (char *)skip_ws(line);
     const char cmd = line[0];
-    char *args = line + 1;
+    const char *args = cmd ? skip_ws(line + 1) : line;
 
     switch (cmd) {
         case 'S': cmd_S(sc, args); break;
