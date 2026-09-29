@@ -70,6 +70,9 @@ __always_inline static inline bool inline_queue_try_add(queue_t *q, const void *
 }
 
 static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calibration) {
+    offsets[0] = offsets_calibration.prev[0];
+    offsets[1] = offsets_calibration.prev[1];
+
     if (offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_ADC) {
         for (uint8_t ch = 0; ch < 2; ch++) {
             set_output_mode(ch, OUTPUT_MODE_GND);
@@ -80,10 +83,6 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
             offsets[ch].adc = acc / (float)SAMPLES;
         }
     }
-    else {
-        offsets[0].adc = offsets_calibration.adc[0];
-        offsets[1].adc = offsets_calibration.adc[1];
-    }
 
     const int8_t sweep_range = 50;
     dacs_write_blocking(0, 0);
@@ -91,16 +90,10 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
     gpio_clr_mask64(nldac_mask);
 
     for (uint8_t line = 0; line < 2; line++) {
-        if (line && !(offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_CURRENT)) {
-            offsets[0].current = 0;
-            offsets[1].current = 0;
+        if (line && !(offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_CURRENT))
             continue;
-        }
-        if (!line && !(offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_VOLTAGE)) {
-            offsets[0].voltage = 0;
-            offsets[1].voltage = 0;
+        if (!line && !(offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_VOLTAGE))
             continue;
-        }
         const uint16_t adc_cfg = ADC_BASE_CONFIG | (line ? ADC_CURRENT_LINE : 0);
         for (uint8_t ch = 0; ch < 2; ch++) {
             adc_write_blocking(ch, adc_cfg);

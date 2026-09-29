@@ -36,7 +36,7 @@ typedef enum {
 
 typedef struct { 
     offsets_tx_type_t offset_tx_type;
-    float adc[2]; // if only calculating voltage/current offsets, pass adc offsets
+    offsets_t prev[2];
 } offsets_tx_t;
 
 typedef struct {

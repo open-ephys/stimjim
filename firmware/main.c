@@ -294,7 +294,8 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
     if (*args != '\0') { puts(cmd_usage); return; }
     printf("Updating ADC offsets...\n");
     const offsets_tx_t offsets_calibration = {
-        .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_VOLTAGE | OFFSETS_TX_CALIBRATE_CURRENT,
+        .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
+        .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
     };
     stimjim_ctx_set_offsets(sc, &offsets_calibration);
 
@@ -306,11 +307,9 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "C usage: C";
 
     if (*args != '\0') { puts(cmd_usage); return; }
-    printf("Updating current and voltage offsets...\n");
-    offsets_t offsets[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
-    const offsets_tx_t offsets_calibration = { 
-        .offset_tx_type = OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
-        .adc = { offsets[0].adc, offsets[1].adc } 
+    printf("Updating ADC, current and voltage offsets...\n");
+    const offsets_tx_t offsets_calibration = {
+        .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
     stimjim_ctx_set_offsets(sc, &offsets_calibration);
 
