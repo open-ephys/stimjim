@@ -72,9 +72,24 @@ static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
     }
 }
 
+static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
+    pulsetrain_t pt = stimjim_ctx_get_pulsetrain(sc, (int8_t)n);
+    if (pt.n_pulses == 0) {
+        printf("PulseTrain[%d] is not defined.\n", n);
+        return;
+    }
+    // output_mode is stored as a bit flag (1 << mode); print the mode number
+    printf("PulseTrain[%d]: mode[%d,%d], period=%u us, pulses=%u, %d stages\n",
+           n, __builtin_ctz(pt.output_mode[0]), __builtin_ctz(pt.output_mode[1]),
+           pt.period, pt.n_pulses, pt.n_stages);
+    for (uint8_t i = 0; i < pt.n_stages; i++)
+        printf("  Stage %d: amp[%d,%d], dur=%u us\n",
+               i, pt.stage_amplitude[0][i], pt.stage_amplitude[1][i], pt.stage_duration[i]);
+}
+
 static void cmd_S(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] =
-        "S usage: S<idx>,<mode0>,<mode1>,<period_us>,<total_dur_us>;"
+        "S usage: S<idx> to print, or S<idx>,<mode0>,<mode1>,<period_us>,<total_dur_us>;"
         " <amp0>,<amp1>,<stage_dur_us>; ...";
 
     int32_t n, mode0, mode1;
@@ -82,8 +97,10 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     pulsetrain_t pt = { 0 };
 
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1)
-     || !try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
+    if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1))
+    { puts(cmd_usage); return; }
+    if (*p == '\0') { print_pulsetrain(sc, (uint8_t)n); return; }
+    if (!try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
      || !try_parse_i32_in_range(&p, &mode1, "mode1", 0, 3)
      || !try_parse_i32_in_range(&p, &pt.period, "period_us",  1, INT32_MAX)
      || !try_parse_i32_in_range(&p, &duration,  "total_dur_us", 1, INT32_MAX))
@@ -146,11 +163,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
             set_trigger_pulsetrain(sc, ch, (int8_t)n);
     }
 
-    printf("PulseTrain[%d]: mode[%d,%d], period=%u us, pulses=%u, %d stages\n",
-           n, pt.output_mode[0], pt.output_mode[1], pt.period, pt.n_pulses, pt.n_stages);
-    for (int32_t i = 0; i < pt.n_stages; i++)
-        printf("  Stage %d: amp[%d,%d], dur=%u us\n",
-               i, pt.stage_amplitude[0][i], pt.stage_amplitude[1][i], pt.stage_duration[i]);
+    print_pulsetrain(sc, (uint8_t)n);
 }
 
 static void cmd_TU(const stimjim_context_t *sc, const char *args) {
