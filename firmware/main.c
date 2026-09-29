@@ -335,10 +335,15 @@ static void cmd_X(const char *args) {
 static char *read_serial_line(void) {
     static char buf[BUF_LEN];
     static uint16_t nbuf = 0;
+    static bool overflow = false; // discarding the rest of an overlong line
 
     int32_t c = getchar_timeout_us(0);
     if (c == PICO_ERROR_TIMEOUT) return NULL;
-    if (nbuf >= sizeof(buf) - 1) { nbuf = 0; return NULL; }
+    if (overflow) {
+        if (c == '\n') { overflow = false; puts("Line too long; ignored."); }
+        return NULL;
+    }
+    if (c != '\n' && nbuf >= sizeof(buf) - 1) { nbuf = 0; overflow = true; return NULL; }
 
     buf[nbuf++] = (char)c;
     if (buf[nbuf - 1] != '\n') return NULL;
