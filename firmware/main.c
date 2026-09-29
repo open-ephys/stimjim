@@ -183,7 +183,8 @@ static void cmd_TU(const stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "R usage: R<ch>,<pt_idx|-1>[,<0=trigger|1=sync>]";
+    static const char cmd_usage[] =
+        "R usage: R<ch>,<pt_idx>[,<0=trigger|1=sync>]  (pt_idx -1 = sync)";
 
     int32_t ch = 0, idx = 0, dir = 0;
     const char *p = args;
@@ -193,11 +194,10 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     if (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
     { puts(cmd_usage); return; }
 
-    stimjim_ctx_set_channel_io(sc, (uint8_t)ch, (int8_t)idx, (bool)dir);
+    const bool sync = dir || idx < 0;
+    stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
 
-    if (idx == -1) 
-        printf("IN%d -> Disabled\n", ch);
-    else if (dir) 
+    if (sync)
         printf("IN%d -> Sync signal\n", ch);
     else {
         set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
