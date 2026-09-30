@@ -16,6 +16,7 @@
 #define SAMPLES 100
 
 static const uint64_t nldac_mask = (1LL << NLDAC_A) | (1LL << NLDAC_B);
+static const uint64_t nldac_ch_mask[2] = { 1LL << NLDAC_A, 1LL << NLDAC_B };
 static const uint64_t oe0_mask[2] = { 1LL << OE0_A, 1LL << OE0_B };
 static const uint64_t oe1_mask[2] = { 1LL << OE1_A, 1LL << OE1_B };
 static const uint64_t gpio_mask[2] = {
@@ -89,7 +90,7 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
 
     const int8_t sweep_range = 50;
     dacs_write_blocking(0, 0);
-    dacs_latch();
+    dacs_latch(nldac_mask);
     gpio_clr_mask64(nldac_mask);
 
     for (uint8_t line = 0; line < 2; line++) {
@@ -122,7 +123,7 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
     // Leave the DACs latched at the current offset (zero current), as the
     // Teensy did after boot; the sweep left them at the last swept code.
     dacs_write_blocking((uint16_t)(int16_t)offsets[0].current, (uint16_t)(int16_t)offsets[1].current);
-    dacs_latch();
+    dacs_latch(nldac_mask);
 
     set_output_mode(0, OUTPUT_MODE_GND);
     set_output_mode(1, OUTPUT_MODE_GND);
@@ -134,10 +135,11 @@ typedef struct {
     uint64_t mode_clr, mode_set;   // mux to the output mode (pulse start)
     uint64_t gnd_set;              // mux to ground (inter-pulse gap)
     uint64_t end_clr, end_set;     // stimulus end: LEDs/sync off, mux to ground
+    uint64_t nldac;
 } stim_gpio_masks_t;
 
 __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pulsetrain_t *pt) {
-    uint64_t led_sync = 0, mode_clr = 0, mode_set = 0, gnd_set = 0;
+    uint64_t led_sync = 0, mode_clr = 0, mode_set = 0, gnd_set = 0, nldac = 0;
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (!(pt->output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK)) continue;
         led_sync |= gpio_mask[ch];
@@ -146,6 +148,7 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
         mode_clr |= (pt->output_mode[ch] & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND) ? 0 : oe0_mask[ch])
                  |  (pt->output_mode[ch] & (OUTPUT_MODE_FLOAT   | OUTPUT_MODE_GND) ? 0 : oe1_mask[ch]);
         gnd_set  |= oe0_mask[ch] | oe1_mask[ch];
+        nldac    |= nldac_ch_mask[ch];
     }
     // A train with no stages has only the inter-pulse gap, so it starts grounded
     const bool gap_first = pt->n_stages == 1;
@@ -157,6 +160,7 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
         .gnd_set   = gnd_set,
         .end_clr   = led_sync,
         .end_set   = gnd_set,
+        .nldac     = nldac,
     };
 }
 
@@ -228,7 +232,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             if (stage < pt->n_stages - 1 || pulse < pt->n_pulses - 1) {
                 gpio_clr_mask64(mux_clr);
                 gpio_set_mask64(mux_set);
-                dacs_latch();
+                dacs_latch(masks->nldac);
             }
 
             // Accumulate clock cycles of next stage transition
@@ -274,7 +278,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
     gpio_clr_mask64(masks.start_clr);
     gpio_set_mask64(masks.start_set);
 
-    dacs_latch();
+    dacs_latch(masks.nldac);
 
     // Record cycle counter as reference for first stage timing
     uint32_t stage_start_cyc = m33_hw->dwt_cyccnt;
@@ -307,7 +311,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
         dacs_write_blocking(
             (uint16_t)pt->stage_amplitude[0][pt->n_stages - 1],
             (uint16_t)pt->stage_amplitude[1][pt->n_stages - 1]);
-        dacs_latch();
+        dacs_latch(masks.nldac);
     }
 
     // Send telemetry about the delivered pulsetrain to core0
@@ -367,7 +371,7 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
                 else {
                     if (m->type == MANUAL_CMD_DAC_SET) {
                         dac_write_blocking(m->ch, (uint16_t)m->dac_code);
-                        dacs_latch();
+                        dacs_latch(nldac_ch_mask[m->ch]);
                     } 
                     else {
                         set_output_mode(m->ch, m->output_mode);

@@ -11,13 +11,11 @@
 #define DAC_REG_CTRL       0x18u
 #define DAC_CFG(reg, val) (((uint32_t)(reg) << 16) | (uint32_t)(val))
 
-__always_inline static inline void dacs_latch(void) {
-    sio_hw->gpio_clr    = (1u << NLDAC_B);
-    sio_hw->gpio_hi_clr = (1u << (NLDAC_A - 32u));
+__always_inline static inline void dacs_latch(const uint64_t nldac_mask) {
+    gpio_clr_mask64(nldac_mask);
     // hold low ≥3 cycles to meet DAC min NLDAC pulse width requirement
     __asm volatile("nop\n\t" "nop\n\t" "nop\n\t");
-    sio_hw->gpio_set    = (1u << NLDAC_B);
-    sio_hw->gpio_hi_set = (1u << (NLDAC_A - 32u));
+    gpio_set_mask64(nldac_mask);
 }
 
 __always_inline static inline bool dac_write(uint8_t ch, const uint32_t src) {
