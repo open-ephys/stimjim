@@ -36,7 +36,7 @@ static void parse_skip(const char **p) {
         *p = skip_ws(*p + 1);
 }
 
-static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *name, const int32_t min, const int32_t max) {
+static bool try_parse_in_range(const char **p, long long *out, const char *name, const long long min, const long long max) {
     parse_skip(p);
 
     char *ep;
@@ -44,15 +44,29 @@ static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *nam
     const char *next = skip_ws(ep);
     bool ok = (ep != *p) && (*next == '\0' || is_delimiter(*next)) && (val >= min) && (val <= max);
     if (ok) {
-        *out = (int32_t)val;
+        *out = val;
         *p = next;
         return true;
     }
 
     const char *end = *p;
     while (*end && !is_delimiter(*end)) end++;
-    printf("Invalid %s: '%.*s' (must be %d..%d)\n", name, (int)(end - *p), *p, min, max);
+    printf("Invalid %s: '%.*s' (must be %lld..%lld)\n", name, (int)(end - *p), *p, min, max);
     return false;
+}
+
+static bool try_parse_i32_in_range(const char **p, int32_t *out, const char *name, const int32_t min, const int32_t max) {
+    long long val;
+    if (!try_parse_in_range(p, &val, name, min, max)) return false;
+    *out = (int32_t)val;
+    return true;
+}
+
+static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *name, const uint32_t min, const uint32_t max) {
+    long long val;
+    if (!try_parse_in_range(p, &val, name, min, max)) return false;
+    *out = (uint32_t)val;
+    return true;
 }
 
 static void print_offsets(const stimjim_context_t *sc) {
@@ -99,7 +113,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         " <amp0>,<amp1>,<stage_dur_us>; ...";
 
     int32_t n, mode0, mode1;
-    int32_t duration;
+    uint32_t duration;
     pulsetrain_t pt = { 0 };
 
     const char *p = args;
@@ -108,8 +122,8 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     if (*p == '\0') { print_pulsetrain(sc, (uint8_t)n); return; }
     if (!try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
      || !try_parse_i32_in_range(&p, &mode1, "mode1", 0, 3)
-     || !try_parse_i32_in_range(&p, &pt.period, "period_us",  1, INT32_MAX)
-     || !try_parse_i32_in_range(&p, &duration,  "total_dur_us", 1, INT32_MAX))
+     || !try_parse_u32_in_range(&p, &pt.period, "period_us",  1, UINT32_MAX)
+     || !try_parse_u32_in_range(&p, &duration,  "total_dur_us", 1, UINT32_MAX))
     { puts(cmd_usage); return; }
 
     pt.output_mode[0] = 1 << mode0;
@@ -136,7 +150,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         snprintf(field_name, sizeof(field_name), "amp1 stage[%d]", pt.n_stages);
         if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return;
         snprintf(field_name, sizeof(field_name), "stage_dur_us stage[%d]", pt.n_stages);
-        if (!try_parse_i32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 1, UINT16_MAX)) return;
+        if (!try_parse_u32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 1, UINT32_MAX)) return;
         pt.n_stages++;
     }
 
