@@ -172,7 +172,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     for (uint8_t i = 0; !short_pulse && i < pt.n_stages; i++)
         short_pulse = (pt.stage_duration[i] < 20u);
     if (short_pulse)
-        puts("Warning: <20us stage or inter-pulse gap detected. Desired pulse timings are not guaranteed.");
+        puts("Warning: <20us stage or inter-pulse gap detected. Specified pulse timings are not guaranteed.");
 
     stimjim_ctx_set_pulsetrain(sc, (uint8_t)n, &pt);
 
