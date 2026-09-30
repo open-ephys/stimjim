@@ -84,6 +84,9 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
         }
     }
 
+    if (!(offsets_calibration.offset_tx_type & (OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE)))
+        return;
+
     const int8_t sweep_range = 50;
     dacs_write_blocking(0, 0);
     dacs_latch();
