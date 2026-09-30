@@ -125,29 +125,35 @@ static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calib
     set_output_mode(1, OUTPUT_MODE_GND);
 }
 
-// masks to clear/set gpio atomically before/after stimulus
+// masks to clear/set gpio atomically during a stimulus
 typedef struct {
-    uint64_t start_clr, start_set; // gpio masks for stimulus start
-    uint64_t end_clr, end_set;     // gpio masks for stimulus end
+    uint64_t start_clr, start_set; // stimulus start: LEDs/sync on, mux as for stage 0
+    uint64_t mode_clr, mode_set;   // mux to the output mode (pulse start)
+    uint64_t gnd_set;              // mux to ground (inter-pulse gap)
+    uint64_t end_clr, end_set;     // stimulus end: LEDs/sync off, mux to ground
 } stim_gpio_masks_t;
 
 __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pulsetrain_t *pt) {
-    uint64_t start_clr = 0, start_set = 0, end_clr = 0, end_set = 0, oe_set = 0;
+    uint64_t led_sync = 0, mode_clr = 0, mode_set = 0, gnd_set = 0;
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (!(pt->output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK)) continue;
-        start_set |= gpio_mask[ch];
-        oe_set    |= (pt->output_mode[ch] & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND) ? oe0_mask[ch] : 0)
-                  |  (pt->output_mode[ch] & (OUTPUT_MODE_FLOAT   | OUTPUT_MODE_GND) ? oe1_mask[ch] : 0);
-        start_clr |= (pt->output_mode[ch] & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND) ? 0 : oe0_mask[ch])
-                  |  (pt->output_mode[ch] & (OUTPUT_MODE_FLOAT   | OUTPUT_MODE_GND) ? 0 : oe1_mask[ch]);
-        end_clr   |= gpio_mask[ch];
-        end_set   |= oe0_mask[ch] | oe1_mask[ch];
+        led_sync |= gpio_mask[ch];
+        mode_set |= (pt->output_mode[ch] & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND) ? oe0_mask[ch] : 0)
+                 |  (pt->output_mode[ch] & (OUTPUT_MODE_FLOAT   | OUTPUT_MODE_GND) ? oe1_mask[ch] : 0);
+        mode_clr |= (pt->output_mode[ch] & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND) ? 0 : oe0_mask[ch])
+                 |  (pt->output_mode[ch] & (OUTPUT_MODE_FLOAT   | OUTPUT_MODE_GND) ? 0 : oe1_mask[ch]);
+        gnd_set  |= oe0_mask[ch] | oe1_mask[ch];
     }
+    // A train with no stages has only the inter-pulse gap, so it starts grounded
+    const bool gap_first = pt->n_stages == 1;
     return (stim_gpio_masks_t){
-        .start_clr = start_clr,
-        .start_set = start_set | oe_set,
-        .end_clr   = end_clr,
-        .end_set   = end_set,
+        .start_clr = gap_first ? 0 : mode_clr,
+        .start_set = led_sync | (gap_first ? gnd_set : mode_set),
+        .mode_clr  = mode_clr,
+        .mode_set  = mode_set,
+        .gnd_set   = gnd_set,
+        .end_clr   = led_sync,
+        .end_set   = gnd_set,
     };
 }
 
@@ -159,9 +165,11 @@ __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, c
     st->cancelled = false;
 }
 
-__always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1_stim_telemetry_t *sr, uint32_t stage_start_cyc) {
+__always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
+                                                   core1_stim_telemetry_t *sr, uint32_t stage_start_cyc) {
 
     const uint32_t dac_settle_cyc = DAC_SETTLE_US * cycles_per_us;
+    const uint8_t gap = pt->n_stages - 1;  // the last stage is the inter-pulse gap
 
     for (uint32_t pulse = 0; pulse < pt->n_pulses; pulse++) {
         for (uint8_t stage = 0; stage < pt->n_stages; stage++) {
@@ -176,22 +184,28 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1
             // range of the 32-bit cycle counter for long inter-pulse gaps.
             uint64_t stage_dur_cyc = (uint64_t)pt->stage_duration[stage] * cycles_per_us;
 
-            // Check for cancel ('X') commands while waiting for DAC to settle
-            while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < dac_settle_cyc)
-                if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+            uint64_t mux_clr = 0, mux_set = 0;
+            if (next_stage == gap)  mux_set = masks->gnd_set;
+            else if (stage == gap) { mux_clr = masks->mode_clr; mux_set = masks->mode_set; }
 
-            // Read ADCs (blocking). Assign on the first pulse, accumulate after,
-            // so the telemetry arrays need no pre-zeroing memset.
-            int16_t vals[2];
-            adcs_read_get_value_blocking(vals);
-            if (pulse == 0) {
-                sr->measured_amplitudes[0][stage] = vals[0];
-                sr->measured_amplitudes[1][stage] = vals[1];
-                sr->delivered_stages[stage]       = 1;
-            } else {
-                sr->measured_amplitudes[0][stage] += vals[0];
-                sr->measured_amplitudes[1][stage] += vals[1];
-                sr->delivered_stages[stage]++;
+            if (stage != gap) {
+                // Check for cancel ('X') commands while waiting for DAC to settle
+                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < dac_settle_cyc)
+                    if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+
+                // Read ADCs (blocking). Assign on the first pulse, accumulate after,
+                // so the telemetry arrays need no pre-zeroing memset.
+                int16_t vals[2];
+                adcs_read_get_value_blocking(vals);
+                if (pulse == 0) {
+                    sr->measured_amplitudes[0][stage] = vals[0];
+                    sr->measured_amplitudes[1][stage] = vals[1];
+                    sr->delivered_stages[stage]       = 1;
+                } else {
+                    sr->measured_amplitudes[0][stage] += vals[0];
+                    sr->measured_amplitudes[1][stage] += vals[1];
+                    sr->delivered_stages[stage]++;
+                }
             }
 
             // Wait out stages longer than INT32_MAX cycles in chunks the 32-bit
@@ -208,8 +222,11 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, core1
                 if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
 
             // Don't latch on the last stage of the last pulse
-            if (stage < pt->n_stages - 1 || pulse < pt->n_pulses - 1)
+            if (stage < pt->n_stages - 1 || pulse < pt->n_pulses - 1) {
+                gpio_clr_mask64(mux_clr);
+                gpio_set_mask64(mux_set);
                 dacs_latch();
+            }
 
             // Accumulate clock cycles of next stage transition
             stage_start_cyc += (uint32_t)stage_dur_cyc;
@@ -276,7 +293,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
     pio_spi_deselect_adc(1);
 
     // All following stages in pulsetrain follow state machine in this loop
-    st.cancelled = pulsetrain_loop(pt, &st, stage_start_cyc);
+    st.cancelled = pulsetrain_loop(pt, &masks, &st, stage_start_cyc);
 
     // Clear LEDs, analog multiplexer, and sync output
     gpio_clr_mask64(masks.end_clr);

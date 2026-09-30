@@ -419,15 +419,13 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
         bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
         printf("Channel %d pulse train terminated. Delivered:\n", ch);
         float adc_offset = stimjim_ctx_get_offsets(sc, ch).adc;
-        for (uint8_t i = 0; i < sr.n_stages; i++) {
+        // The last stage is the inter-pulse gap, which is grounded and not sampled
+        for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
             if (sr.delivered_stages[i]) {
                 float adc_val = ((float)sr.measured_amplitudes[ch][i] / (float)sr.delivered_stages[i]) - adc_offset;
                 sr.measured_amplitudes[ch][i] = lroundf(adc_val * scale[is_current]);
             }
-            if (i < sr.n_stages - 1)
-                printf("  %dx Stage %d: %6ld %s\n", sr.delivered_stages[i], i, sr.measured_amplitudes[ch][i], units[is_current]);
-            else
-                printf("  %dx Inter-pulse gap: %6ld %s\n", sr.delivered_stages[i], sr.measured_amplitudes[ch][i], units[is_current]);
+            printf("  %dx Stage %d: %6ld %s\n", sr.delivered_stages[i], i, sr.measured_amplitudes[ch][i], units[is_current]);
         }
     }
 }
