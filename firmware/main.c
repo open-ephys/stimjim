@@ -227,10 +227,10 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
 
     if (sync)
-        printf("IN%d -> Sync signal\n", ch);
+        printf("IN%d -> Sync output\n", ch);
     else {
         set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
-        printf("IN%d -> PulseTrain[%d] trigger\n", ch, idx);
+        printf("IN%d -> Trigger input for PulseTrain[%d]\n", ch, idx);
     }
 }
 
