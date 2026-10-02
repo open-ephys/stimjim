@@ -93,18 +93,28 @@ static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
 }
 
 static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
+    static const char *const mode_names[4] = { "voltage", "current", "float", "ground" };
+    static const char *const units[4]      = { "mV", "uA", NULL, NULL };
+
     pulsetrain_t pt = stimjim_ctx_get_pulsetrain(sc, (int8_t)n);
     if (pt.n_pulses == 0) {
         printf("PulseTrain[%d] is not defined.\n", n);
         return;
     }
-    // output_mode is stored as a bit flag (1 << mode); print the mode number
-    printf("PulseTrain[%d]: mode[%d,%d], period=%u us, pulses=%u, %d stages\n",
-           n, __builtin_ctz(pt.output_mode[0]), __builtin_ctz(pt.output_mode[1]),
-           pt.period, pt.n_pulses, pt.n_stages);
-    for (uint8_t i = 0; i < pt.n_stages; i++)
-        printf("  Stage %d: amp[%d,%d], dur=%u us\n",
-               i, pt.stage_amplitude[0][i], pt.stage_amplitude[1][i], pt.stage_duration[i]);
+    // output_mode is stored as a bit flag (1 << mode)
+    const int mode[2] = { __builtin_ctz(pt.output_mode[0]), __builtin_ctz(pt.output_mode[1]) };
+    printf("PulseTrain[%d]: ch0 %s, ch1 %s, period %u us, %u pulses, %d stages\n",
+           n, mode_names[mode[0]], mode_names[mode[1]], pt.period, pt.n_pulses, pt.n_stages);
+    for (uint8_t i = 0; i < pt.n_stages; i++) {
+        printf("  Stage %d: %u us", i, pt.stage_duration[i]);
+        for (uint8_t ch = 0; ch < 2; ch++) {
+            if (units[mode[ch]])
+                printf(", ch%d %d %s", ch, pt.stage_amplitude[ch][i], units[mode[ch]]);
+            else
+                printf(", ch%d n/a", ch);
+        }
+        putchar('\n');
+    }
 }
 
 static void cmd_S(stimjim_context_t *sc, const char *args) {
