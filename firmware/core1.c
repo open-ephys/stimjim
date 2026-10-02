@@ -30,6 +30,9 @@ static const uint8_t channel_io_pins[2] = { CHANNEL_IO_A, CHANNEL_IO_B };
 // be included in our time-critical hot path.
 static uint32_t cycles_per_us;
 
+// The duration of an ADC read measured at startup, plus ADC_LEAD_MARGIN_US
+static uint32_t adc_lead_cyc;
+
 // Pico SDK function inlined to avoid jitter related to XIP cache-miss
 __always_inline static inline bool inline_queue_try_remove(queue_t *q, void *data) {
     uint32_t save = spin_lock_blocking(q->core.spin_lock);
@@ -175,7 +178,6 @@ __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, c
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
                                                    core1_stim_telemetry_t *sr, uint32_t stage_start_cyc) {
 
-    const uint32_t dac_settle_cyc = DAC_SETTLE_US * cycles_per_us;
     const uint8_t gap = pt->n_stages - 1;  // the last stage is the inter-pulse gap
 
     for (uint32_t pulse = 0; pulse < pt->n_pulses; pulse++) {
@@ -195,9 +197,19 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             if (next_stage == gap)  mux_set = masks->gnd_set;
             else if (stage == gap) { mux_clr = masks->mode_clr; mux_set = masks->mode_set; }
 
+            // Wait out stages longer than INT32_MAX cycles in chunks the 32-bit
+            // cycle counter can measure
+            while (stage_dur_cyc > INT32_MAX) {
+                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX / 2)
+                    if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+                stage_start_cyc += INT32_MAX / 2;
+                stage_dur_cyc   -= INT32_MAX / 2;
+            }
+
             if (stage != gap) {
-                // Check for cancel ('X') commands while waiting for DAC to settle
-                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < dac_settle_cyc)
+                // Check for cancel ('X') commands while waiting to read the ADCs
+                // just ahead of the next latch
+                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
                     if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
 
                 // Read ADCs (blocking). Assign on the first pulse, accumulate after,
@@ -213,15 +225,6 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                     sr->measured_amplitudes[1][stage] += vals[1];
                     sr->delivered_stages[stage]++;
                 }
-            }
-
-            // Wait out stages longer than INT32_MAX cycles in chunks the 32-bit
-            // cycle counter can measure
-            while (stage_dur_cyc > INT32_MAX) {
-                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX)
-                    if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
-                stage_start_cyc += INT32_MAX;
-                stage_dur_cyc   -= INT32_MAX;
             }
 
             // Check for cancel ('X') commands while waiting for stage to end
@@ -401,6 +404,16 @@ void __time_critical_func(main_core1)(void) {
     dacs_init();
     adcs_write_blocking(ADC_BASE_CONFIG, ADC_BASE_CONFIG);
     sleep_ms(1); // Wait for ADCs to wake up, 500us minimum
+
+    uint32_t adc_read_cyc = 0;
+    for (uint8_t i = 0; i < 8; i++) {
+        int16_t vals[2];
+        const uint32_t start_cyc = m33_hw->dwt_cyccnt;
+        adcs_read_get_value_blocking(vals);
+        const uint32_t cyc = m33_hw->dwt_cyccnt - start_cyc;
+        if (cyc > adc_read_cyc) adc_read_cyc = cyc;
+    }
+    adc_lead_cyc = adc_read_cyc + ADC_LEAD_MARGIN_US * cycles_per_us;
 
     multicore_fifo_push_blocking(CORE_HANDSHAKE_MESSAGE);
 

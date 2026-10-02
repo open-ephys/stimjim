@@ -37,7 +37,7 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 
 #define RISING_EDGE_INTERRUPT_BIT(gpio_number, value) (value << (4 * (gpio_number % 8) + 3))
 
-#define DAC_SETTLE_US 10u
+#define ADC_LEAD_MARGIN_US 2u
 
 #define MICROAMPS_PER_ADC   (20e6f / (1.0f + (49.4f / 1.8f)) / 100.0f / (float)(1 << 13))
 #define MILLIVOLTS_PER_ADC  (20e3f / (float)(1 << 13))
