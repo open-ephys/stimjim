@@ -19,6 +19,9 @@
 #define BUF_LEN 1024
 
 queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result, q_discarded;
+static queue_t q_deferred_commands;
+
+static void handle_user_input(stimjim_context_t *sc, bool waiting);
 
 static bool is_delimiter(const char c) {
     return c == ',' || c == ';';
@@ -272,7 +275,7 @@ static void cmd_A(const char *args) {
     printf("Set channel %d to DAC code %d.\n", ch, code);
 }
 
-static void cmd_E(const stimjim_context_t *sc, const char *args) {
+static void cmd_E(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "E usage: E<ch>,<line>";
 
     int32_t ch = 0, line = 0;
@@ -287,7 +290,8 @@ static void cmd_E(const stimjim_context_t *sc, const char *args) {
     sio_hw->doorbell_out_set = 1 << 2;
 
     int16_t val;
-    queue_remove_blocking(&q_adc_result, &val);
+    while (!queue_try_remove(&q_adc_result, &val))
+        handle_user_input(sc, true);
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
     static const char  units[2][3] = { "mV", "uA" };
@@ -321,7 +325,9 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
         .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
     };
-    stimjim_ctx_set_offsets(sc, &offsets_calibration);
+    stimjim_ctx_request_offsets(sc, &offsets_calibration);
+    while (!stimjim_ctx_try_receive_offsets(sc))
+        handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
     printf("Offsets updated\n");
@@ -335,7 +341,9 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
-    stimjim_ctx_set_offsets(sc, &offsets_calibration);
+    stimjim_ctx_request_offsets(sc, &offsets_calibration);
+    while (!stimjim_ctx_try_receive_offsets(sc))
+        handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
     printf("Offsets updated\n");
@@ -402,9 +410,22 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
     }
 }
 
-static void handle_user_input(stimjim_context_t *sc) {
+// While E/B/C wait on core1, which runs them only after a stimulus, handle X
+// right away so it can cancel the stimulus, and defer any other command.
+static void handle_user_input(stimjim_context_t *sc, bool waiting) {
+    static char deferred_command[BUF_LEN];
+    if (!waiting && queue_try_remove(&q_deferred_commands, deferred_command)) {
+        handle_serial_line(sc, deferred_command);
+        return;
+    }
     char *line = read_serial_line();
-    if (line) handle_serial_line(sc, line);
+    if (!line) return;
+    if (waiting && *skip_ws(line) != 'X') {
+        if (!queue_try_add(&q_deferred_commands, line))
+            puts("Too many commands waiting; command ignored.");
+        return;
+    }
+    handle_serial_line(sc, line);
 }
 
 static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
@@ -466,6 +487,7 @@ int main(void) {
     queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 32);
     queue_init(&q_adc_result, sizeof(int16_t), 5);
     queue_init(&q_discarded, sizeof(uint8_t), 8);
+    queue_init(&q_deferred_commands, BUF_LEN, 8);
 
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
     multicore_launch_core1(main_core1);
@@ -479,7 +501,7 @@ int main(void) {
     print_offsets(stimjim_ctx);
 
     while (true) {
-        handle_user_input(stimjim_ctx);
+        handle_user_input(stimjim_ctx, false);
         handle_stimulus_telemetry(stimjim_ctx);
         handle_discarded_requests(stimjim_ctx);
     }

@@ -64,7 +64,8 @@ stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx)
     offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT,
     };
-    stimjim_ctx_set_offsets(&stimjim_ctx, &offsets_calibration);
+    stimjim_ctx_request_offsets(&stimjim_ctx, &offsets_calibration);
+    while (!stimjim_ctx_try_receive_offsets(&stimjim_ctx));
 
     gpio_put(LED_A, false);
     gpio_put(LED_B, false);
@@ -106,8 +107,11 @@ void stimjim_ctx_set_pulsetrain(stimjim_context_t *stimjim_ctx, const uint8_t pt
     stimjim_ctx->pulsetrains[pt_index] = *pt;
 }
 
-void stimjim_ctx_set_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration) {
+void stimjim_ctx_request_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration) {
     core1_cmd_t cmd = { .type = CORE1_CMD_OFFSETS, .offsets = *offsets_calibration };
     queue_add_blocking(stimjim_ctx->q_core1_cmd, &cmd);
-    queue_remove_blocking(stimjim_ctx->q_offsets_rx, &stimjim_ctx->offsets);
+}
+
+bool stimjim_ctx_try_receive_offsets(stimjim_context_t *stimjim_ctx) {
+    return queue_try_remove(stimjim_ctx->q_offsets_rx, &stimjim_ctx->offsets);
 }
