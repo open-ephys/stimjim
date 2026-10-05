@@ -413,10 +413,7 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 
     if (sr.cancelled) {
         printf("Stimulus cancelled.\n");
-        return;
-    }
-
-    if (sr.delivered_stages[0] == 0) {
+    } else if (sr.delivered_stages[0] == 0) {
         printf("No pulses delivered (empty or uninitialized pulse train).\n");
         return;
     }

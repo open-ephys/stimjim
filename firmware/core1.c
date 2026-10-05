@@ -169,7 +169,6 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
 
 __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, core1_stim_telemetry_t *st) {
     st->n_stages = pt->n_stages;
-    st->delivered_stages[0] = 0;
     st->output_mode[0] = pt->output_mode[0];
     st->output_mode[1] = pt->output_mode[1];
     st->cancelled = false;
@@ -212,19 +211,12 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
                     if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
 
-                // Read ADCs (blocking). Assign on the first pulse, accumulate after,
-                // so the telemetry arrays need no pre-zeroing memset.
+                // Read ADCs (blocking) and accumulate into the telemetry
                 int16_t vals[2];
                 adcs_read_get_value_blocking(vals);
-                if (pulse == 0) {
-                    sr->measured_amplitudes[0][stage] = vals[0];
-                    sr->measured_amplitudes[1][stage] = vals[1];
-                    sr->delivered_stages[stage]       = 1;
-                } else {
-                    sr->measured_amplitudes[0][stage] += vals[0];
-                    sr->measured_amplitudes[1][stage] += vals[1];
-                    sr->delivered_stages[stage]++;
-                }
+                sr->measured_amplitudes[0][stage] += vals[0];
+                sr->measured_amplitudes[1][stage] += vals[1];
+                sr->delivered_stages[stage]++;
             }
 
             // Check for cancel ('X') commands while waiting for stage to end
@@ -294,7 +286,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
     adc_write(1, pt_adc_cfg(pt, 1));
 
     // Initialize stimulus telemetry (overlaps the ADC config transfer)
-    core1_stim_telemetry_t st;
+    static core1_stim_telemetry_t st;
     init_stim_telemetry(pt, &st);
 
     // Wait for the ADC config to complete, then deselect
@@ -319,6 +311,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
 
     // Send telemetry about the delivered pulsetrain to core0
     inline_queue_try_add(&q_stimulus_telemetry, &st);
+    memset(&st, 0, sizeof(st));
 
     clear_trigger_edges();
 }
