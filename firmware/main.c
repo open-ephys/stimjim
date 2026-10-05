@@ -445,7 +445,7 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (!(sr.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK)) continue;
         bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
-        printf("Channel %d pulse train terminated. Delivered:\n", ch);
+        printf("Channel %d pulse train delivered:\n", ch);
         float adc_offset = stimjim_ctx_get_offsets(sc, ch).adc;
         // The last stage is the inter-pulse gap, which is grounded and not sampled
         for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
