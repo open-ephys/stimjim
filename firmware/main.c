@@ -73,11 +73,10 @@ static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *na
 }
 
 static void print_offsets(const stimjim_context_t *sc) {
-    for (uint8_t ch = 0; ch < 2; ch++) {
-        offsets_t off = stimjim_ctx_get_offsets(sc, ch);
-        printf("Channel %u offsets: adc=%.4f voltage=%d current=%d\n",
-               ch, (double)off.adc, off.voltage, off.current);
-    }
+    const offsets_t off[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
+    printf("ADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n\n",
+           (double)off[0].adc, (double)off[1].adc, off[0].current, off[1].current,
+           off[0].voltage, off[1].voltage);
 }
 
 static void set_trigger_pulsetrain(const stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
@@ -96,8 +95,8 @@ static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
 }
 
 static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
-    static const char *const mode_names[4] = { "voltage", "current", "float", "ground" };
-    static const char *const units[4]      = { "mV", "uA", NULL, NULL };
+    static const char *const mode_names[4] = {
+        "Voltage output", "Current output", "No output (high-Z)", "No output (grounded)" };
 
     pulsetrain_t pt = stimjim_ctx_get_pulsetrain(sc, (int8_t)n);
     if (pt.n_pulses == 0) {
@@ -106,18 +105,18 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     }
     // output_mode is stored as a bit flag (1 << mode)
     const int mode[2] = { __builtin_ctz(pt.output_mode[0]), __builtin_ctz(pt.output_mode[1]) };
-    printf("PulseTrain[%d]: ch0 %s, ch1 %s, period %u us, %u pulses, %d stages\n",
-           n, mode_names[mode[0]], mode_names[mode[1]], pt.period, pt.n_pulses, pt.n_stages);
-    for (uint8_t i = 0; i < pt.n_stages; i++) {
-        printf("  Stage %d: %u us", i, pt.stage_duration[i]);
-        for (uint8_t ch = 0; ch < 2; ch++) {
-            if (units[mode[ch]])
-                printf(", ch%d %d %s", ch, pt.stage_amplitude[ch][i], units[mode[ch]]);
-            else
-                printf(", ch%d n/a", ch);
-        }
-        putchar('\n');
-    }
+    const uint32_t duration = pt.n_pulses * pt.period;
+    puts("----------------------------------");
+    printf("Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
+           n, mode[0], mode_names[mode[0]], mode[1], mode_names[mode[1]]);
+    printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %u usec (%0.3f sec)\n",
+           pt.period, 0.000001 * pt.period, 1000000.0 / pt.period, duration, 0.000001 * duration);
+    puts("\n  stage    duration     output0   output1");
+    for (uint8_t i = 0; i < pt.n_stages; i++)
+        printf("   %2d  %7u usec %8d%s %8d%s\n", i, pt.stage_duration[i],
+               pt.stage_amplitude[0][i], mode[0] == 0 ? "mV" : "uA",
+               pt.stage_amplitude[1][i], mode[1] == 0 ? "mV" : "uA");
+    puts("----------------------------------\n");
 }
 
 static void cmd_S(stimjim_context_t *sc, const char *args) {
@@ -198,7 +197,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     print_pulsetrain(sc, (uint8_t)n);
 }
 
-static void cmd_TU(const stimjim_context_t *sc, const char *args) {
+static void cmd_TU(const stimjim_context_t *sc, const char cmd_char, const char *args) {
     static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>";
 
     int32_t idx = 0;
@@ -211,7 +210,7 @@ static void cmd_TU(const stimjim_context_t *sc, const char *args) {
     };
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("PulseTrain[%d] requested.\n", idx);
+    printf("\nStarted %c train with parameters of PulseTrain %d\n", cmd_char, idx);
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
@@ -230,10 +229,11 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
 
     if (sync)
-        printf("IN%d -> Sync output\n", ch);
+        printf("Detaching interrupt to IN%d\nProgramming IN%d as output that indicates activity on output %d\n",
+               ch, ch, ch);
     else {
         set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
-        printf("IN%d -> Trigger input for PulseTrain[%d]\n", ch, idx);
+        printf("Attaching interrupt to IN%d to run PulseTrain[%d]\n", ch, idx);
     }
 }
 
@@ -255,7 +255,7 @@ static void cmd_V(const stimjim_context_t *sc, const char *args) {
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = (int16_t)code } };
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("Set channel %d to %d mV (DAC code %d).\n", ch, mv, code);
+    printf("Set channel %d to amplitude %d mV (dac value %d).\n", ch, mv, code);
 }
 
 static void cmd_A(const char *args) {
@@ -272,7 +272,7 @@ static void cmd_A(const char *args) {
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("Set channel %d to DAC code %d.\n", ch, code);
+    printf("Set channel %d to amplitude %d\n", ch, code);
 }
 
 static void cmd_E(stimjim_context_t *sc, const char *args) {
@@ -297,7 +297,7 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
     static const char  units[2][3] = { "mV", "uA" };
     static const float scale[2]    = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
     int32_t real = lroundf(((float)val - off.adc) * scale[line]);
-    printf("Read value: %d (%d %s)\n", val, real, units[line]);
+    printf("Read value: %d (%d%s)\n", val, real, units[line]);
 }
 
 static void cmd_M(const stimjim_context_t *sc, const char *args) {
@@ -313,14 +313,13 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = (1u << 2);
-    printf("Set channel %d to mode %d.\n", ch, mode);
+    printf("Set channel %d to mode %d\n", ch, mode);
 }
 
 static void cmd_B(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "B usage: B";
 
     if (*args != '\0') { puts(cmd_usage); return; }
-    printf("Updating ADC offsets...\n");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
         .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
@@ -330,14 +329,12 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
-    printf("Offsets updated\n");
 }
 
 static void cmd_C(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "C usage: C";
 
     if (*args != '\0') { puts(cmd_usage); return; }
-    printf("Updating ADC, current and voltage offsets...\n");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
@@ -346,7 +343,6 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
         handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
-    printf("Offsets updated\n");
 }
 
 static void cmd_D(const stimjim_context_t *sc, const char *args) {
@@ -361,7 +357,7 @@ static void cmd_X(const char *args) {
 
     if (*args != '\0') { puts(cmd_usage); return; }
     sio_hw->doorbell_out_set = (1u << 0);
-    puts("Cancel requested.");
+    puts("Forcing train to stop");
 }
 
 static char *read_serial_line(void) {
@@ -396,7 +392,7 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
     switch (cmd) {
         case 'S': cmd_S(sc, args); break;
         case 'T': // intentional fall through
-        case 'U': cmd_TU(sc, args); break;
+        case 'U': cmd_TU(sc, cmd, args); break;
         case 'R': cmd_R(sc, args); break;
         case 'V': cmd_V(sc, args); break;
         case 'A': cmd_A(args); break;
@@ -432,30 +428,39 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     core1_stim_telemetry_t sr;
     if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
-    if (sr.cancelled) {
-        printf("Stimulus cancelled.\n");
-    } else if (sr.delivered_stages[0] == 0) {
+    if (sr.cancelled) return;
+
+    if (sr.delivered_stages[0] == 0) {
         printf("No pulses delivered (empty or uninitialized pulse train).\n");
         return;
     }
 
-    static const char units[2][3] = { "mV", "uA" };
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
-    for (uint8_t ch = 0; ch < 2; ch++) {
-        if (!(sr.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK)) continue;
-        bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
-        printf("Channel %d pulse train delivered:\n", ch);
-        float adc_offset = stimjim_ctx_get_offsets(sc, ch).adc;
-        // The last stage is the inter-pulse gap, which is grounded and not sampled
-        for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
-            if (sr.delivered_stages[i]) {
-                float adc_val = ((float)sr.measured_amplitudes[ch][i] / (float)sr.delivered_stages[i]) - adc_offset;
-                sr.measured_amplitudes[ch][i] = lroundf(adc_val * scale[is_current]);
+    printf("Train complete. Delivered %u pulses.\nCurrent/Voltage by stage: \n"
+           "           Ch0                Ch1 \n", sr.n_pulses);
+    // The last stage is the inter-pulse gap, which is grounded and not sampled
+    for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
+        printf("Stage %d", i);
+        for (uint8_t ch = 0; ch < 2; ch++) {
+            const bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
+            long amplitude = 0;
+            if ((sr.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK) && sr.delivered_stages[i]) {
+                float adc_val = ((float)sr.measured_amplitudes[ch][i] / (float)sr.delivered_stages[i])
+                              - stimjim_ctx_get_offsets(sc, ch).adc;
+                amplitude = lroundf(adc_val * scale[is_current]);
             }
-            printf("  %dx Stage %d: %6ld %s\n", sr.delivered_stages[i], i, sr.measured_amplitudes[ch][i], units[is_current]);
+            printf("%6ld%s,          ", amplitude, (sr.output_mode[ch] & OUTPUT_MODE_VOLTAGE) ? "mV" : "uA");
         }
+        putchar('\n');
     }
+}
+
+static void handle_triggered_stimuli(const stimjim_context_t *sc) {
+    if (!multicore_fifo_rvalid()) return;
+    const uint32_t ch = multicore_fifo_pop_blocking();
+    printf("\nStarted %c train with parameters of PulseTrain %d\n",
+           ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
 }
 
 static void handle_discarded_requests(const stimjim_context_t *sc) {
@@ -497,11 +502,14 @@ int main(void) {
     stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_core1_cmd, &q_offsets_rx);
 
     sleep_ms(3000);
-    printf("StimJim %s\n", FIRMWARE_VERSION);
+    printf("Booting StimJim %s\n", FIRMWARE_VERSION);
+    puts("Initializing triggers inputs...");
     print_offsets(stimjim_ctx);
+    puts("Ready to go!\n\n");
 
     while (true) {
         handle_user_input(stimjim_ctx, false);
+        handle_triggered_stimuli(stimjim_ctx);
         handle_stimulus_telemetry(stimjim_ctx);
         handle_discarded_requests(stimjim_ctx);
     }

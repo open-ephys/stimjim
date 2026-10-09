@@ -169,6 +169,7 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
 
 __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, core1_stim_telemetry_t *st) {
     st->n_stages = pt->n_stages;
+    st->n_pulses = pt->n_pulses;
     st->output_mode[0] = pt->output_mode[0];
     st->output_mode[1] = pt->output_mode[1];
     st->cancelled = false;
@@ -250,7 +251,7 @@ __always_inline static inline void clear_trigger_edges(void) {
     }
 }
 
-__always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
+__always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const int8_t trigger_ch) {
 
     // Clear cancel doorbell
     sio_hw->doorbell_in_clr = 1u;
@@ -288,6 +289,10 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt) {
     // Initialize stimulus telemetry (overlaps the ADC config transfer)
     static core1_stim_telemetry_t st;
     init_stim_telemetry(pt, &st);
+
+    // Tell core0 which trigger input started this stimulus, if any
+    if (trigger_ch >= 0 && multicore_fifo_wready())
+        sio_hw->fifo_wr = (uint32_t)trigger_ch;
 
     // Wait for the ADC config to complete, then deselect
     while (!pio_spi_is_done(0) || !pio_spi_is_done(1));
@@ -416,13 +421,14 @@ void __time_critical_func(main_core1)(void) {
     while (true) {
         // If there is no stimulus queued, check triggers
         const pulsetrain_t *pt = handle_cmd_queue(pt_trigger, CMD_QUEUE_IDLE);
+        int8_t trigger_ch = -1;
         if (!pt) {
-            int8_t ch = check_pending_trigger_ch();
-            if (ch >= 0)
-                pt = &pt_trigger[ch];
+            trigger_ch = check_pending_trigger_ch();
+            if (trigger_ch >= 0)
+                pt = &pt_trigger[trigger_ch];
         }
         if (pt) {
-            run_pulsetrain(pt);
+            run_pulsetrain(pt, trigger_ch);
             handle_cmd_queue(pt_trigger, CMD_QUEUE_AFTER_STIM);
         }
     }

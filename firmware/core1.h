@@ -8,6 +8,7 @@ extern queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result, q_
 
 typedef struct {
     uint8_t n_stages;
+    uint32_t n_pulses;
     int32_t measured_amplitudes[2][MAX_STAGES + 1];
     uint32_t delivered_stages[MAX_STAGES + 1];
     output_mode_t output_mode[2];
