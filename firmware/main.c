@@ -24,6 +24,13 @@ static queue_t q_deferred_commands;
 
 static void handle_user_input(stimjim_context_t *sc, bool waiting);
 
+// Queue a command for core1. While the queue is full (core1 is busy with a
+// stimulus), keep handling stop commands so they can still cancel it.
+static void send_core1_cmd(stimjim_context_t *sc, const core1_cmd_t *cmd) {
+    while (!queue_try_add(&q_core1_cmd, cmd))
+        handle_user_input(sc, true);
+}
+
 static bool is_delimiter(const char c) {
     return c == ',' || c == ';';
 }
@@ -80,15 +87,15 @@ static void print_offsets(const stimjim_context_t *sc) {
            off[0].voltage, off[1].voltage);
 }
 
-static void set_trigger_pulsetrain(const stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
+static void set_trigger_pulsetrain(stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
     core1_cmd_t cmd = {
         .type = CORE1_CMD_TRIGGER_CONFIG,
         .trigger_config = { .ch = ch, .pt = stimjim_ctx_convert_pt(sc, idx) },
     };
-    queue_add_blocking(&q_core1_cmd, &cmd);
+    send_core1_cmd(sc, &cmd);
 }
 
-static void set_trigger_pulsetrains_w_new_offsets(const stimjim_context_t *sc) {
+static void set_trigger_pulsetrains_w_new_offsets(stimjim_context_t *sc) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
         set_trigger_pulsetrain(sc, ch, io.idx);
@@ -203,7 +210,7 @@ static void stop_stimulus(void) {
     puts("Forcing train to stop");
 }
 
-static void cmd_TU(const stimjim_context_t *sc, const char cmd_char, const char *args) {
+static void cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
     static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (idx -1 = stop)";
 
     int32_t idx = 0;
@@ -219,7 +226,7 @@ static void cmd_TU(const stimjim_context_t *sc, const char cmd_char, const char 
     // Bump the request number before queueing, so that a running stimulus stops
     // for this one, but core1 never sees this request as newer than itself
     stimulus_request_seq = seq;
-    queue_add_blocking(&q_core1_cmd, &cmd);
+    send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("\nStarted %c train with parameters of PulseTrain %d\n", cmd_char, idx);
 }
@@ -248,7 +255,7 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     }
 }
 
-static void cmd_V(const stimjim_context_t *sc, const char *args) {
+static void cmd_V(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "V usage: V<ch>,<mV>";
 
     int32_t ch = 0, mv = 0;
@@ -264,12 +271,12 @@ static void cmd_V(const stimjim_context_t *sc, const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = (int16_t)code } };
-    queue_add_blocking(&q_core1_cmd, &cmd);
+    send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d mV (dac value %d).\n", ch, mv, code);
 }
 
-static void cmd_A(const char *args) {
+static void cmd_A(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "A usage: A<ch>,<dac_code>";
 
     int32_t ch = 0;
@@ -281,7 +288,7 @@ static void cmd_A(const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
-    queue_add_blocking(&q_core1_cmd, &cmd);
+    send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d\n", ch, code);
 }
@@ -297,7 +304,7 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
-    queue_add_blocking(&q_core1_cmd, &cmd);
+    send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
 
     int16_t val;
@@ -311,7 +318,7 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
     printf("Read value: %d (%d%s)\n", val, real, units[line]);
 }
 
-static void cmd_M(const stimjim_context_t *sc, const char *args) {
+static void cmd_M(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] =
         "M usage: M<ch>,<mode>  (mode: 0=voltage 1=current 2=float 3=gnd)";
 
@@ -322,7 +329,7 @@ static void cmd_M(const stimjim_context_t *sc, const char *args) {
     { puts(cmd_usage); return; }
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
-    queue_add_blocking(&q_core1_cmd, &cmd);
+    send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = (1u << 2);
     printf("Set channel %d to mode %d\n", ch, mode);
 }
@@ -335,7 +342,8 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
         .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
     };
-    stimjim_ctx_request_offsets(sc, &offsets_calibration);
+    while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration))
+        handle_user_input(sc, true);
     while (!stimjim_ctx_try_receive_offsets(sc))
         handle_user_input(sc, true);
 
@@ -349,7 +357,8 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
-    stimjim_ctx_request_offsets(sc, &offsets_calibration);
+    while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration))
+        handle_user_input(sc, true);
     while (!stimjim_ctx_try_receive_offsets(sc))
         handle_user_input(sc, true);
 
@@ -405,7 +414,7 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
         case 'U': cmd_TU(sc, cmd, args); break;
         case 'R': cmd_R(sc, args); break;
         case 'V': cmd_V(sc, args); break;
-        case 'A': cmd_A(args); break;
+        case 'A': cmd_A(sc, args); break;
         case 'E': cmd_E(sc, args); break;
         case 'M': cmd_M(sc, args); break;
         case 'B': cmd_B(sc, args); break;
