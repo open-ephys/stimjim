@@ -171,7 +171,7 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
 
 __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, core1_stim_telemetry_t *st) {
     st->n_stages = pt->n_stages;
-    st->n_pulses = pt->n_pulses;
+    st->n_pulses = 0;
     st->output_mode[0] = pt->output_mode[0];
     st->output_mode[1] = pt->output_mode[1];
     st->cancelled = false;
@@ -194,6 +194,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
     const uint8_t gap = pt->n_stages - 1;  // the last stage is the inter-pulse gap
 
     for (uint32_t pulse = 0; pulse < pt->n_pulses; pulse++) {
+        sr->n_pulses = pulse + 1;  // pulses started, including one cut short
         for (uint8_t stage = 0; stage < pt->n_stages; stage++) {
 
             // Preload DAC (blocking)

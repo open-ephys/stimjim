@@ -198,13 +198,19 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     print_pulsetrain(sc, (uint8_t)n);
 }
 
+static void stop_stimulus(void) {
+    sio_hw->doorbell_out_set = (1u << 0);
+    puts("Forcing train to stop");
+}
+
 static void cmd_TU(const stimjim_context_t *sc, const char cmd_char, const char *args) {
-    static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>";
+    static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (idx -1 = stop)";
 
     int32_t idx = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", 0, MAX_PULSETRAINS - 1))
+    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
     { puts(cmd_usage); return; }
+    if (idx < 0) { stop_stimulus(); return; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
@@ -361,8 +367,7 @@ static void cmd_X(const char *args) {
     static const char cmd_usage[] = "X usage: X";
 
     if (*args != '\0') { puts(cmd_usage); return; }
-    sio_hw->doorbell_out_set = (1u << 0);
-    puts("Forcing train to stop");
+    stop_stimulus();
 }
 
 static char *read_serial_line(void) {
@@ -411,8 +416,17 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
     }
 }
 
-// While E/B/C wait on core1, which runs them only after a stimulus, handle X
-// right away so it can cancel the stimulus, and defer any other command.
+// X, T-1 or U-1
+static bool is_stop_command(const char *line) {
+    const char *p = skip_ws(line);
+    if (*p == 'X') return true;
+    if (*p != 'T' && *p != 'U') return false;
+    p = skip_ws(p + 1);
+    return p[0] == '-' && p[1] == '1' && *skip_ws(p + 2) == '\0';
+}
+
+// While E/B/C wait on core1, which runs them only after a stimulus, handle stop
+// commands right away so they can cancel the stimulus, and defer any other command.
 static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     static char deferred_command[BUF_LEN];
     if (!waiting && queue_try_remove(&q_deferred_commands, deferred_command)) {
@@ -421,7 +435,7 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     }
     char *line = read_serial_line();
     if (!line) return;
-    if (waiting && *skip_ws(line) != 'X') {
+    if (waiting && !is_stop_command(line)) {
         if (!queue_try_add(&q_deferred_commands, line))
             puts("Too many commands waiting; command ignored.");
         return;
@@ -433,8 +447,6 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     core1_stim_telemetry_t sr;
     if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
-    if (sr.cancelled) return;
-
     if (sr.n_pulses == 0) {
         printf("No pulses delivered (uninitialized pulse train).\n");
         return;
@@ -442,8 +454,8 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
-    printf("Train complete. Delivered %u pulses.\nCurrent/Voltage by stage: \n"
-           "           Ch0                Ch1 \n", sr.n_pulses);
+    printf("Train %s. Delivered %u pulses.\nCurrent/Voltage by stage: \n"
+           "           Ch0                Ch1 \n", sr.cancelled ? "stopped" : "complete", sr.n_pulses);
     // The last stage is the inter-pulse gap, which is grounded and not sampled
     for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
         printf("Stage %d", i);
