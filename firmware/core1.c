@@ -175,9 +175,14 @@ __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, c
     st->cancelled = false;
 }
 
-// True if X cancelled the stimulus, or a newer T/U request preempts it
+// Rising edges latched on the armed trigger inputs, which share a register
+static_assert(CHANNEL_IO_A >> 3 == CHANNEL_IO_B >> 3, "trigger inputs must share an interrupt register");
+#define TRIGGER_EDGE_BITS (RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1) | RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1))
+
+// True if X cancelled the stimulus, or a newer T/U request or a trigger preempts it
 __always_inline static inline bool stop_requested(const uint32_t seq) {
-    return (sio_hw->doorbell_in_set & 1u) || stimulus_request_seq != seq;
+    return (sio_hw->doorbell_in_set & 1u) || stimulus_request_seq != seq
+        || (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & TRIGGER_EDGE_BITS);
 }
 
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
@@ -226,9 +231,11 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 sr->delivered_stages[stage]++;
             }
 
-            // Check for cancel ('X') commands while waiting for stage to end
-            while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc)
+            // Check for cancel ('X') commands while waiting for stage to end, then
+            // spin out its last microsecond without them so the stage ends exactly
+            while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + cycles_per_us < (uint32_t)stage_dur_cyc)
                 if (stop_requested(seq)) return true;
+            while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc);
 
             // Don't latch on the last stage of the last pulse
             if (stage < pt->n_stages - 1 || pulse < pt->n_pulses - 1) {
@@ -301,6 +308,9 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     if (trigger_ch >= 0 && multicore_fifo_wready())
         sio_hw->fifo_wr = (uint32_t)trigger_ch;
 
+    // Forget earlier trigger edges; ones from here on preempt this stimulus
+    clear_trigger_edges();
+
     // Wait for the ADC config to complete, then deselect
     while (!pio_spi_is_done(0) || !pio_spi_is_done(1));
     pio_spi_deselect_adc(0);
@@ -324,8 +334,6 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     // Send telemetry about the delivered pulsetrain to core0
     inline_queue_try_add(&q_stimulus_telemetry, &st);
     memset(&st, 0, sizeof(st));
-
-    clear_trigger_edges();
 }
 
 // Returns the channel (0 or 1) whose trigger input has a latched rising edge,
