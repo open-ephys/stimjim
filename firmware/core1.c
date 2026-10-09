@@ -153,11 +153,13 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
         gnd_set  |= oe0_mask[ch] | oe1_mask[ch];
         nldac    |= nldac_ch_mask[ch];
     }
-    // A train with no stages has only the inter-pulse gap, so it starts grounded
-    const bool gap_first = pt->n_stages == 1;
+    // A train with no stages only turns the LEDs and sync on for its duration,
+    // leaving the outputs as they were
+    if (pt->n_stages == 1)
+        mode_clr = mode_set = gnd_set = nldac = 0;
     return (stim_gpio_masks_t){
-        .start_clr = gap_first ? 0 : mode_clr,
-        .start_set = led_sync | (gap_first ? gnd_set : mode_set),
+        .start_clr = mode_clr,
+        .start_set = led_sync | mode_set,
         .mode_clr  = mode_clr,
         .mode_set  = mode_set,
         .gnd_set   = gnd_set,
