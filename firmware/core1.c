@@ -175,8 +175,14 @@ __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, c
     st->cancelled = false;
 }
 
+// True if X cancelled the stimulus, or a newer T/U request preempts it
+__always_inline static inline bool stop_requested(const uint32_t seq) {
+    return (sio_hw->doorbell_in_set & 1u) || stimulus_request_seq != seq;
+}
+
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
-                                                   core1_stim_telemetry_t *sr, uint32_t stage_start_cyc) {
+                                                   core1_stim_telemetry_t *sr, uint32_t stage_start_cyc,
+                                                   const uint32_t seq) {
 
     const uint8_t gap = pt->n_stages - 1;  // the last stage is the inter-pulse gap
 
@@ -201,7 +207,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             // cycle counter can measure
             while (stage_dur_cyc > INT32_MAX) {
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX / 2)
-                    if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+                    if (stop_requested(seq)) return true;
                 stage_start_cyc += INT32_MAX / 2;
                 stage_dur_cyc   -= INT32_MAX / 2;
             }
@@ -210,7 +216,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 // Check for cancel ('X') commands while waiting to read the ADCs
                 // just ahead of the next latch
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
-                    if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+                    if (stop_requested(seq)) return true;
 
                 // Read ADCs (blocking) and accumulate into the telemetry
                 int16_t vals[2];
@@ -222,7 +228,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
 
             // Check for cancel ('X') commands while waiting for stage to end
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc)
-                if (sio_hw->doorbell_in_set & 1u) return true;  // cancel
+                if (stop_requested(seq)) return true;
 
             // Don't latch on the last stage of the last pulse
             if (stage < pt->n_stages - 1 || pulse < pt->n_pulses - 1) {
@@ -251,7 +257,8 @@ __always_inline static inline void clear_trigger_edges(void) {
     }
 }
 
-__always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const int8_t trigger_ch) {
+__always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const int8_t trigger_ch,
+                                                  const uint32_t seq) {
 
     // Clear cancel doorbell
     sio_hw->doorbell_in_clr = 1u;
@@ -300,13 +307,13 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     pio_spi_deselect_adc(1);
 
     // All following stages in pulsetrain follow state machine in this loop
-    st.cancelled = pulsetrain_loop(pt, &masks, &st, stage_start_cyc);
+    st.cancelled = pulsetrain_loop(pt, &masks, &st, stage_start_cyc, seq);
 
     // Clear LEDs, analog multiplexer, and sync output
     gpio_clr_mask64(masks.end_clr);
     gpio_set_mask64(masks.end_set);
 
-    // If a cancel ('X') command was received, set the DACs to output nominal 0
+    // If the stimulus was cancelled or preempted, set the DACs to output nominal 0
     if (st.cancelled) {
         dacs_write_blocking(
             (uint16_t)pt->stage_amplitude[0][pt->n_stages - 1],
@@ -333,25 +340,19 @@ __always_inline static inline int8_t check_pending_trigger_ch(void) {
     return -1;
 }
 
-typedef enum { CMD_QUEUE_IDLE, CMD_QUEUE_AFTER_STIM } cmd_queue_mode_t;
-
-// IDLE: Apply all commands in queue, return the first queued stimulus, or NULL.
-// AFTER_STIM: Process all commands in queue except discard queued stimuli.
-// Always returns NULL because multiple stimuli can't be subsequently queued.
-__always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t pt_trigger[2], cmd_queue_mode_t mode) {
+// Apply queued commands up to the first current stimulus and return it (setting
+// *seq to its request number), or NULL. Stimuli a newer T/U supersedes are skipped.
+__always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t pt_trigger[2], uint32_t *seq) {
     static pulsetrain_t stimulus;   // single-threaded; consumed before the next call
     core1_cmd_t cmd;
 
     while (inline_queue_try_remove(&q_core1_cmd, &cmd)) {
         switch (cmd.type) {
             case CORE1_CMD_STIMULUS:
-                if (mode == CMD_QUEUE_IDLE) {
-                    stimulus = cmd.stimulus.pt;
-                    return &stimulus;
-                }
-                // queued behind the running stimulus: discard and report it
-                inline_queue_try_add(&q_discarded, &cmd.stimulus.idx);
-                break;
+                if (cmd.stimulus.seq != stimulus_request_seq) break;
+                stimulus = cmd.stimulus.pt;
+                *seq = cmd.stimulus.seq;
+                return &stimulus;
             case CORE1_CMD_TRIGGER_CONFIG:
                 pt_trigger[cmd.trigger_config.ch] = cmd.trigger_config.pt;
                 break;
@@ -419,17 +420,18 @@ void __time_critical_func(main_core1)(void) {
     pulsetrain_t pt_trigger[2] = {0};
 
     while (true) {
+        // A triggered stimulus is preempted by T/U requests made after this point
+        uint32_t seq = stimulus_request_seq;
+
         // If there is no stimulus queued, check triggers
-        const pulsetrain_t *pt = handle_cmd_queue(pt_trigger, CMD_QUEUE_IDLE);
+        const pulsetrain_t *pt = handle_cmd_queue(pt_trigger, &seq);
         int8_t trigger_ch = -1;
         if (!pt) {
             trigger_ch = check_pending_trigger_ch();
             if (trigger_ch >= 0)
                 pt = &pt_trigger[trigger_ch];
         }
-        if (pt) {
-            run_pulsetrain(pt, trigger_ch);
-            handle_cmd_queue(pt_trigger, CMD_QUEUE_AFTER_STIM);
-        }
+        if (pt)
+            run_pulsetrain(pt, trigger_ch, seq);
     }
 }

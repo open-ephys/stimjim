@@ -18,7 +18,8 @@
 
 #define BUF_LEN 1024
 
-queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result, q_discarded;
+queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
+volatile uint32_t stimulus_request_seq;
 static queue_t q_deferred_commands;
 
 static void handle_user_input(stimjim_context_t *sc, bool waiting);
@@ -204,10 +205,14 @@ static void cmd_TU(const stimjim_context_t *sc, const char cmd_char, const char 
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", 0, MAX_PULSETRAINS - 1))
     { puts(cmd_usage); return; }
+    const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
-        .stimulus = { .idx = (uint8_t)idx, .pt = stimjim_ctx_convert_pt(sc, (int8_t)idx) },
+        .stimulus = { .seq = seq, .pt = stimjim_ctx_convert_pt(sc, (int8_t)idx) },
     };
+    // Bump the request number before queueing, so that a running stimulus stops
+    // for this one, but core1 never sees this request as newer than itself
+    stimulus_request_seq = seq;
     queue_add_blocking(&q_core1_cmd, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("\nStarted %c train with parameters of PulseTrain %d\n", cmd_char, idx);
@@ -463,15 +468,6 @@ static void handle_triggered_stimuli(const stimjim_context_t *sc) {
            ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
 }
 
-static void handle_discarded_requests(const stimjim_context_t *sc) {
-    uint8_t idx;
-    if (!queue_try_remove(&q_discarded, &idx)) return;
-
-    while (!queue_is_empty(&q_stimulus_telemetry))
-        handle_stimulus_telemetry(sc);
-    printf("PulseTrain[%d] discarded: a stimulus was already running.\n", idx);
-}
-
 int main(void) {
     if (!stdio_init_all())
         return EXIT_FAILURE;
@@ -491,7 +487,6 @@ int main(void) {
     queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
     queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 32);
     queue_init(&q_adc_result, sizeof(int16_t), 5);
-    queue_init(&q_discarded, sizeof(uint8_t), 8);
     queue_init(&q_deferred_commands, BUF_LEN, 8);
 
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
@@ -511,6 +506,5 @@ int main(void) {
         handle_user_input(stimjim_ctx, false);
         handle_triggered_stimuli(stimjim_ctx);
         handle_stimulus_telemetry(stimjim_ctx);
-        handle_discarded_requests(stimjim_ctx);
     }
 }

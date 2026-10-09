@@ -4,7 +4,8 @@
 
 #define CORE_HANDSHAKE_MESSAGE 0xDEADBEEF
 
-extern queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result, q_discarded;
+extern queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
+extern volatile uint32_t stimulus_request_seq;  // incremented by core0 for every T/U
 
 typedef struct {
     uint8_t n_stages;
@@ -39,7 +40,7 @@ typedef enum {
 typedef struct {
     core1_cmd_type_t type;
     union {
-        struct { uint8_t idx; pulsetrain_t pt; } stimulus;
+        struct { uint32_t seq; pulsetrain_t pt; } stimulus;
         struct { uint8_t ch; pulsetrain_t pt; } trigger_config;
         offsets_tx_t offsets;
         manual_cmd_t manual;
