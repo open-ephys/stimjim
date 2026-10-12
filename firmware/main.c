@@ -152,8 +152,8 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     if (*p != ';' && *p != '\0') { puts(cmd_usage); return; }
     int32_t amp_limit[2];
     for (uint8_t ch = 0; ch < 2; ch++) {
-        if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = 10000;
-        else if (pt.output_mode[ch] & OUTPUT_MODE_CURRENT) amp_limit[ch] = 3333;
+        if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = MAX_MILLIVOLTS;
+        else if (pt.output_mode[ch] & OUTPUT_MODE_CURRENT) amp_limit[ch] = MAX_MICROAMPS;
         else                                               amp_limit[ch] = 0;
     }
 
@@ -261,7 +261,7 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, mv = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &mv, "mV", -10000, 10000))
+     || !try_parse_i32_in_range(&p, &mv, "mV", -MAX_MILLIVOLTS, MAX_MILLIVOLTS))
     { puts(cmd_usage); return; }
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);

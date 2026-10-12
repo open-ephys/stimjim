@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define DAC_REG_RANGE     0x08u
-#define DAC_RANGE_PM10V   4u
+#define DAC_RANGE_PM5V    3u
 #define DAC_REG_POWER     0x10u
 #define DAC_POWER_ON      1u
 #define DAC_REG_CTRL       0x18u
