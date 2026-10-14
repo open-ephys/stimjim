@@ -1,4 +1,4 @@
-#define FIRMWARE_VERSION "v0.0.0"
+#define FIRMWARE_VERSION "v0.1.0"
 
 #include <errno.h>
 #include <limits.h>
