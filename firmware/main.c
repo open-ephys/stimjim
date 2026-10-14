@@ -486,6 +486,11 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
         }
         putchar('\n');
     }
+
+    printf("Stage counts: ");
+    for (uint8_t i = 0; i < sr.n_stages - 1; i++)
+        printf(i ? ", %u" : "%u", sr.delivered_stages[i]);
+    putchar('\n');
 }
 
 static void handle_triggered_stimuli(const stimjim_context_t *sc) {
