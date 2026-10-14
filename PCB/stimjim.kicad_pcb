@@ -5460,7 +5460,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "5k"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5485,7 +5485,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5524,7 +5524,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-103-B-T5"
+		(property "MPN" "RG1608P-4991-B-T5"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5550,7 +5550,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020235"
+		(property "OEPSPN" "OEPS020233"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10333,7 +10333,7 @@
 				)
 			)
 		)
-		(property "Value" "3k"
+		(property "Value" "1.5k"
 			(at 0 1.43 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -10358,7 +10358,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 3kΩ ±0.1% 0.100W   [RG1608P-302-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 1.5kΩ ±0.1% 0.100W   [RG1608P-152-B-T5] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10371,7 +10371,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10384,7 +10384,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-302-B-T5"
+		(property "MPN" "RG1608P-152-B-T5"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -10397,7 +10397,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020234"
+		(property "OEPSPN" "OEPS020262"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12252,7 +12252,7 @@
 				)
 			)
 		)
-		(property "Value" "360"
+		(property "Value" "1.8k"
 			(at 5.4716 -0.0476 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -12277,7 +12277,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 360Ω ±0.1% 0.100W   [RG1608P-361-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 1.8kΩ ±0.1% 0.100W   [RG1608P-182-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12316,7 +12316,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-361-B-T5"
+		(property "MPN" "RG1608P-182-B-T5 "
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12342,7 +12342,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020231"
+		(property "OEPSPN" "OEPS020261"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12468,7 +12468,7 @@
 				)
 			)
 		)
-		(property "Value" "5k"
+		(property "Value" "10k"
 			(at 0 1.43 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -12493,7 +12493,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12532,7 +12532,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-4991-B-T5"
+		(property "MPN" "RG1608P-103-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12558,7 +12558,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020233"
+		(property "OEPSPN" "OEPS020235"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13522,7 +13522,7 @@
 				)
 			)
 		)
-		(property "Value" "3k"
+		(property "Value" "1.5k"
 			(at 0 1.43 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -13547,7 +13547,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 3kΩ ±0.1% 0.100W   [RG1608P-302-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 1.5kΩ ±0.1% 0.100W   [RG1608P-152-B-T5] [SMD]"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13560,7 +13560,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13573,7 +13573,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-302-B-T5"
+		(property "MPN" "RG1608P-152-B-T5"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13586,7 +13586,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020234"
+		(property "OEPSPN" "OEPS020262"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16480,7 +16480,7 @@
 				)
 			)
 		)
-		(property "Value" "5k"
+		(property "Value" "10k"
 			(at 0 1.43 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -16505,7 +16505,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16544,7 +16544,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-4991-B-T5"
+		(property "MPN" "RG1608P-103-B-T5"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -16570,7 +16570,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020233"
+		(property "OEPSPN" "OEPS020235"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17508,7 +17508,7 @@
 				)
 			)
 		)
-		(property "Value" "360"
+		(property "Value" "1.8k"
 			(at 5.4716 -0.0476 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -17533,7 +17533,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 360Ω ±0.1% 0.100W   [RG1608P-361-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 1.8kΩ ±0.1% 0.100W   [RG1608P-182-B-T5] [SMD]"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17572,7 +17572,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-361-B-T5"
+		(property "MPN" "RG1608P-182-B-T5 "
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17598,7 +17598,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020231"
+		(property "OEPSPN" "OEPS020261"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17927,7 +17927,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "5k"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -17952,7 +17952,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17991,7 +17991,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-103-B-T5"
+		(property "MPN" "RG1608P-4991-B-T5"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18017,7 +18017,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020235"
+		(property "OEPSPN" "OEPS020233"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -42642,7 +42642,7 @@
 				)
 			)
 		)
-		(property "Value" "AD8421"
+		(property "Value" "INA826AID"
 			(at 0 3.4 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -42665,7 +42665,7 @@
 				)
 			)
 		)
-		(property "Description" "IC:   INST AMP 1 CIRCUIT   [AD8421BRZ-R7] [8-SOIC]"
+		(property "Description" "IC:   INST AMP 1 CIRCUIT   [INA826AIDR] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -42688,7 +42688,7 @@
 				)
 			)
 		)
-		(property "MPN" "AD8421BRZ-R7"
+		(property "MPN" "INA826AIDR"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -42701,7 +42701,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS080222"
+		(property "OEPSPN" "OEPS080248"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -45278,7 +45278,7 @@
 				)
 			)
 		)
-		(property "Value" "AD8421"
+		(property "Value" "INA826AID"
 			(at 0 3.4 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -45301,7 +45301,7 @@
 				)
 			)
 		)
-		(property "Description" "IC:   INST AMP 1 CIRCUIT   [AD8421BRZ-R7] [8-SOIC]"
+		(property "Description" "IC:   INST AMP 1 CIRCUIT   [INA826AIDR] [8-SOIC]"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -45324,7 +45324,7 @@
 				)
 			)
 		)
-		(property "MPN" "AD8421BRZ-R7"
+		(property "MPN" "INA826AIDR"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -45337,7 +45337,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS080222"
+		(property "OEPSPN" "OEPS080248"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -49174,7 +49174,7 @@
 				)
 			)
 		)
-		(property "Description" "CONNECTOR:   USB2.0 TYPE C 24P SMD R/A   [USB4105-GF-A] [SMD/TH]"
+		(property "Description" "CONNECTOR:   USB2.0 TYPE C 16P SMD R/A   [USB4105-GF-A] [SMD/TH]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
