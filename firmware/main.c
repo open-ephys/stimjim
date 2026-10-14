@@ -338,6 +338,7 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "B usage: B";
 
     if (*args != '\0') { puts(cmd_usage); return; }
+    puts("Updating ADC offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
         .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
@@ -348,12 +349,14 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
+    puts("Offsets updated");
 }
 
 static void cmd_C(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "C usage: C";
 
     if (*args != '\0') { puts(cmd_usage); return; }
+    puts("Updating ADC, current and voltage offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
@@ -363,6 +366,7 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
         handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
+    puts("Offsets updated");
 }
 
 static void cmd_D(const stimjim_context_t *sc, const char *args) {
