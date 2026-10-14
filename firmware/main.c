@@ -460,6 +460,12 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
         printf("No pulses delivered (uninitialized pulse train).\n");
         return;
     }
+    // Because of the inter-pulse stage, there is always at least one stage.
+    // This checks if there are any user-defined stages.
+    if (sr.n_stages == 1) {
+        printf("No pulses delivered (pulse train has no stages).\n");
+        return;
+    }
 
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
