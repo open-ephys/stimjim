@@ -20720,7 +20720,7 @@
 				)
 			)
 		)
-		(property "Description" "IC:   VREF 2.5V 0.8% 5mA   [AD1582ARTZ-REEL7] [SOT-23-3]"
+		(property "Description" "IC:   VREF 2.5V 0.08% 5mA   [AD1582BRTZ-REEL7] [SOT-23-3]"
 			(at 139.7 40.64 0)
 			(hide yes)
 			(show_name no)
@@ -20753,7 +20753,7 @@
 				)
 			)
 		)
-		(property "MPN" "AD1582ARTZ-REEL7"
+		(property "MPN" "AD1582BRTZ-REEL7"
 			(at 139.7 40.64 0)
 			(hide yes)
 			(show_name no)
@@ -20764,7 +20764,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS080224"
+		(property "OEPSPN" "OEPS080250"
 			(at 139.7 40.64 0)
 			(hide yes)
 			(show_name no)
