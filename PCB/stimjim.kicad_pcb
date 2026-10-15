@@ -5485,7 +5485,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 5kΩ ±0.1% 0.100W   [RT0603BRE075KL] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5524,7 +5524,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-4991-B-T5"
+		(property "MPN" "RT0603BRE075KL"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5550,7 +5550,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020233"
+		(property "OEPSPN" "OEPS020263"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17952,7 +17952,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 5kΩ ±0.1% 0.100W   [RT0603BRE075KL] [SMD]"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -17991,7 +17991,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-4991-B-T5"
+		(property "MPN" "RT0603BRE075KL"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18017,7 +18017,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020233"
+		(property "OEPSPN" "OEPS020263"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
