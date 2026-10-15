@@ -10995,7 +10995,7 @@
 				)
 			)
 		)
-		(property "Value" "3k"
+		(property "Value" "1.5k"
 			(at 213.36 72.39 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11027,7 +11027,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 3kΩ ±0.1% 0.100W   [RG1608P-302-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 1.5kΩ ±0.1% 0.100W   [RG1608P-152-B-T5] [SMD]"
 			(at 213.36 76.2 0)
 			(hide yes)
 			(show_name no)
@@ -11038,7 +11038,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "1%"
+		(property "Tolerance" "0.1%"
 			(at 213.36 76.2 90)
 			(hide yes)
 			(show_name no)
@@ -11049,7 +11049,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-302-B-T5"
+		(property "MPN" "RG1608P-152-B-T5"
 			(at 213.36 76.2 90)
 			(hide yes)
 			(show_name no)
@@ -11060,7 +11060,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020234"
+		(property "OEPSPN" "OEPS020262"
 			(at 213.36 76.2 90)
 			(hide yes)
 			(show_name no)
@@ -15182,7 +15182,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "5k"
 			(at 229.87 39.0144 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15214,7 +15214,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 5kΩ ±0.1% 0.100W   [RT0603BRE075KL] [SMD]"
 			(at 229.87 41.91 0)
 			(hide yes)
 			(show_name no)
@@ -15247,7 +15247,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-103-B-T5"
+		(property "MPN" "RT0603BRE075KL"
 			(at 229.87 41.91 90)
 			(hide yes)
 			(show_name no)
@@ -15269,7 +15269,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020235"
+		(property "OEPSPN" "OEPS020263"
 			(at 229.87 41.91 90)
 			(hide yes)
 			(show_name no)
@@ -15803,7 +15803,7 @@
 				)
 			)
 		)
-		(property "Value" "AD8421"
+		(property "Value" "INA826AID"
 			(at 270.51 67.2398 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15835,7 +15835,7 @@
 				)
 			)
 		)
-		(property "Description" "IC:   INST AMP 1 CIRCUIT   [AD8421BRZ-R7] [8-SOIC]"
+		(property "Description" "IC:   INST AMP 1 CIRCUIT   [INA826AIDR] [8-SOIC]"
 			(at 255.27 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -15846,7 +15846,7 @@
 				)
 			)
 		)
-		(property "MPN" "AD8421BRZ-R7"
+		(property "MPN" "INA826AIDR"
 			(at 255.27 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -15857,7 +15857,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS080222"
+		(property "OEPSPN" "OEPS080248"
 			(at 255.27 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -16291,7 +16291,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "360"
+		(property "Value" "1.8k"
 			(at 238.3028 72.263 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16324,7 +16324,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 360Ω ±0.1% 0.100W   [RG1608P-361-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 1.8kΩ ±0.1% 0.100W   [RG1608P-182-B-T5] [SMD]"
 			(at 240.03 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -16357,7 +16357,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-361-B-T5"
+		(property "MPN" "RG1608P-182-B-T5 "
 			(at 240.03 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -16379,7 +16379,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020231"
+		(property "OEPSPN" "OEPS020261"
 			(at 240.03 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -20550,7 +20550,7 @@
 				)
 			)
 		)
-		(property "Value" "5k"
+		(property "Value" "10k"
 			(at 254 39.0144 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -20582,7 +20582,7 @@
 				)
 			)
 		)
-		(property "Description" "RESISTOR:   SMD 0603 4.99kΩ ±0.1% 0.100W   [RG1608P-4991-B-T5] [SMD]"
+		(property "Description" "RESISTOR:   SMD 0603 10kΩ ±0.1% 0.100W   [RG1608P-103-B-T5] [SMD]"
 			(at 254 41.91 0)
 			(hide yes)
 			(show_name no)
@@ -20615,7 +20615,7 @@
 				)
 			)
 		)
-		(property "MPN" "RG1608P-4991-B-T5"
+		(property "MPN" "RG1608P-103-B-T5"
 			(at 254 41.91 90)
 			(hide yes)
 			(show_name no)
@@ -20637,7 +20637,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS020233"
+		(property "OEPSPN" "OEPS020235"
 			(at 254 41.91 90)
 			(hide yes)
 			(show_name no)
@@ -20720,7 +20720,7 @@
 				)
 			)
 		)
-		(property "Description" "IC:   VREF 2.5V 0.8% 5mA   [AD1582ARTZ-REEL7] [SOT-23-3]"
+		(property "Description" "IC:   VREF 2.5V 0.08% 5mA   [AD1582BRTZ-REEL7] [SOT-23-3]"
 			(at 139.7 40.64 0)
 			(hide yes)
 			(show_name no)
@@ -20753,7 +20753,7 @@
 				)
 			)
 		)
-		(property "MPN" "AD1582ARTZ-REEL7"
+		(property "MPN" "AD1582BRTZ-REEL7"
 			(at 139.7 40.64 0)
 			(hide yes)
 			(show_name no)
@@ -20764,7 +20764,7 @@
 				)
 			)
 		)
-		(property "OEPSPN" "OEPS080224"
+		(property "OEPSPN" "OEPS080250"
 			(at 139.7 40.64 0)
 			(hide yes)
 			(show_name no)
