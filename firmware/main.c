@@ -176,6 +176,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
             if (!(pt.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK))
                 pt.stage_amplitude[ch][pt.n_stages] = 0;
         pt.n_stages++;
+        if (*p != ';' && *p != '\0') { puts(cmd_usage); return; }  // a 4th value in a stage
     }
 
     uint64_t stage_sum = 0;
@@ -215,7 +216,8 @@ static void cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
 
     int32_t idx = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
+    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1)
+     || *p != '\0')
     { puts(cmd_usage); return; }
     if (idx < 0) { stop_stimulus(); return; }
     const uint32_t seq = stimulus_request_seq + 1;
@@ -240,7 +242,7 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
     { puts(cmd_usage); return; }
-    if (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
+    if ((*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1)) || *p != '\0')
     { puts(cmd_usage); return; }
 
     const bool sync = dir || idx < 0;
@@ -261,7 +263,8 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, mv = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &mv, "mV", -MAX_MILLIVOLTS, MAX_MILLIVOLTS))
+     || !try_parse_i32_in_range(&p, &mv, "mV", -MAX_MILLIVOLTS, MAX_MILLIVOLTS)
+     || *p != '\0')
     { puts(cmd_usage); return; }
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
@@ -283,7 +286,8 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
     int32_t code = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX))
+     || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX)
+     || *p != '\0')
     { puts(cmd_usage); return; }
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
@@ -299,7 +303,8 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, line = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &line, "line", 0, 1))
+     || !try_parse_i32_in_range(&p, &line, "line", 0, 1)
+     || *p != '\0')
     { puts(cmd_usage); return; }
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
@@ -325,7 +330,8 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, mode = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3))
+     || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3)
+     || *p != '\0')
     { puts(cmd_usage); return; }
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
