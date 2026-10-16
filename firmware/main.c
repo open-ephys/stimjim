@@ -113,12 +113,13 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     }
     // output_mode is stored as a bit flag (1 << mode)
     const int mode[2] = { __builtin_ctz(pt.output_mode[0]), __builtin_ctz(pt.output_mode[1]) };
-    const uint32_t duration = pt.n_pulses * pt.period;
+    const uint64_t duration = (uint64_t)pt.n_pulses * pt.period;
     puts("----------------------------------");
     printf("Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
            n, mode[0], mode_names[mode[0]], mode[1], mode_names[mode[1]]);
-    printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %u usec (%0.3f sec)\n",
-           pt.period, 0.000001 * pt.period, 1000000.0 / pt.period, duration, 0.000001 * duration);
+    printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
+           pt.period, 0.000001 * pt.period, 1000000.0 / pt.period,
+           (unsigned long long)duration, 0.000001 * (double)duration);
     puts("\n  stage    duration     output0   output1");
     for (uint8_t i = 0; i < pt.n_stages; i++)
         printf("   %2d  %7u usec %8d%s %8d%s\n", i, pt.stage_duration[i],
@@ -182,11 +183,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         return;
     }
 
-    pt.n_pulses = duration / pt.period;
-    if (pt.n_pulses == 0) {
-        puts("Invalid pulse train: total duration is shorter than one period (0 pulses).");
-        return;
-    }
+    pt.n_pulses = (uint32_t)(((uint64_t)duration + pt.period - 1) / pt.period);
 
     bool short_pulse = (pt.period - stage_sum) < 20u;
     for (uint8_t i = 0; !short_pulse && i < pt.n_stages; i++)
