@@ -128,6 +128,11 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     puts("----------------------------------\n");
 }
 
+static void print_high_voltage_warning(void) {
+    printf("Warning: >%dV in voltage mode. The ADC can't accurately measure voltages beyond +/-%dV.\n",
+           MAX_MEASURABLE_MILLIVOLTS / 1000, MAX_MEASURABLE_MILLIVOLTS / 1000);
+}
+
 static void cmd_S(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] =
         "S usage: S<idx> to print, or S<idx>,<mode0>,<mode1>,<period_us>,<total_dur_us>;"
@@ -192,18 +197,26 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     bool short_pulse = (pt.period - stage_sum) < 20u;
     for (uint8_t i = 0; !short_pulse && i < pt.n_stages; i++)
         short_pulse = (pt.stage_duration[i] < 20u);
-    if (short_pulse)
-        puts("Warning: <20us stage or inter-pulse gap detected. Specified pulse timings are not guaranteed.");
+
+    bool high_voltage = false;
+    for (uint8_t ch = 0; ch < 2; ch++)
+        for (uint8_t i = 0; (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE) && i < pt.n_stages; i++)
+            high_voltage |= labs(pt.stage_amplitude[ch][i]) > MAX_MEASURABLE_MILLIVOLTS;
 
     stimjim_ctx_set_pulsetrain(sc, (uint8_t)n, &pt);
 
     for (uint8_t ch = 0; ch < 2; ch++) {
         channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
-        if (io.idx == n) 
+        if (io.idx == n)
             set_trigger_pulsetrain(sc, ch, (int8_t)n);
     }
 
     print_pulsetrain(sc, (uint8_t)n);
+
+    if (short_pulse)
+        puts("Warning: <20us stage or inter-pulse gap detected. Specified pulse timings are not guaranteed.");
+    if (high_voltage)
+        print_high_voltage_warning();
 }
 
 static void stop_stimulus(void) {
@@ -277,6 +290,8 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d mV (dac value %d).\n", ch, mv, code);
+    if (labs(mv) > MAX_MEASURABLE_MILLIVOLTS)
+        print_high_voltage_warning();
 }
 
 static void cmd_A(stimjim_context_t *sc, const char *args) {
@@ -295,6 +310,8 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d\n", ch, code);
+    if ((abs(code) - INT8_MIN) * MILLIVOLTS_PER_DAC > MAX_MEASURABLE_MILLIVOLTS)
+        print_high_voltage_warning();
 }
 
 static void cmd_E(stimjim_context_t *sc, const char *args) {

@@ -47,5 +47,6 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 #define V_OUT_GAIN          (1.0f + (10.0f / 5.0f))
 #define MAX_MICROAMPS       3333
 #define MAX_MILLIVOLTS      15000
+#define MAX_MEASURABLE_MILLIVOLTS 10000
 #define MICROAMPS_PER_DAC   (2.0f * DAC_FULL_SCALE_V * 1e6f / R_CURRENT_OHMS / (float)(1 << 16))
 #define MILLIVOLTS_PER_DAC  (2.0f * DAC_FULL_SCALE_V * 1e3f * V_OUT_GAIN / (float)(1 << 16))
