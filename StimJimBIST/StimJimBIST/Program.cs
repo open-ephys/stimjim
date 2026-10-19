@@ -17,7 +17,8 @@ try {
 
     int[] testVoltages = [-9000, 0, 9000];
 
-    const double VoltageGain = 1.505;
+    const double VoltageGain = 3.0;
+    const double CurrentResistorOhms = 1.5e3;
     const int VoltageTolerancemV = 50;
     const int CurrentToleranceuA = 50;
 
@@ -44,7 +45,7 @@ try {
         for (int i = 0; i < testVoltages.Length; i++)
         {
             var vTest = testVoltages[i];
-            var iTest = 1e6 * vTest / 1000 / VoltageGain / 3e3;
+            var iTest = 1e6 * vTest / 1000 / VoltageGain / CurrentResistorOhms;
 
             port.WriteLine($"V{chan},{vTest}");
             port.ReadLine();
@@ -92,7 +93,7 @@ try {
         for (int i = 0; i < testVoltages.Length; i++)
         {
             var vTest = testVoltages[i];
-            var iTest = 1e6 * vTest / 1000 / VoltageGain / 3e3;
+            var iTest = 1e6 * vTest / 1000 / VoltageGain / CurrentResistorOhms;
 
             port.WriteLine($"V{chan},{vTest}");
             port.ReadLine();
