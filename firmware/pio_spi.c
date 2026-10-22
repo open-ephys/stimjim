@@ -1,6 +1,6 @@
 #include "pio_spi.h"
 
-const pio_spi_cfg_t pio_spi_cfg[2] __attribute__((section(".data"))) = {
+const pio_spi_cfg_t pio_spi_cfg[2] __attribute__((section(".data.pio_spi_cfg"))) = {
     {   .pio = pio0, .base = 16,
         .miso = SPI_MISO_A, .mosi = SPI_MOSI_A, .sck = SPI_SCK_A,
         .cs_dac = CSA_A, .cs_adc = CSB_A },
