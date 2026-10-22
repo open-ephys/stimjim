@@ -78,15 +78,15 @@ stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx)
 
 // getters
 
-const channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {
+channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {
     return stimjim_ctx->channel_io_pins[ch];
 }
 
-const pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *stimjim_ctx, const int8_t pt_idx) {
+pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *stimjim_ctx, const int8_t pt_idx) {
     return pt_idx < 0 ? (pulsetrain_t){0} : stimjim_ctx->pulsetrains[pt_idx];
 }
 
-const offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {
+offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *stimjim_ctx, const uint8_t ch) {
     return stimjim_ctx->offsets[ch];
 }
 
