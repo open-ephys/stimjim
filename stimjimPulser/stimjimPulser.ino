@@ -494,11 +494,15 @@ void loop()
                 Stimjim.getVoltageOffsets();
 
             } else if (comBuf[0] == 'D') { // print offset values for user reference
-                char str[100];
-                sprintf(str, "ADC offsets (+-2.5V): %f, %f\r\nADC offsets (+-10V): %f, %f\r\ncurrent offsets: %d, %d\r\nvoltage offsets: %d, %d\r\n",
+                char str[200];
+                int written = snprintf(str, sizeof(str), "ADC offsets (+-2.5V): %f, %f\r\nADC offsets (+-10V): %f, %f\r\ncurrent offsets: %d, %d\r\nvoltage offsets: %d, %d\r\n",
                     Stimjim.adcOffset25[0],Stimjim.adcOffset25[1], Stimjim.adcOffset10[0],Stimjim.adcOffset10[1],
                     Stimjim.currentOffsets[0], Stimjim.currentOffsets[1], Stimjim.voltageOffsets[0], Stimjim.voltageOffsets[1] );
-                Serial.println(str);
+                if (written < 0 || static_cast<size_t>(written) >= sizeof(str)) {
+                    Serial.println("ERROR: calibration report formatting failed or truncated");
+                } else {
+                    Serial.println(str);
+                }
 
             } else if (comBuf[0] == 'R') {
 
