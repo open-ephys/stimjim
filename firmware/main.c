@@ -17,6 +17,7 @@
 #include "stimjim_context.h"
 
 #define BUF_LEN 1024
+#define RUNS_AFTER_TRAIN "Will run after the running train finishes."
 
 queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 volatile uint32_t stimulus_request_seq;
@@ -270,6 +271,10 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     }
 }
 
+static bool is_train_running(void) {
+    return (sio_hw->doorbell_in_set & DOORBELL_TRAIN_RUNNING) || queue_get_level(&q_core1_cmd);
+}
+
 static void cmd_V(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "V usage: V<ch>,<mV>";
 
@@ -287,6 +292,8 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = (int16_t)code } };
+    if (is_train_running())
+        puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d mV (dac value %d).\n", ch, mv, code);
@@ -307,6 +314,8 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
+    if (is_train_running())
+        puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d\n", ch, code);
@@ -326,6 +335,8 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
+    if (is_train_running())
+        puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
 
@@ -352,6 +363,8 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
     { puts(cmd_usage); return; }
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
+    if (is_train_running())
+        puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = (1u << 2);
     printf("Set channel %d to mode %d\n", ch, mode);
@@ -361,6 +374,8 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "B usage: B";
 
     if (*args != '\0') { puts(cmd_usage); return; }
+    if (is_train_running())
+        puts(RUNS_AFTER_TRAIN);
     puts("Updating ADC offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
@@ -379,6 +394,8 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "C usage: C";
 
     if (*args != '\0') { puts(cmd_usage); return; }
+    if (is_train_running())
+        puts(RUNS_AFTER_TRAIN);
     puts("Updating ADC, current and voltage offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,

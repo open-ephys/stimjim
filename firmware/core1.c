@@ -272,6 +272,8 @@ __always_inline static inline void clear_trigger_edges(void) {
 __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const int8_t trigger_ch,
                                                   const uint32_t seq) {
 
+    sio_hw->doorbell_out_set = DOORBELL_TRAIN_RUNNING;
+
     // Clear cancel doorbell
     sio_hw->doorbell_in_clr = 1u;
 
@@ -348,6 +350,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     else
         dropped_summaries++;
     memset(&st, 0, sizeof(st));
+    sio_hw->doorbell_out_clr = DOORBELL_TRAIN_RUNNING;
 }
 
 // Returns the channel (0 or 1) whose trigger input has a latched rising edge,

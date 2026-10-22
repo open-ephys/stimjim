@@ -6,6 +6,7 @@
 
 extern queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 extern volatile uint32_t stimulus_request_seq;  // incremented by core0 for every T/U
+#define DOORBELL_TRAIN_RUNNING (1u << 1)
 
 typedef struct {
     uint8_t n_stages;
