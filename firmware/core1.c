@@ -287,7 +287,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     pio_spi_deselect_dac(0);
     pio_spi_deselect_dac(1);
 
-    // Set LEDs, analog multiplexer, and sync output output pins
+    // Set LEDs, analog multiplexer, and sync output pins
     gpio_clr_mask64(masks.start_clr);
     gpio_set_mask64(masks.start_set);
 
