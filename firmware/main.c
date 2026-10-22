@@ -82,7 +82,7 @@ static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *na
 
 static void print_offsets(const stimjim_context_t *sc) {
     const offsets_t off[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
-    printf("ADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n\n",
+    printf("ADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
            (double)off[0].adc, (double)off[1].adc, off[0].current, off[1].current,
            off[0].voltage, off[1].voltage);
 }
@@ -120,12 +120,12 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
            pt.period, 0.000001 * pt.period, 1000000.0 / pt.period,
            (unsigned long long)duration, 0.000001 * (double)duration);
-    puts("\n  stage    duration     output0   output1");
+    puts("  stage    duration     output0   output1");
     for (uint8_t i = 0; i < pt.n_stages; i++)
         printf("   %2d  %7u usec %8d%s %8d%s\n", i, pt.stage_duration[i],
                pt.stage_amplitude[0][i], mode[0] == 0 ? "mV" : "uA",
                pt.stage_amplitude[1][i], mode[1] == 0 ? "mV" : "uA");
-    puts("----------------------------------\n");
+    puts("----------------------------------");
 }
 
 static void print_high_voltage_warning(void) {
@@ -243,7 +243,7 @@ static void cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     stimulus_request_seq = seq;
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("\nStarted %c train with parameters of PulseTrain %d\n", cmd_char, idx);
+    printf("Started %c train with parameters of PulseTrain %d\n", cmd_char, idx);
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
@@ -414,7 +414,7 @@ static char *read_serial_line(void) {
     int32_t c = getchar_timeout_us(0);
     if (c == PICO_ERROR_TIMEOUT) return NULL;
     if (overflow) {
-        if (c == '\n') { overflow = false; puts("Line too long; ignored."); }
+        if (c == '\n') { overflow = false; puts("Line too long; ignored.\n"); }
         return NULL;
     }
     if (c != '\n' && nbuf >= sizeof(buf) - 1) { nbuf = 0; overflow = true; return NULL; }
@@ -450,6 +450,7 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
         case 'X': cmd_X(args); break;
         default:  printf("Unknown command: '%c'\n", cmd); break;
     }
+    putchar('\n');
 }
 
 // X, T-1 or U-1
@@ -473,7 +474,7 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     if (!line) return;
     if (waiting && !is_stop_command(line)) {
         if (!queue_try_add(&q_deferred_commands, line))
-            puts("Too many commands waiting; command ignored.");
+            puts("Too many commands waiting; command ignored.\n");
         return;
     }
     handle_serial_line(sc, line);
@@ -484,13 +485,13 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
     if (sr.n_pulses == 0) {
-        printf("No pulses delivered (uninitialized pulse train).\n");
+        printf("No pulses delivered (uninitialized pulse train).\n\n");
         return;
     }
     // Because of the inter-pulse stage, there is always at least one stage.
     // This checks if there are any user-defined stages.
     if (sr.n_stages == 1) {
-        printf("No pulses delivered (pulse train has no stages).\n");
+        printf("No pulses delivered (pulse train has no stages).\n\n");
         return;
     }
 
@@ -517,13 +518,13 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     printf("Stage counts: ");
     for (uint8_t i = 0; i < sr.n_stages - 1; i++)
         printf(i ? ", %u" : "%u", sr.delivered_stages[i]);
-    putchar('\n');
+    puts("\n");
 }
 
 static void handle_triggered_stimuli(const stimjim_context_t *sc) {
     if (!multicore_fifo_rvalid()) return;
     const uint32_t ch = multicore_fifo_pop_blocking();
-    printf("\nStarted %c train with parameters of PulseTrain %d\n",
+    printf("Started %c train with parameters of PulseTrain %d\n\n",
            ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
 }
 
@@ -559,7 +560,7 @@ int main(void) {
     printf("Booting StimJim %s\n", FIRMWARE_VERSION);
     puts("Initializing triggers inputs...");
     print_offsets(stimjim_ctx);
-    puts("Ready to go!\n\n");
+    puts("Ready to go!\n");
 
     while (true) {
         handle_user_input(stimjim_ctx, false);
