@@ -121,7 +121,7 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
            pt.period, 0.000001 * pt.period, 1000000.0 / pt.period,
            (unsigned long long)duration, 0.000001 * (double)duration);
-    puts("  stage    duration     output0   output1");
+    puts("\n  stage    duration     output0   output1");
     for (uint8_t i = 0; i < pt.n_stages; i++)
         printf("   %2d  %7u usec %8d%s %8d%s\n", i, pt.stage_duration[i],
                pt.stage_amplitude[0][i], mode[0] == 0 ? "mV" : "uA",
@@ -225,15 +225,15 @@ static void stop_stimulus(void) {
     puts("Forcing train to stop");
 }
 
-static void cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
+static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
     static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (idx -1 = stop)";
 
     int32_t idx = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1)
      || *p != '\0')
-    { puts(cmd_usage); return; }
-    if (idx < 0) { stop_stimulus(); return; }
+    { puts(cmd_usage); return false; }
+    if (idx < 0) { stop_stimulus(); return false; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
@@ -244,7 +244,8 @@ static void cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     stimulus_request_seq = seq;
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("Started %c train with parameters of PulseTrain %d\n", cmd_char, idx);
+    printf("\nStarted %c train with parameters of PulseTrain %d\n", cmd_char, idx);
+    return true;
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
@@ -455,7 +456,7 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
     switch (cmd) {
         case 'S': cmd_S(sc, args); break;
         case 'T': // intentional fall through
-        case 'U': cmd_TU(sc, cmd, args); break;
+        case 'U': if (cmd_TU(sc, cmd, args)) return; break;
         case 'R': cmd_R(sc, args); break;
         case 'V': cmd_V(sc, args); break;
         case 'A': cmd_A(sc, args); break;
@@ -546,7 +547,7 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 static void handle_triggered_stimuli(const stimjim_context_t *sc) {
     if (!multicore_fifo_rvalid()) return;
     const uint32_t ch = multicore_fifo_pop_blocking();
-    printf("Started %c train with parameters of PulseTrain %d\n\n",
+    printf("\nStarted %c train with parameters of PulseTrain %d\n",
            ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
 }
 
