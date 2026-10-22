@@ -291,14 +291,14 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     pio_spi_deselect_dac(0);
     pio_spi_deselect_dac(1);
 
+    // Record cycle counter as reference for first stage timing
+    uint32_t stage_start_cyc = m33_hw->dwt_cyccnt;
+
     // Set LEDs, analog multiplexer, and sync output pins
     gpio_clr_mask64(masks.start_clr);
     gpio_set_mask64(masks.start_set);
 
     dacs_latch(masks.nldac);
-
-    // Record cycle counter as reference for first stage timing
-    uint32_t stage_start_cyc = m33_hw->dwt_cyccnt;
 
     // Start the ADC line config (current vs voltage); it transfers on the PIO in
     // the background while we initialize the telemetry below.
