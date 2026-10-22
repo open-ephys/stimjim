@@ -195,9 +195,9 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 
     pt.n_pulses = (uint32_t)(((uint64_t)duration + pt.period - 1) / pt.period);
 
-    bool short_pulse = (pt.period - stage_sum) < 20u;
-    for (uint8_t i = 0; !short_pulse && i < pt.n_stages; i++)
-        short_pulse = (pt.stage_duration[i] && pt.stage_duration[i] < 20u);
+    bool short_stage = false;
+    for (uint8_t i = 0; !short_stage && i < pt.n_stages; i++)
+        short_stage = (pt.stage_duration[i] && pt.stage_duration[i] < 20u);
 
     bool high_voltage = false;
     for (uint8_t ch = 0; ch < 2; ch++)
@@ -214,7 +214,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 
     print_pulsetrain(sc, (uint8_t)n);
 
-    if (short_pulse)
+    if (short_stage)
         puts("Warning: <20us stage duration detected. Specified waveform timings are not guaranteed.");
     if (high_voltage)
         print_high_voltage_warning();
