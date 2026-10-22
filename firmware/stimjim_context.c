@@ -42,24 +42,27 @@ pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const int8_t p
 
     pulsetrain_t pt_converted = {
         .output_mode = { pt.output_mode[0], pt.output_mode[1] },
-        .n_stages = pt.n_stages + 1,
         .n_pulses = pt.n_pulses,
     };
 
     uint32_t stage_duration_sum = 0;
     offsets_t offsets[2] = { stimjim_ctx_get_offsets(ctx, 0), stimjim_ctx_get_offsets(ctx, 1) };
-    
+
+    uint8_t n = 0;
     for (uint8_t i = 0; i < pt.n_stages; i++) {
+        if (!pt.stage_duration[i]) continue;
         stage_duration_sum += pt.stage_duration[i];
-        pt_converted.stage_duration[i] = pt.stage_duration[i];
-        pt_converted.stage_amplitude[0][i] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[0][i]);
-        pt_converted.stage_amplitude[1][i] = dac_code(offsets[1], pt.output_mode[1] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[1][i]);
+        pt_converted.stage_duration[n] = pt.stage_duration[i];
+        pt_converted.stage_amplitude[0][n] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[0][i]);
+        pt_converted.stage_amplitude[1][n] = dac_code(offsets[1], pt.output_mode[1] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[1][i]);
+        n++;
     }
+    pt_converted.n_stages = n + 1;
 
     // inter-pulse gap: zero amplitude for the remainder of the period
-    pt_converted.stage_duration[pt.n_stages]  = pt.period - stage_duration_sum;
-    pt_converted.stage_amplitude[0][pt.n_stages] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, 0);
-    pt_converted.stage_amplitude[1][pt.n_stages] = dac_code(offsets[1], pt.output_mode[1] & OUTPUT_MODE_CURRENT, 0);
+    pt_converted.stage_duration[n]  = pt.period - stage_duration_sum;
+    pt_converted.stage_amplitude[0][n] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, 0);
+    pt_converted.stage_amplitude[1][n] = dac_code(offsets[1], pt.output_mode[1] & OUTPUT_MODE_CURRENT, 0);
 
     return pt_converted;
 }

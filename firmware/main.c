@@ -177,7 +177,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         snprintf(field_name, sizeof(field_name), "amp1 stage[%d]", pt.n_stages);
         if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return;
         snprintf(field_name, sizeof(field_name), "stage_dur_us stage[%d]", pt.n_stages);
-        if (!try_parse_u32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 1, UINT32_MAX)) return;
+        if (!try_parse_u32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 0, UINT32_MAX)) return;
         for (uint8_t ch = 0; ch < 2; ch++)
             if (!(pt.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK))
                 pt.stage_amplitude[ch][pt.n_stages] = 0;
@@ -197,7 +197,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 
     bool short_pulse = (pt.period - stage_sum) < 20u;
     for (uint8_t i = 0; !short_pulse && i < pt.n_stages; i++)
-        short_pulse = (pt.stage_duration[i] < 20u);
+        short_pulse = (pt.stage_duration[i] && pt.stage_duration[i] < 20u);
 
     bool high_voltage = false;
     for (uint8_t ch = 0; ch < 2; ch++)
