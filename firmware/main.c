@@ -225,6 +225,11 @@ static void stop_stimulus(void) {
     puts("Forcing train to stop");
 }
 
+static void print_start_notice(const char cmd_char, const int idx) {
+    stdio_putchar_raw('\n');
+    printf("Started %c train with parameters of PulseTrain %d\n", cmd_char, idx);
+}
+
 static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
     static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (idx -1 = stop)";
 
@@ -244,7 +249,7 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     stimulus_request_seq = seq;
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("\nStarted %c train with parameters of PulseTrain %d\n", cmd_char, idx);
+    print_start_notice(cmd_char, idx);
     return true;
 }
 
@@ -520,8 +525,9 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
-    printf("Train %s. Delivered %u pulses.\nCurrent/Voltage by stage: \n"
-           "           Ch0                Ch1 \n", sr.cancelled ? "stopped" : "complete", sr.n_pulses);
+    printf("Train %s. Delivered %u pulses.", sr.cancelled ? "stopped" : "complete", sr.n_pulses);
+    stdio_putchar_raw('\n');
+    printf("Current/Voltage by stage: \n           Ch0                Ch1 \n");
     // The last stage is the inter-pulse gap, which is grounded and not sampled
     for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
         printf("Stage %d", i);
@@ -547,8 +553,7 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 static void handle_triggered_stimuli(const stimjim_context_t *sc) {
     if (!multicore_fifo_rvalid()) return;
     const uint32_t ch = multicore_fifo_pop_blocking();
-    printf("\nStarted %c train with parameters of PulseTrain %d\n",
-           ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
+    print_start_notice(ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
 }
 
 int main(void) {
