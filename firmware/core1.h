@@ -14,6 +14,7 @@ typedef struct {
     uint32_t delivered_stages[MAX_STAGES + 1];
     output_mode_t output_mode[2];
     bool cancelled;
+    uint32_t dropped_summaries, dropped_trigger_notices;
 } core1_stim_telemetry_t;
 
 typedef enum {

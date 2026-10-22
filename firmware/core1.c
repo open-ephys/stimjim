@@ -33,6 +33,8 @@ static uint32_t cycles_per_us;
 // The duration of an ADC read measured at startup, plus ADC_LEAD_MARGIN_US
 static uint32_t adc_lead_cyc;
 
+static uint32_t dropped_summaries, dropped_trigger_notices;
+
 // Pico SDK function inlined to avoid jitter related to XIP cache-miss
 __always_inline static inline bool inline_queue_try_remove(queue_t *q, void *data) {
     uint32_t save = spin_lock_blocking(q->core.spin_lock);
@@ -308,8 +310,12 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     init_stim_telemetry(pt, &st);
 
     // Tell core0 which trigger input started this stimulus, if any
-    if (trigger_ch >= 0 && multicore_fifo_wready())
-        sio_hw->fifo_wr = (uint32_t)trigger_ch;
+    if (trigger_ch >= 0) {
+        if (multicore_fifo_wready())
+            sio_hw->fifo_wr = (uint32_t)trigger_ch;
+        else
+            dropped_trigger_notices++;
+    }
 
     // Forget earlier trigger edges; ones from here on preempt this stimulus
     clear_trigger_edges();
@@ -335,7 +341,12 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     }
 
     // Send telemetry about the delivered pulsetrain to core0
-    inline_queue_try_add(&q_stimulus_telemetry, &st);
+    st.dropped_summaries = dropped_summaries;
+    st.dropped_trigger_notices = dropped_trigger_notices;
+    if (inline_queue_try_add(&q_stimulus_telemetry, &st))
+        dropped_summaries = dropped_trigger_notices = 0;
+    else
+        dropped_summaries++;
     memset(&st, 0, sizeof(st));
 }
 

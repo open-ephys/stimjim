@@ -484,6 +484,11 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     core1_stim_telemetry_t sr;
     if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
+    if (sr.dropped_summaries)
+        printf("Warning: %u train summaries were dropped (queue full).\n\n", sr.dropped_summaries);
+    if (sr.dropped_trigger_notices)
+        printf("Warning: %u stimulus start messages were dropped (queue full).\n\n", sr.dropped_trigger_notices);
+
     if (sr.n_pulses == 0) {
         printf("No pulses delivered (uninitialized pulse train).\n\n");
         return;
@@ -545,7 +550,7 @@ int main(void) {
 
     queue_init(&q_core1_cmd, sizeof(core1_cmd_t), 8);
     queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
-    queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 32);
+    queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 128);
     queue_init(&q_adc_result, sizeof(int16_t), 5);
     queue_init(&q_deferred_commands, BUF_LEN, 8);
 
