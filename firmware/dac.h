@@ -27,13 +27,6 @@ __always_inline static inline bool dac_write(uint8_t ch, const uint32_t src) {
     return true;
 }
 
-__always_inline static inline void dac_write_blocking(uint8_t ch, const uint32_t val) {
-    pio_spi_select_dac(ch);
-    dac_write(ch, val);
-    while (!pio_spi_is_done(ch));
-    pio_spi_deselect_dac(ch);
-}
-
 __always_inline static inline void dacs_write_blocking(const uint32_t val0, const uint32_t val1) {
     pio_spi_select_dac(0);
     pio_spi_select_dac(1);
@@ -44,4 +37,5 @@ __always_inline static inline void dacs_write_blocking(const uint32_t val0, cons
     pio_spi_deselect_dac(1);
 }
 
+void dac_write_blocking(uint8_t ch, const uint32_t val);
 void dacs_init(void);

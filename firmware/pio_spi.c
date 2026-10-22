@@ -23,3 +23,8 @@ void pio_spi_init(uint8_t ch)
     pio_spi_mode1_init(cfg->pio, 0, state->offset_dac, cfg->mosi, cfg->sck);
     pio_spi_mode2_init(cfg->pio, 1, state->offset_adc, cfg->miso, cfg->mosi, cfg->sck);
 }
+
+void pio_spi_wait_done(uint8_t ch) {
+    while (!pio_spi_is_done(ch))
+        tight_loop_contents();
+}

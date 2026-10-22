@@ -48,12 +48,7 @@ typedef struct {
     uint32_t stage_duration[MAX_STAGES+1]; // us
 } pulsetrain_t;
 
-__always_inline static inline void set_output_mode(uint8_t ch, output_mode_t mode) {
-    static const uint8_t oe0_pin[2] = { OE0_A, OE0_B };
-    static const uint8_t oe1_pin[2] = { OE1_A, OE1_B };
-    gpio_put(oe0_pin[ch], mode & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND));
-    gpio_put(oe1_pin[ch], mode & (OUTPUT_MODE_FLOAT | OUTPUT_MODE_GND));
-}
+void set_output_mode(uint8_t ch, output_mode_t mode);
 
 stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx);
 

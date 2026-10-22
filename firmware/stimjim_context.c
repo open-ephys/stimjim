@@ -20,6 +20,13 @@ struct stimjim_ctx {
 // single static instance
 static stimjim_context_t stimjim_ctx = { 0 };
 
+void __not_in_flash_func(set_output_mode)(uint8_t ch, output_mode_t mode) {
+    static const uint8_t oe0_pin[2] = { OE0_A, OE0_B };
+    static const uint8_t oe1_pin[2] = { OE1_A, OE1_B };
+    gpio_put(oe0_pin[ch], mode & (OUTPUT_MODE_CURRENT | OUTPUT_MODE_GND));
+    gpio_put(oe1_pin[ch], mode & (OUTPUT_MODE_FLOAT | OUTPUT_MODE_GND));
+}
+
 // convert mV or uA to dac_code
 static inline int16_t dac_code(const offsets_t off, const bool line, const int32_t amplitude) {
     int32_t code = lroundf(amplitude / (line ? MICROAMPS_PER_DAC : MILLIVOLTS_PER_DAC)) + (line ? off.current : off.voltage);

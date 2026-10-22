@@ -75,7 +75,7 @@ __always_inline static inline bool inline_queue_try_add(queue_t *q, const void *
     return false;
 }
 
-static void measure_offsets(offsets_t *offsets, const offsets_tx_t offsets_calibration) {
+static void __not_in_flash_func(measure_offsets)(offsets_t *offsets, const offsets_tx_t offsets_calibration) {
     offsets[0] = offsets_calibration.prev[0];
     offsets[1] = offsets_calibration.prev[1];
 
@@ -355,7 +355,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
 
 // Returns the channel (0 or 1) whose trigger input has a latched rising edge,
 // or -1 if none. Channel 0 takes priority if both rising edges arrive on both
-// channels simultaneously
+// channels simultaneously. Inlined to reduce trigger latency by a few clock cycles.
 __always_inline static inline int8_t check_pending_trigger_ch(void) {
     for (uint8_t ch = 0; ch < 2; ch++) {
         uint8_t pin = channel_io_pins[ch];
@@ -367,6 +367,7 @@ __always_inline static inline int8_t check_pending_trigger_ch(void) {
 
 // Apply queued commands up to the first current stimulus and return it (setting
 // *seq to its request number), or NULL. Stimuli a newer T/U supersedes are skipped.
+// Inlined to reduce trigger latency by a few clock cycles.
 __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t pt_trigger[2], uint32_t *seq) {
     static pulsetrain_t stimulus;   // single-threaded; consumed before the next call
     core1_cmd_t cmd;
