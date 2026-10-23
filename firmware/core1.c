@@ -20,8 +20,8 @@ static const uint64_t nldac_ch_mask[2] = { 1LL << NLDAC_A, 1LL << NLDAC_B };
 static const uint64_t oe0_mask[2] = { 1LL << OE0_A, 1LL << OE0_B };
 static const uint64_t oe1_mask[2] = { 1LL << OE1_A, 1LL << OE1_B };
 static const uint64_t gpio_mask[2] = {
-    (1LL << LED_A) | (1LL << CHANNEL_IO_A),
-    (1LL << LED_B) | (1LL << CHANNEL_IO_B),};
+    (1LL << LED_A) | (1LL << CHANNEL_IO_A) | (1LL << SYNC_A),
+    (1LL << LED_B) | (1LL << CHANNEL_IO_B) | (1LL << SYNC_B),};
 static const uint8_t channel_io_pins[2] = { CHANNEL_IO_A, CHANNEL_IO_B };
 
 // clk_sys isn't defined as constant but is initialized only once at runtime

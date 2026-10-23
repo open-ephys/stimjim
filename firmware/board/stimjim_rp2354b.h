@@ -35,6 +35,9 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 #define GPIO6         12u
 #define GPIO7         13u
 
+#define SYNC_A        GPIO6
+#define SYNC_B        GPIO7
+
 #define RISING_EDGE_INTERRUPT_BIT(gpio_number, value) (value << (4 * (gpio_number % 8) + 3))
 
 #define ADC_LEAD_MARGIN_US 2u

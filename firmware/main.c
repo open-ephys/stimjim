@@ -564,10 +564,11 @@ int main(void) {
     const uint64_t out_pins_mask =
         1LL << NLDAC_A | 1LL << OE0_A | 1LL << OE1_A | 1LL << LED_A | 1LL << CSA_A | 1LL << CSB_A |
         1LL << NLDAC_B | 1LL << OE0_B | 1LL << OE1_B | 1LL << LED_B | 1LL << CSA_B | 1LL << CSB_B;
+    const uint64_t sync_pins_mask = 1LL << SYNC_A | 1LL << SYNC_B;
 
-    gpio_set_dir_out_masked64(out_pins_mask);
+    gpio_set_dir_out_masked64(out_pins_mask | sync_pins_mask);
     gpio_set_mask64(out_pins_mask);
-    gpio_set_function_masked64(out_pins_mask, GPIO_FUNC_SIO);
+    gpio_set_function_masked64(out_pins_mask | sync_pins_mask, GPIO_FUNC_SIO);
 
     gpio_init(CHANNEL_IO_A);
     gpio_init(CHANNEL_IO_B);
