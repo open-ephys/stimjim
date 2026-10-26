@@ -58,13 +58,13 @@ This test examines the functionality of the DAC, ADC, output mux, current source
 - Put both channels in voltage mode ()
 	- This this ties V_OUT to CHANNEL_OUT, which is open
 	- This ties I_OUT to ground through a 1k resistor
-	- I_OUT = V_OUT / 3kOhm
+	- I_OUT = V_OUT / 4.5 kOhm (V_DAC = V_OUT / 3, I_OUT = V_DAC / 1.5 kOhm)
 	
 - For each channel, apply -9V, 0V, and 9V to V_OUT
-	- This sets V_DAC = V_OUT / 1.5
-	- V_DAC is still applied to Howland and current measurement circuit with transimpedance gain of 0.33 mA per volt
+	- This sets V_DAC = V_OUT / 3
+	- V_DAC is still applied to Howland and current measurement circuit with transconductance of 0.67 mA per volt
 	- Read the voltage at CHANNEL_OUT to see if the voltage iset to the test voltage
-	- Read I_SENSE to see that its equal to V_DAC / 1.5 * 0.33 mA/V
+	- Read I_SENSE to see that its equal to V_DAC * 0.67 mA/V
 
 #### Current Mode test
 This test examines the functionality of the DAC, ADC, and output mux, and current sense circuit simultaneously.
@@ -75,8 +75,8 @@ It is largely redundant with the first test but does ensure that the output mux 
     - This ties I_OUT to CHANNEL_OUT, which is open
 
 - For each channel, attempt to apply  -1V, 1V to V_OUT
-	- This sets V_DAC = V_OUT / 1.5
-	- This attempts to deliver V_DAC * 0.33 mA/V to CHANNEL_OUT
+	- This sets V_DAC = V_OUT / 3
+	- This attempts to deliver V_DAC * 0.67 mA/V to CHANNEL_OUT
 	- Read the voltage at CHANNEL_OUT (should saturate at +/-10V)
 	- Read current through CHANNEL_OUT (should be 0 since its open)
 
