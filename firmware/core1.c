@@ -1,4 +1,5 @@
 #include <hardware/clocks.h>
+#include <hardware/irq.h>
 #include <hardware/structs/m33.h>
 #include <float.h>
 #include <pico/multicore.h>
@@ -22,7 +23,6 @@ static const uint64_t oe1_mask[2] = { 1LL << OE1_A, 1LL << OE1_B };
 static const uint64_t gpio_mask[2] = {
     (1LL << LED_A) | (1LL << CHANNEL_IO_A) | (1LL << SYNC_A),
     (1LL << LED_B) | (1LL << CHANNEL_IO_B) | (1LL << SYNC_B),};
-static const uint8_t channel_io_pins[2] = { CHANNEL_IO_A, CHANNEL_IO_B };
 
 // clk_sys isn't defined as constant but is initialized only once at runtime
 // using clock_get_hz(). Although this variable could easily be scoped to the
@@ -183,15 +183,23 @@ __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, c
 static_assert(CHANNEL_IO_A >> 3 == CHANNEL_IO_B >> 3, "trigger inputs must share an interrupt register");
 #define TRIGGER_EDGE_BITS (RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1) | RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1))
 
+static volatile uint32_t latest_trigger;
+
+static void __not_in_flash_func(trigger_isr)(void) {
+    const uint32_t edges = io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & TRIGGER_EDGE_BITS;
+    io_bank0_hw->intr[CHANNEL_IO_A >> 3] = edges;
+    const uint32_t ch = (edges & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1)) ? 0 : 1;
+    latest_trigger = ((latest_trigger + 2) & ~1u) | ch;
+}
+
 // True if X cancelled the stimulus, or a newer T/U request or a trigger preempts it
-__always_inline static inline bool stop_requested(const uint32_t seq) {
-    return (sio_hw->doorbell_in_set & 1u) || stimulus_request_seq != seq
-        || (io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & TRIGGER_EDGE_BITS);
+__always_inline static inline bool stop_requested(const uint32_t seq, const uint32_t trigger) {
+    return (sio_hw->doorbell_in_set & 1u) || stimulus_request_seq != seq || latest_trigger != trigger;
 }
 
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
                                                    core1_stim_telemetry_t *sr, uint32_t stage_start_cyc,
-                                                   const uint32_t seq) {
+                                                   const uint32_t seq, const uint32_t trigger) {
 
     const uint8_t gap = pt->n_stages - 1;  // the last stage is the inter-pulse gap
 
@@ -217,7 +225,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             // cycle counter can measure
             while (stage_dur_cyc > INT32_MAX) {
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX / 2)
-                    if (stop_requested(seq)) { sr->stop_stage = stage; return true; }
+                    if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
                 stage_start_cyc += INT32_MAX / 2;
                 stage_dur_cyc   -= INT32_MAX / 2;
             }
@@ -226,7 +234,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 // Check for cancel ('X') commands while waiting to read the ADCs
                 // just ahead of the next latch
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
-                    if (stop_requested(seq)) { sr->stop_stage = stage; return true; }
+                    if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
 
                 // Read ADCs (blocking) and accumulate into the telemetry
                 int16_t vals[2];
@@ -239,7 +247,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             // Check for cancel ('X') commands while waiting for stage to end, then
             // spin out its last microsecond without them so the stage ends exactly
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + cycles_per_us < (uint32_t)stage_dur_cyc)
-                if (stop_requested(seq)) { sr->stop_stage = stage; return true; }
+                if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc);
 
             // Don't latch on the last stage of the last pulse
@@ -261,16 +269,8 @@ __always_inline static inline uint16_t pt_adc_cfg(const pulsetrain_t *pt, uint8_
     return ADC_BASE_CONFIG | ((pt->output_mode[ch] & OUTPUT_MODE_CURRENT) ? ADC_CURRENT_LINE : 0);
 }
 
-// Clear latched rising edges on the trigger inputs.
-__always_inline static inline void clear_trigger_edges(void) {
-    for (uint8_t ch = 0; ch < 2; ch++) {
-        uint8_t pin = channel_io_pins[ch];
-        io_bank0_hw->intr[pin >> 3] = RISING_EDGE_INTERRUPT_BIT(pin, 1);
-    }
-}
-
 __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const int8_t trigger_ch,
-                                                  const uint32_t seq) {
+                                                  const uint32_t seq, const uint32_t trigger) {
 
     sio_hw->doorbell_out_set = DOORBELL_TRAIN_RUNNING;
 
@@ -319,16 +319,13 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
             dropped_trigger_notices++;
     }
 
-    // Forget earlier trigger edges; ones from here on preempt this stimulus
-    clear_trigger_edges();
-
     // Wait for the ADC config to complete, then deselect
     while (!pio_spi_is_done(0) || !pio_spi_is_done(1));
     pio_spi_deselect_adc(0);
     pio_spi_deselect_adc(1);
 
     // All following stages in pulsetrain follow state machine in this loop
-    st.cancelled = pulsetrain_loop(pt, &masks, &st, stage_start_cyc, seq);
+    st.cancelled = pulsetrain_loop(pt, &masks, &st, stage_start_cyc, seq, trigger);
 
     // Clear LEDs, analog multiplexer, and sync output
     gpio_clr_mask64(masks.end_clr);
@@ -351,18 +348,6 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
         dropped_summaries++;
     memset(&st, 0, sizeof(st));
     sio_hw->doorbell_out_clr = DOORBELL_TRAIN_RUNNING;
-}
-
-// Returns the channel (0 or 1) whose trigger input has a latched rising edge,
-// or -1 if none. Channel 0 takes priority if both rising edges arrive on both
-// channels simultaneously. Inlined to reduce trigger latency by a few clock cycles.
-__always_inline static inline int8_t check_pending_trigger_ch(void) {
-    for (uint8_t ch = 0; ch < 2; ch++) {
-        uint8_t pin = channel_io_pins[ch];
-        if (io_bank0_hw->proc1_irq_ctrl.ints[pin >> 3] & RISING_EDGE_INTERRUPT_BIT(pin, 1))
-            return (int8_t)ch;
-    }
-    return -1;
 }
 
 // Apply queued commands up to the first current stimulus and return it (setting
@@ -440,10 +425,14 @@ void __time_critical_func(main_core1)(void) {
     }
     adc_lead_cyc = adc_read_cyc + ADC_LEAD_MARGIN_US * cycles_per_us;
 
+    irq_set_exclusive_handler(IO_IRQ_BANK0, trigger_isr);
+    irq_set_enabled(IO_IRQ_BANK0, true);
+
     multicore_fifo_push_blocking(CORE_HANDSHAKE_MESSAGE);
 
     // Pulse train armed on each trigger input, set via the R/S commands.
     pulsetrain_t pt_trigger[2] = {0};
+    uint32_t handled_trigger = latest_trigger;
 
     while (true) {
         // A triggered stimulus is preempted by T/U requests made after this point
@@ -451,13 +440,14 @@ void __time_critical_func(main_core1)(void) {
 
         // If there is no stimulus queued, check triggers
         const pulsetrain_t *pt = handle_cmd_queue(pt_trigger, &seq);
+        const uint32_t trigger = latest_trigger;
         int8_t trigger_ch = -1;
-        if (!pt) {
-            trigger_ch = check_pending_trigger_ch();
-            if (trigger_ch >= 0)
-                pt = &pt_trigger[trigger_ch];
+        if (!pt && trigger != handled_trigger) {
+            trigger_ch = (int8_t)(trigger & 1);
+            pt = &pt_trigger[trigger_ch];
         }
+        handled_trigger = trigger;
         if (pt)
-            run_pulsetrain(pt, trigger_ch, seq);
+            run_pulsetrain(pt, trigger_ch, seq, trigger);
     }
 }

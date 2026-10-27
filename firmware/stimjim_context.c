@@ -112,8 +112,10 @@ void stimjim_ctx_set_channel_io(stimjim_context_t *stimjim_ctx, const uint8_t ch
     stimjim_ctx->channel_io_pins[ch].idx = target;
     if (dir || target < 0)
         io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3] &= ~RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
-    else
+    else {
+        io_bank0_hw->intr[ch_pin >> 3] = RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
         io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3] |= RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
+    }
 }
 
 void stimjim_ctx_set_pulsetrain(stimjim_context_t *stimjim_ctx, const uint8_t pt_index, const pulsetrain_t *pt) {
