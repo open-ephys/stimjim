@@ -242,7 +242,7 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1)
      || *p != '\0')
     { puts(cmd_usage); return false; }
-    if (idx < 0) { stop_stimulus(); return false; }
+    if (idx < 0) { stop_stimulus(); return true; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
@@ -466,11 +466,11 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
         case 'S': cmd_S(sc, args); break;
         case 'T': // intentional fall through
         case 'U': if (cmd_TU(sc, cmd, args)) return; break;
-        case 'R': cmd_R(sc, args); break;
-        case 'V': cmd_V(sc, args); break;
-        case 'A': cmd_A(sc, args); break;
-        case 'E': cmd_E(sc, args); break;
-        case 'M': cmd_M(sc, args); break;
+        case 'R': cmd_R(sc, args); return;
+        case 'V': cmd_V(sc, args); return;
+        case 'A': cmd_A(sc, args); return;
+        case 'E': cmd_E(sc, args); return;
+        case 'M': cmd_M(sc, args); return;
         case 'B': cmd_B(sc, args); break;
         case 'C': cmd_C(sc, args); break;
         case 'D': cmd_D(sc, args); break;
