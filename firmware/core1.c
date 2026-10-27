@@ -217,7 +217,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             // cycle counter can measure
             while (stage_dur_cyc > INT32_MAX) {
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX / 2)
-                    if (stop_requested(seq)) return true;
+                    if (stop_requested(seq)) { sr->stop_stage = stage; return true; }
                 stage_start_cyc += INT32_MAX / 2;
                 stage_dur_cyc   -= INT32_MAX / 2;
             }
@@ -226,7 +226,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 // Check for cancel ('X') commands while waiting to read the ADCs
                 // just ahead of the next latch
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
-                    if (stop_requested(seq)) return true;
+                    if (stop_requested(seq)) { sr->stop_stage = stage; return true; }
 
                 // Read ADCs (blocking) and accumulate into the telemetry
                 int16_t vals[2];
@@ -239,7 +239,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             // Check for cancel ('X') commands while waiting for stage to end, then
             // spin out its last microsecond without them so the stage ends exactly
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + cycles_per_us < (uint32_t)stage_dur_cyc)
-                if (stop_requested(seq)) return true;
+                if (stop_requested(seq)) { sr->stop_stage = stage; return true; }
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc);
 
             // Don't latch on the last stage of the last pulse

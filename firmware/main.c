@@ -525,7 +525,12 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
-    printf("Train %s. Delivered %u pulses.", sr.cancelled ? "stopped" : "complete", sr.n_pulses);
+    if (!sr.cancelled)
+        printf("Train complete. Delivered %u pulses.", sr.n_pulses);
+    else if (sr.stop_stage == sr.n_stages - 1)
+        printf("Train stopped after pulse %u.", sr.n_pulses);
+    else
+        printf("Train stopped during stage %u of pulse %u.", sr.stop_stage, sr.n_pulses);
     stdio_putchar_raw('\n');
     printf("Current/Voltage by stage: \n           Ch0                Ch1 \n");
     // The last stage is the inter-pulse gap, which is grounded and not sampled
