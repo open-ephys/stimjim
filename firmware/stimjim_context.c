@@ -104,6 +104,8 @@ offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *stimjim_ctx, const ui
 
 void stimjim_ctx_set_channel_io(stimjim_context_t *stimjim_ctx, const uint8_t ch, const int8_t target, const bool dir) {
     const uint ch_pin = ch ? CHANNEL_IO_B : CHANNEL_IO_A;
+    const uint32_t edge_bit = RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
+    const channel_io_t prev = stimjim_ctx->channel_io_pins[ch];
 
     gpio_set_pulls(ch_pin, false, !dir);
     gpio_set_dir(ch_pin, dir);
@@ -111,10 +113,10 @@ void stimjim_ctx_set_channel_io(stimjim_context_t *stimjim_ctx, const uint8_t ch
     stimjim_ctx->channel_io_pins[ch].dir = dir;
     stimjim_ctx->channel_io_pins[ch].idx = target;
     if (dir || target < 0)
-        io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3] &= ~RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
-    else {
-        io_bank0_hw->intr[ch_pin >> 3] = RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
-        io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3] |= RISING_EDGE_INTERRUPT_BIT(ch_pin, 1);
+        hw_clear_bits(&io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3], edge_bit);
+    else if (prev.dir || prev.idx < 0) {
+        io_bank0_hw->intr[ch_pin >> 3] = edge_bit;
+        hw_set_bits(&io_bank0_hw->proc1_irq_ctrl.inte[ch_pin >> 3], edge_bit);
     }
 }
 

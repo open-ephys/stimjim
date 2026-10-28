@@ -188,8 +188,11 @@ static volatile uint32_t latest_trigger;
 
 static void __not_in_flash_func(trigger_isr)(void) {
     const uint32_t edges = io_bank0_hw->proc1_irq_ctrl.ints[CHANNEL_IO_A >> 3] & TRIGGER_EDGE_BITS;
+    uint32_t ch;
+    if (edges & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1)) ch = 0;
+    else if (edges & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_B, 1)) ch = 1;
+    else return;
     io_bank0_hw->intr[CHANNEL_IO_A >> 3] = edges;
-    const uint32_t ch = (edges & RISING_EDGE_INTERRUPT_BIT(CHANNEL_IO_A, 1)) ? 0 : 1;
     latest_trigger = ((latest_trigger + 2) & ~1u) | ch;
 }
 
