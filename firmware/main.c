@@ -249,11 +249,11 @@ static void print_start_notice(const char cmd_char, const int idx) {
 }
 
 static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
-    static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (idx -1 = stop)";
+    static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (negative idx = stop)";
 
     int32_t idx = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1)
+    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1)
      || *p != '\0')
     { if (verbose) printf("Info: %s\n", cmd_usage); return false; }
     if (idx < 0) { stop_stimulus(cmd_char); return true; }
@@ -273,12 +273,12 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] =
-        "R usage: R<ch>,<pt_idx>[,<0=trigger|1=sync>]  (pt_idx -1 = sync)";
+        "R usage: R<ch>,<pt_idx>[,<0=trigger|1=sync>]  (negative pt_idx = sync)";
 
     int32_t ch = 0, idx = 0, dir = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
+     || !try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1))
     { if (verbose) printf("Info: %s\n", cmd_usage); return; }
     if ((*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1)) || *p != '\0')
     { if (verbose) printf("Info: %s\n", cmd_usage); return; }
