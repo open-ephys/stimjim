@@ -34,6 +34,7 @@ static uint32_t cycles_per_us;
 static uint32_t adc_lead_cyc;
 
 static uint32_t dropped_summaries, dropped_trigger_notices;
+static uint32_t handled_request_seq;
 
 // Pico SDK function inlined to avoid jitter related to XIP cache-miss
 __always_inline static inline bool inline_queue_try_remove(queue_t *q, void *data) {
@@ -360,6 +361,7 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
     while (inline_queue_try_remove(&q_core1_cmd, &cmd)) {
         switch (cmd.type) {
             case CORE1_CMD_STIMULUS:
+                handled_request_seq = cmd.stimulus.seq;
                 if (cmd.stimulus.seq != stimulus_request_seq) break;
                 stimulus = cmd.stimulus.pt;
                 *seq = cmd.stimulus.seq;
@@ -435,14 +437,13 @@ void __time_critical_func(main_core1)(void) {
     uint32_t handled_trigger = latest_trigger;
 
     while (true) {
-        // A triggered stimulus is preempted by T/U requests made after this point
-        uint32_t seq = stimulus_request_seq;
-
-        // If there is no stimulus queued, check triggers
+        uint32_t seq;
         const pulsetrain_t *pt = handle_cmd_queue(pt_trigger, &seq);
         const uint32_t trigger = latest_trigger;
         int8_t trigger_ch = -1;
-        if (!pt && trigger != handled_trigger) {
+        // Check triggers unless a T/U is queued or about to be
+        if (!pt && trigger != handled_trigger && stimulus_request_seq == handled_request_seq) {
+            seq = handled_request_seq;
             trigger_ch = (int8_t)(trigger & 1);
             pt = &pt_trigger[trigger_ch];
         }
