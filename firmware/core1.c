@@ -206,13 +206,14 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                                                    const uint32_t seq, const uint32_t trigger) {
 
     const uint8_t gap = pt->n_stages - 1;  // the last stage is the inter-pulse gap
+    const uint8_t n_stages = pt->stage_duration[gap] ? pt->n_stages : gap;
 
     for (uint32_t pulse = 0; pulse < pt->n_pulses; pulse++) {
         sr->n_pulses = pulse + 1;  // pulses started, including one cut short
-        for (uint8_t stage = 0; stage < pt->n_stages; stage++) {
+        for (uint8_t stage = 0; stage < n_stages; stage++) {
 
             // Preload DAC (blocking)
-            uint8_t next_stage = (stage + 1 < pt->n_stages) ? stage + 1 : 0;
+            uint8_t next_stage = (stage + 1 < n_stages) ? stage + 1 : 0;
             dacs_write_blocking(
                 (uint16_t)pt->stage_amplitude[0][next_stage],
                 (uint16_t)pt->stage_amplitude[1][next_stage]);
@@ -255,7 +256,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc);
 
             // Don't latch on the last stage of the last pulse
-            if (stage < pt->n_stages - 1 || pulse < pt->n_pulses - 1) {
+            if (stage < n_stages - 1 || pulse < pt->n_pulses - 1) {
                 gpio_clr_mask64(mux_clr);
                 gpio_set_mask64(mux_set);
                 dacs_latch(masks->nldac);
@@ -336,7 +337,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     gpio_set_mask64(masks.end_set);
 
     // If the stimulus was cancelled or preempted, set the DACs to output nominal 0
-    if (st.cancelled) {
+    if (st.cancelled || !pt->stage_duration[pt->n_stages - 1]) {
         dacs_write_blocking(
             (uint16_t)pt->stage_amplitude[0][pt->n_stages - 1],
             (uint16_t)pt->stage_amplitude[1][pt->n_stages - 1]);
