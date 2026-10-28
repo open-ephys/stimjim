@@ -283,15 +283,15 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     { if (verbose) printf("Info: %s\n", cmd_usage); return; }
 
     const bool sync = dir || idx < 0;
+    if (!sync)
+        set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
 
     if (sync)
         printf("Detaching interrupt to IN%d\nProgramming IN%d as output that indicates activity on output %d\n",
                ch, ch, ch);
-    else {
-        set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
+    else
         printf("Attaching interrupt to IN%d to run PulseTrain[%d]\n", ch, idx);
-    }
 }
 
 static bool is_train_running(void) {
