@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <hardware/structs/bus_ctrl.h>
 #include <hardware/gpio.h>
 #include <pico/multicore.h>
@@ -17,11 +18,12 @@
 #include "stimjim_context.h"
 
 #define BUF_LEN 1024
-#define RUNS_AFTER_TRAIN "Will run after the running train finishes."
+#define RUNS_AFTER_TRAIN "Info: Will run after the running train finishes."
 
 queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 volatile uint32_t stimulus_request_seq;
 static queue_t q_deferred_commands;
+static bool verbose;
 
 static void handle_user_input(stimjim_context_t *sc, bool waiting);
 
@@ -61,9 +63,17 @@ static bool try_parse_in_range(const char **p, long long *out, const char *name,
         return true;
     }
 
-    const char *end = *p;
-    while (*end && !is_delimiter(*end)) end++;
-    printf("Invalid %s: '%.*s' (must be %lld..%lld)\n", name, (int)(end - *p), *p, min, max);
+    if (verbose) {
+        const char *end = *p;
+        while (*end && !is_delimiter(*end)) end++;
+        printf("Error: Invalid %s: '%.*s' (must be %lld..%lld)\n", name, (int)(end - *p), *p, min, max);
+    } else if (ep != *p && (*next == '\0' || is_delimiter(*next))) {
+        if ((!strcmp(name, "idx") && (val < 0 || val >= MAX_PULSETRAINS))
+         || (!strcmp(name, "pulse train index") && val >= MAX_PULSETRAINS))
+            puts("Invalid PulseTrain index.");
+        else if (!strcmp(name, "dac_code"))
+            printf("%lld is out of range.\n", val);
+    }
     return false;
 }
 
@@ -84,7 +94,7 @@ static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *na
 static void print_offsets(const stimjim_context_t *sc) {
     const offsets_t off[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
     printf("ADC offsets (+-2.5V): %f, %f\n", 0.0, 0.0);
-    printf("ADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
+    printf("ADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n\n",
            (double)off[0].adc, (double)off[1].adc, off[0].current, off[1].current,
            off[0].voltage, off[1].voltage);
 }
@@ -109,10 +119,8 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
         "Voltage output", "Current output", "No output (high-Z)", "No output (grounded)" };
 
     pulsetrain_t pt = stimjim_ctx_get_pulsetrain(sc, (int8_t)n);
-    if (pt.n_pulses == 0) {
-        printf("PulseTrain[%d] is not defined.\n", n);
-        return;
-    }
+    if (pt.n_pulses == 0)
+        pt.output_mode[0] = pt.output_mode[1] = OUTPUT_MODE_GND;
     // output_mode is stored as a bit flag (1 << mode)
     const int mode[2] = { __builtin_ctz(pt.output_mode[0]), __builtin_ctz(pt.output_mode[1]) };
     const uint64_t duration = (uint64_t)pt.n_pulses * pt.period;
@@ -120,18 +128,20 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     printf("Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
            n, mode[0], mode_names[mode[0]], mode[1], mode_names[mode[1]]);
     printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
-           pt.period, 0.000001 * pt.period, 1000000.0 / pt.period,
+           pt.period, 0.000001 * pt.period, pt.period ? 1000000.0 / pt.period : 0.0,
            (unsigned long long)duration, 0.000001 * (double)duration);
     puts("\n  stage    duration     output0   output1");
     for (uint8_t i = 0; i < pt.n_stages; i++)
         printf("   %2d  %7u usec %8d%s %8d%s\n", i, pt.stage_duration[i],
                pt.stage_amplitude[0][i], mode[0] == 0 ? "mV" : "uA",
                pt.stage_amplitude[1][i], mode[1] == 0 ? "mV" : "uA");
-    puts("----------------------------------");
+    puts("----------------------------------\n");
+    if (pt.n_pulses == 0 && verbose)
+        printf("Info: PulseTrain[%d] is not defined.\n", n);
 }
 
 static void print_high_voltage_warning(void) {
-    printf("Warning: >%dV in voltage mode. The ADC can't accurately measure voltages beyond +/-%dV.\n",
+    if (verbose) printf("Warning: >%dV in voltage mode. The ADC can't accurately measure voltages beyond +/-%dV.\n",
            MAX_MEASURABLE_MILLIVOLTS / 1000, MAX_MEASURABLE_MILLIVOLTS / 1000);
 }
 
@@ -146,18 +156,18 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1))
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
     if (*p == '\0') { print_pulsetrain(sc, (uint8_t)n); return; }
     if (!try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
      || !try_parse_i32_in_range(&p, &mode1, "mode1", 0, 3)
      || !try_parse_u32_in_range(&p, &pt.period, "period_us",  1, UINT32_MAX)
      || !try_parse_u32_in_range(&p, &duration,  "total_dur_us", 1, UINT32_MAX))
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
 
     pt.output_mode[0] = 1 << mode0;
     pt.output_mode[1] = 1 << mode1;
 
-    if (*p != ';' && *p != '\0') { puts(cmd_usage); return; }
+    if (*p != ';' && *p != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
     int32_t amp_limit[2];
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = MAX_MILLIVOLTS;
@@ -169,7 +179,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         p = skip_ws(p + 1);
         if (!*p) break;
         if (pt.n_stages >= MAX_STAGES) {
-            printf("Invalid pulse train: more than %d stages.\n", MAX_STAGES);
+            if (verbose) printf("Error: Invalid pulse train: more than %d stages.\n", MAX_STAGES);
             return;
         }
         char field_name[32];
@@ -183,14 +193,14 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
             if (!(pt.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK))
                 pt.stage_amplitude[ch][pt.n_stages] = 0;
         pt.n_stages++;
-        if (*p != ';' && *p != '\0') { puts(cmd_usage); return; }  // a 4th value in a stage
+        if (*p != ';' && *p != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }  // a 4th value in a stage
     }
 
     uint64_t stage_sum = 0;
     for (uint8_t i = 0; i < pt.n_stages; i++)
         stage_sum += pt.stage_duration[i];
     if (stage_sum > pt.period) {
-        puts("Invalid pulse train: summed stage durations exceed period.");
+        if (verbose) puts("Error: Invalid pulse train: summed stage durations exceed period.");
         return;
     }
 
@@ -218,16 +228,19 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
     print_pulsetrain(sc, (uint8_t)n);
 
     if (!has_stages)
-        puts("Warning: no stages defined. This train only controls the LED and sync signal.");
+        if (verbose) puts("Warning: No stages defined. This train only controls the LED and sync signal.");
     if (short_stage)
-        puts("Warning: <20us stage duration detected. Specified waveform timings are not guaranteed.");
+        if (verbose) puts("Warning: <20us stage duration detected. Specified waveform timings are not guaranteed.");
     if (high_voltage)
         print_high_voltage_warning();
 }
 
-static void stop_stimulus(void) {
+static void stop_stimulus(const char cmd_char) {
     sio_hw->doorbell_out_set = (1u << 0);
-    puts("Forcing train to stop");
+    if (cmd_char == 'X')
+        puts("Forcing train to stop");
+    else
+        printf("Forcing %c train to stop\n", cmd_char);
 }
 
 static void print_start_notice(const char cmd_char, const int idx) {
@@ -242,8 +255,8 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1)
      || *p != '\0')
-    { puts(cmd_usage); return false; }
-    if (idx < 0) { stop_stimulus(); return true; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return false; }
+    if (idx < 0) { stop_stimulus(cmd_char); return true; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
@@ -266,9 +279,9 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &idx, "pulse train index", -1, MAX_PULSETRAINS - 1))
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
     if ((*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1)) || *p != '\0')
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
 
     const bool sync = dir || idx < 0;
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
@@ -292,22 +305,24 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, mv = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &mv, "mV", -MAX_MILLIVOLTS, MAX_MILLIVOLTS)
+     || !try_parse_i32_in_range(&p, &mv, "mV", INT32_MIN, INT32_MAX)
      || *p != '\0')
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
-    int32_t code = lroundf(mv / MILLIVOLTS_PER_DAC) + off.voltage;
-    if (code < INT16_MIN) code = INT16_MIN;
-    if (code > INT16_MAX) code = INT16_MAX;
+    long long code = llroundf(mv / MILLIVOLTS_PER_DAC) + off.voltage;
+    if (code < INT16_MIN || code > INT16_MAX) {
+        printf(verbose ? "Error: DAC code %lld is out of range.\n" : "%lld is out of range.\n", code);
+        return;
+    }
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = (int16_t)code } };
-    if (is_train_running())
+    if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
-    printf("Set channel %d to amplitude %d mV (dac value %d).\n", ch, mv, code);
+    printf("Set channel %d to amplitude %d mV (dac value %lld).\n", ch, mv, code);
     if (labs(mv) > MAX_MEASURABLE_MILLIVOLTS)
         print_high_voltage_warning();
 }
@@ -321,11 +336,11 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX)
      || *p != '\0')
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
-    if (is_train_running())
+    if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
@@ -342,11 +357,11 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &line, "line", 0, 1)
      || *p != '\0')
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
-    if (is_train_running())
+    if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = 1 << 2;
@@ -371,10 +386,10 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3)
      || *p != '\0')
-    { puts(cmd_usage); return; }
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
-    if (is_train_running())
+    if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     sio_hw->doorbell_out_set = (1u << 2);
@@ -384,10 +399,10 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
 static void cmd_B(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "B usage: B";
 
-    if (*args != '\0') { puts(cmd_usage); return; }
-    if (is_train_running())
+    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
-    puts("Updating ADC offsets...");
+    if (verbose) puts("Info: Updating ADC offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC,
         .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
@@ -398,16 +413,16 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
-    puts("Offsets updated");
+    if (verbose) puts("Info: Offsets updated");
 }
 
 static void cmd_C(stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "C usage: C";
 
-    if (*args != '\0') { puts(cmd_usage); return; }
-    if (is_train_running())
+    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
-    puts("Updating ADC, current and voltage offsets...");
+    if (verbose) puts("Info: Updating ADC, current and voltage offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
@@ -417,21 +432,30 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
         handle_user_input(sc, true);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
-    puts("Offsets updated");
+    if (verbose) puts("Info: Offsets updated");
 }
 
 static void cmd_D(const stimjim_context_t *sc, const char *args) {
     static const char cmd_usage[] = "D usage: D";
 
-    if (*args != '\0') { puts(cmd_usage); return; }
+    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
     print_offsets(sc);
 }
 
 static void cmd_X(const char *args) {
     static const char cmd_usage[] = "X usage: X";
 
-    if (*args != '\0') { puts(cmd_usage); return; }
-    stop_stimulus();
+    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    stop_stimulus('X');
+}
+
+static void cmd_W(const char *args) {
+    static const char cmd_usage[] = "W usage: W1 (verbose on), W0 (verbose off)";
+
+    if ((*args != '0' && *args != '1') || *skip_ws(args + 1) != '\0')
+    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    verbose = *args == '1';
+    if (verbose) puts("Info: Verbose mode on");
 }
 
 static char *read_serial_line(void) {
@@ -442,7 +466,7 @@ static char *read_serial_line(void) {
     int32_t c = getchar_timeout_us(0);
     if (c == PICO_ERROR_TIMEOUT) return NULL;
     if (overflow) {
-        if (c == '\n') { overflow = false; puts("Line too long; ignored.\n"); }
+        if (c == '\n') { overflow = false; if (verbose) puts("Error: Line too long; ignored.\n"); }
         return NULL;
     }
     if (c != '\n' && nbuf >= sizeof(buf) - 1) { nbuf = 0; overflow = true; return NULL; }
@@ -464,7 +488,7 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
     const char *args = skip_ws(line + 1);
 
     switch (cmd) {
-        case 'S': cmd_S(sc, args); break;
+        case 'S': cmd_S(sc, args); return;
         case 'T': // intentional fall through
         case 'U': if (cmd_TU(sc, cmd, args)) return; break;
         case 'R': cmd_R(sc, args); return;
@@ -474,11 +498,12 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
         case 'M': cmd_M(sc, args); return;
         case 'B': cmd_B(sc, args); break;
         case 'C': cmd_C(sc, args); break;
-        case 'D': cmd_D(sc, args); break;
+        case 'D': cmd_D(sc, args); return;
         case 'X': cmd_X(args); break;
-        default:  printf("Unknown command: '%c'\n", cmd); break;
+        case 'W': cmd_W(args); break;
+        default:  if (verbose) printf("Error: Unknown command: '%c'\n", cmd); break;
     }
-    putchar('\n');
+    if (verbose) putchar('\n');
 }
 
 // X, T-1 or U-1
@@ -502,7 +527,7 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     if (!line) return;
     if (waiting && !is_stop_command(line)) {
         if (!queue_try_add(&q_deferred_commands, line))
-            puts("Too many commands waiting; command ignored.\n");
+            if (verbose) puts("Error: Too many commands waiting; command ignored.\n");
         return;
     }
     handle_serial_line(sc, line);
@@ -512,19 +537,19 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     core1_stim_telemetry_t sr;
     if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
-    if (sr.dropped_summaries)
+    if (verbose && sr.dropped_summaries)
         printf("Warning: %u train summaries were dropped (queue full).\n\n", sr.dropped_summaries);
-    if (sr.dropped_trigger_notices)
+    if (verbose && sr.dropped_trigger_notices)
         printf("Warning: %u stimulus start messages were dropped (queue full).\n\n", sr.dropped_trigger_notices);
 
     if (sr.n_pulses == 0) {
-        printf("No pulses delivered (uninitialized pulse train).\n\n");
+        if (verbose) puts("Warning: No pulses delivered (uninitialized pulse train).\n");
         return;
     }
     // Because of the inter-pulse stage, there is always at least one stage.
     // This checks if there are any user-defined stages.
-    if (sr.n_stages == 1) {
-        printf("No pulses delivered (pulse train has no stages).\n\n");
+    if (sr.n_stages == 1 && verbose) {
+        printf("Info: No pulses delivered (pulse train has no stages).\n\n");
         return;
     }
 
@@ -532,10 +557,12 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
 
     if (!sr.cancelled)
         printf("Train complete. Delivered %u pulses.", sr.n_pulses);
+    else if (!verbose)
+        return;
     else if (sr.stop_stage == sr.n_stages - 1)
-        printf("Train stopped after pulse %u.", sr.n_pulses);
+        printf("Info: Train stopped after pulse %u.", sr.n_pulses);
     else
-        printf("Train stopped during stage %u of pulse %u.", sr.stop_stage, sr.n_pulses);
+        printf("Info: Train stopped during stage %u of pulse %u.", sr.stop_stage, sr.n_pulses);
     stdio_putchar_raw('\n');
     printf("Current/Voltage by stage: \n           Ch0                Ch1 \n");
     // The last stage is the inter-pulse gap, which is grounded and not sampled
@@ -594,7 +621,7 @@ int main(void) {
     printf("Booting StimJim %s\n", FIRMWARE_VERSION);
     puts("Initializing triggers inputs...");
     print_offsets(stimjim_ctx);
-    puts("Ready to go!\n");
+    puts("Ready to go!\n\n");
 
     while (true) {
         handle_user_input(stimjim_ctx, false);
