@@ -206,10 +206,11 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 
     pt.n_pulses = (uint32_t)(((uint64_t)duration + pt.period - 1) / pt.period);
 
-    bool short_stage = false, has_stages = false;
+    bool short_stage = false, has_stages = false, zero_duration_stage = false;
     for (uint8_t i = 0; i < pt.n_stages; i++) {
         short_stage |= pt.stage_duration[i] && pt.stage_duration[i] < 20u;
         has_stages  |= pt.stage_duration[i] > 0;
+        zero_duration_stage |= pt.stage_duration[i] == 0;
     }
 
     bool high_voltage = false;
@@ -229,6 +230,8 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 
     if (!has_stages)
         if (verbose) puts("Warning: No stages defined. This train only controls the LED and sync signal.");
+    if (zero_duration_stage)
+        if (verbose) puts("Warning: Stages with 0us duration are omitted from the pulse train.");
     if (short_stage)
         if (verbose) puts("Warning: <20us stage duration detected. Specified waveform timings are not guaranteed.");
     if (high_voltage)
