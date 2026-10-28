@@ -194,7 +194,7 @@ static void __not_in_flash_func(trigger_isr)(void) {
 
 // True if X cancelled the stimulus, or a newer T/U request or a trigger preempts it
 __always_inline static inline bool stop_requested(const uint32_t seq, const uint32_t trigger) {
-    return (sio_hw->doorbell_in_set & 1u) || stimulus_request_seq != seq || latest_trigger != trigger;
+    return (sio_hw->doorbell_in_set & DOORBELL_STOP) || stimulus_request_seq != seq || latest_trigger != trigger;
 }
 
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
@@ -275,7 +275,7 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     sio_hw->doorbell_out_set = DOORBELL_TRAIN_RUNNING;
 
     // Clear cancel doorbell
-    sio_hw->doorbell_in_clr = 1u;
+    sio_hw->doorbell_in_clr = DOORBELL_STOP;
 
     // Start preloading DAC
     pio_spi_select_dac(0);

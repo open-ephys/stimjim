@@ -236,7 +236,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 }
 
 static void stop_stimulus(const char cmd_char) {
-    sio_hw->doorbell_out_set = (1u << 0);
+    sio_hw->doorbell_out_set = DOORBELL_STOP;
     if (cmd_char == 'X')
         puts("Forcing train to stop");
     else
@@ -266,7 +266,6 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     // for this one, but core1 never sees this request as newer than itself
     stimulus_request_seq = seq;
     send_core1_cmd(sc, &cmd);
-    sio_hw->doorbell_out_set = 1 << 2;
     print_start_notice(cmd_char, idx);
     return true;
 }
@@ -321,7 +320,6 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d mV (dac value %lld).\n", ch, mv, code);
     if (labs(mv) > MAX_MEASURABLE_MILLIVOLTS)
         print_high_voltage_warning();
@@ -343,7 +341,6 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    sio_hw->doorbell_out_set = 1 << 2;
     printf("Set channel %d to amplitude %d\n", ch, code);
     if ((abs(code) - INT8_MIN) * MILLIVOLTS_PER_DAC > MAX_MEASURABLE_MILLIVOLTS)
         print_high_voltage_warning();
@@ -364,7 +361,6 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    sio_hw->doorbell_out_set = 1 << 2;
 
     int16_t val;
     while (!queue_try_remove(&q_adc_result, &val))
@@ -392,7 +388,6 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    sio_hw->doorbell_out_set = (1u << 2);
     printf("Set channel %d to mode %d\n", ch, mode);
 }
 
