@@ -83,6 +83,7 @@ static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *na
 
 static void print_offsets(const stimjim_context_t *sc) {
     const offsets_t off[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
+    printf("ADC offsets (+-2.5V): %f, %f\n", 0.0, 0.0);
     printf("ADC offsets (+-10V): %f, %f\ncurrent offsets: %d, %d\nvoltage offsets: %d, %d\n",
            (double)off[0].adc, (double)off[1].adc, off[0].current, off[1].current,
            off[0].voltage, off[1].voltage);
