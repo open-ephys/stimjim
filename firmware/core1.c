@@ -279,8 +279,10 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
 
     sio_hw->doorbell_out_set = DOORBELL_TRAIN_RUNNING;
 
-    // Clear cancel doorbell
-    sio_hw->doorbell_in_clr = DOORBELL_STOP;
+    // This clears cancel requests for triggered pulse trains. Core0 clears
+    // cancel requests for T/U pulse trains.
+    if (trigger_ch >= 0)
+        sio_hw->doorbell_in_clr = DOORBELL_STOP;
 
     // Start preloading DAC
     pio_spi_select_dac(0);

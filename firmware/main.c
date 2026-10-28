@@ -262,6 +262,9 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
         .type = CORE1_CMD_STIMULUS,
         .stimulus = { .seq = seq, .pt = stimjim_ctx_convert_pt(sc, (int8_t)idx) },
     };
+    // This clears cancel requests for T/U pulse trains. Core1 clears cancel
+    // requests for triggered pulse trains.
+    sio_hw->doorbell_out_clr = DOORBELL_STOP;
     // Bump the request number before queueing, so that a running stimulus stops
     // for this one, but core1 never sees this request as newer than itself
     stimulus_request_seq = seq;
