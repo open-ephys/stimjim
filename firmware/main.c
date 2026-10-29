@@ -284,8 +284,11 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         print_high_voltage_warning();
 }
 
+static bool stop_already_requested;
+
 static void stop_stimulus(const char cmd_char) {
-    sio_hw->doorbell_out_set = DOORBELL_STOP;
+    if (!stop_already_requested)
+        sio_hw->doorbell_out_set = DOORBELL_STOP;
     if (cmd_char == 'X')
         puts("Forcing train to stop");
     else
@@ -571,25 +574,38 @@ static void cancel_deferred_stimuli(void) {
     }
 }
 
-// While E/B/C wait on core1, which runs them only after a stimulus, handle stop
-// commands right away so they can cancel the stimulus, and defer any other command.
+// While E/B/C wait on core1, which runs them only after a stimulus, a stop command
+// takes effect right away so it can cancel the stimulus, but its reply is deferred
+// with every other command. Input lines never contain '\n', so a deferred entry
+// starting with one is a stop that has already been requested.
 static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     static char deferred_command[BUF_LEN];
     if (!waiting && queue_try_remove(&q_deferred_commands, deferred_command)) {
-        handle_serial_line(sc, deferred_command);
+        stop_already_requested = deferred_command[0] == '\n';
+        handle_serial_line(sc, deferred_command + stop_already_requested);
+        stop_already_requested = false;
         return;
     }
     char *line = read_serial_line();
     if (!line) return;
     if (waiting) {
-        if (!is_stop_command(line)) {
+        if (is_stop_command(line)) {
+            sio_hw->doorbell_out_set = DOORBELL_STOP;
+            cancel_deferred_stimuli();
+            static char reply[BUF_LEN];
+            const char cmd = *skip_ws(line);
+            strcpy(reply, cmd == 'X' ? "\nX" : cmd == 'T' ? "\nT-1" : "\nU-1");
+            if (queue_try_add(&q_deferred_commands, reply))
+                return;
+            stop_already_requested = true;
+        } else {
             if (!queue_try_add(&q_deferred_commands, line))
                 if (verbose) puts("Error: Too many commands waiting; command ignored.\n");
             return;
         }
-        cancel_deferred_stimuli();
     }
     handle_serial_line(sc, line);
+    stop_already_requested = false;
 }
 
 static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
