@@ -32,8 +32,8 @@ pico_board_cmake_set(PICO_PLATFORM, rp2350)
 #define GPIO3         06u
 #define GPIO4         05u
 #define GPIO5         04u
-#define GPIO6         12u
-#define GPIO7         13u
+#define GPIO6         13u
+#define GPIO7         14u
 
 #define SYNC_A        GPIO6
 #define SYNC_B        GPIO7
