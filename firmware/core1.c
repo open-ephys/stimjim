@@ -368,7 +368,7 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
         switch (cmd.type) {
             case CORE1_CMD_STIMULUS:
                 handled_request_seq = cmd.stimulus.seq;
-                if (cmd.stimulus.seq != stimulus_request_seq) break;
+                if (cmd.stimulus.seq != stimulus_request_seq || (sio_hw->doorbell_in_set & DOORBELL_STOP)) break;
                 stimulus = cmd.stimulus.pt;
                 *seq = cmd.stimulus.seq;
                 return &stimulus;

@@ -550,10 +550,24 @@ static void handle_serial_line(stimjim_context_t *sc, char *line) {
 // X, T-1 or U-1
 static bool is_stop_command(const char *line) {
     const char *p = skip_ws(line);
-    if (*p == 'X') return true;
-    if (*p != 'T' && *p != 'U') return false;
+    const char cmd = *p;
+    if (cmd != 'X' && cmd != 'T' && cmd != 'U') return false;
     p = skip_ws(p + 1);
-    return p[0] == '-' && p[1] == '1' && *skip_ws(p + 2) == '\0';
+    if (cmd == 'X') return *p == '\0';
+    parse_skip(&p);
+    char *ep;
+    const long long idx = strtoll(p, &ep, 10);
+    return ep != p && idx < 0 && idx >= INT32_MIN && *skip_ws(ep) == '\0';
+}
+
+static void cancel_deferred_stimuli(void) {
+    static char line[BUF_LEN];
+    for (uint n = queue_get_level(&q_deferred_commands); n > 0; n--) {
+        queue_try_remove(&q_deferred_commands, line);
+        const char cmd = *skip_ws(line);
+        if (cmd != 'T' && cmd != 'U')
+            queue_try_add(&q_deferred_commands, line);
+    }
 }
 
 // While E/B/C wait on core1, which runs them only after a stimulus, handle stop
@@ -566,10 +580,13 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     }
     char *line = read_serial_line();
     if (!line) return;
-    if (waiting && !is_stop_command(line)) {
-        if (!queue_try_add(&q_deferred_commands, line))
-            if (verbose) puts("Error: Too many commands waiting; command ignored.\n");
-        return;
+    if (waiting) {
+        if (!is_stop_command(line)) {
+            if (!queue_try_add(&q_deferred_commands, line))
+                if (verbose) puts("Error: Too many commands waiting; command ignored.\n");
+            return;
+        }
+        cancel_deferred_stimuli();
     }
     handle_serial_line(sc, line);
 }
