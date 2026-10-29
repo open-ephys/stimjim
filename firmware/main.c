@@ -298,9 +298,9 @@ static void print_start_notice(const char cmd_char, const int idx) {
 }
 
 static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
-    int32_t idx = 0;
+    long long idx = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1)
+    if (!try_parse_in_range(&p, &idx, "pulse train index", LLONG_MIN, MAX_PULSETRAINS - 1)
      || check_for_extra_arguments(p)) {
         print_invalid_index();
         return false;
@@ -318,18 +318,19 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     // for this one, but core1 never sees this request as newer than itself
     stimulus_request_seq = seq;
     send_core1_cmd(sc, &cmd);
-    print_start_notice(cmd_char, idx);
+    print_start_notice(cmd_char, (int)idx);
     return true;
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
-    int32_t ch = 0, idx = 0, dir = 0;
+    int32_t ch = 0, dir = 0;
+    long long idx = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)) {
         print_channel_io(sc, 0);
         return;
     }
-    const bool idx_ok = try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1);
+    const bool idx_ok = try_parse_in_range(&p, &idx, "pulse train index", LLONG_MIN, MAX_PULSETRAINS - 1);
     if (!idx_ok
      || (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
      || check_for_extra_arguments(p)) {
@@ -557,7 +558,7 @@ static bool is_stop_command(const char *line) {
     parse_skip(&p);
     char *ep;
     const long long idx = strtoll(p, &ep, 10);
-    return ep != p && idx < 0 && idx >= INT32_MIN && *skip_ws(ep) == '\0';
+    return ep != p && idx < 0 && *skip_ws(ep) == '\0';
 }
 
 static void cancel_deferred_stimuli(void) {
