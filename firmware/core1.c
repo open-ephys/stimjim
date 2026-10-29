@@ -242,7 +242,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                     if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
 
                 // Read ADCs (blocking) and accumulate into the telemetry
-                int16_t vals[2];
+                int16_t vals[2] = { 0 };
                 adcs_read_get_value_blocking(vals);
                 sr->measured_amplitudes[0][stage] += vals[0];
                 sr->measured_amplitudes[1][stage] += vals[1];

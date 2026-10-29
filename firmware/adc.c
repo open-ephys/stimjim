@@ -8,7 +8,7 @@ void __not_in_flash_func(adc_write_blocking)(uint8_t ch, const uint16_t config) 
 }
 
 int16_t __not_in_flash_func(adc_read_blocking)(uint8_t ch) {
-    int16_t val;
+    int16_t val = 0;
     pio_spi_select_adc(ch);
     adc_read(ch);
     while (!pio_spi_is_done(ch));

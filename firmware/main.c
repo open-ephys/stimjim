@@ -1,6 +1,7 @@
 #define FIRMWARE_VERSION "v0.1.0"
 
 #include <errno.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <stdbool.h>
@@ -127,12 +128,12 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     puts("----------------------------------");
     printf("Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
            n, mode[0], mode_names[mode[0]], mode[1], mode_names[mode[1]]);
-    printf("  period:    %u usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
+    printf("  period:    %" PRIu32 " usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
            pt.period, 0.000001 * pt.period, pt.period ? 1000000.0 / pt.period : 0.0,
            (unsigned long long)duration, 0.000001 * (double)duration);
     puts("\n  stage    duration     output0   output1");
     for (uint8_t i = 0; i < pt.n_stages; i++)
-        printf("   %2d  %7u usec %8d%s %8d%s\n", i, pt.stage_duration[i],
+        printf("   %2d  %7" PRIu32 " usec %8" PRId32 "%s %8" PRId32 "%s\n", i, pt.stage_duration[i],
                pt.stage_amplitude[0][i], mode[0] == 0 ? "mV" : "uA",
                pt.stage_amplitude[1][i], mode[1] == 0 ? "mV" : "uA");
     puts("----------------------------------\n");
@@ -294,10 +295,10 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
 
     if (sync)
-        printf("Detaching interrupt to IN%d\nProgramming IN%d as output that indicates activity on output %d\n",
+        printf("Detaching interrupt to IN%" PRId32 "\nProgramming IN%" PRId32 " as output that indicates activity on output %" PRId32 "\n",
                ch, ch, ch);
     else
-        printf("Attaching interrupt to IN%d to run PulseTrain[%d]\n", ch, idx);
+        printf("Attaching interrupt to IN%" PRId32 " to run PulseTrain[%" PRId32 "]\n", ch, idx);
 }
 
 static bool is_train_running(void) {
@@ -326,7 +327,7 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    printf("Set channel %d to amplitude %d mV (dac value %lld).\n", ch, mv, code);
+    printf("Set channel %" PRId32 " to amplitude %" PRId32 " mV (dac value %lld).\n", ch, mv, code);
     if (labs(mv) > MAX_MEASURABLE_MILLIVOLTS)
         print_high_voltage_warning();
 }
@@ -347,7 +348,7 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    printf("Set channel %d to amplitude %d\n", ch, code);
+    printf("Set channel %" PRId32 " to amplitude %" PRId32 "\n", ch, code);
     if ((abs(code) - INT8_MIN) * MILLIVOLTS_PER_DAC > MAX_MEASURABLE_MILLIVOLTS)
         print_high_voltage_warning();
 }
@@ -376,7 +377,7 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
     static const char  units[2][3] = { "mV", "uA" };
     static const float scale[2]    = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
     int32_t real = lroundf(((float)val - off.adc) * scale[line]);
-    printf("Read value: %d (%d%s)\n", val, real, units[line]);
+    printf("Read value: %d (%" PRId32 "%s)\n", val, real, units[line]);
 }
 
 static void cmd_M(stimjim_context_t *sc, const char *args) {
@@ -394,7 +395,7 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
-    printf("Set channel %d to mode %d\n", ch, mode);
+    printf("Set channel %" PRId32 " to mode %" PRId32 "\n", ch, mode);
 }
 
 static void cmd_B(stimjim_context_t *sc, const char *args) {
@@ -539,9 +540,9 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
 
     if (verbose && sr.dropped_summaries)
-        printf("Warning: %u train summaries were dropped (queue full).\n\n", sr.dropped_summaries);
+        printf("Warning: %" PRIu32 " train summaries were dropped (queue full).\n\n", sr.dropped_summaries);
     if (verbose && sr.dropped_trigger_notices)
-        printf("Warning: %u stimulus start messages were dropped (queue full).\n\n", sr.dropped_trigger_notices);
+        printf("Warning: %" PRIu32 " stimulus start messages were dropped (queue full).\n\n", sr.dropped_trigger_notices);
 
     if (sr.n_pulses == 0) {
         if (verbose) puts("Warning: No pulses delivered (uninitialized pulse train).\n");
@@ -557,13 +558,13 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     static const float scale[2] = { MILLIVOLTS_PER_ADC, MICROAMPS_PER_ADC };
 
     if (!sr.cancelled)
-        printf("Train complete. Delivered %u pulses.", sr.n_pulses);
+        printf("Train complete. Delivered %" PRIu32 " pulses.", sr.n_pulses);
     else if (!verbose)
         return;
     else if (sr.stop_stage == sr.n_stages - 1)
-        printf("Info: Train stopped after pulse %u.", sr.n_pulses);
+        printf("Info: Train stopped after pulse %" PRIu32 ".", sr.n_pulses);
     else
-        printf("Info: Train stopped during stage %u of pulse %u.", sr.stop_stage, sr.n_pulses);
+        printf("Info: Train stopped during stage %u of pulse %" PRIu32 ".", sr.stop_stage, sr.n_pulses);
     stdio_putchar_raw('\n');
     printf("Current/Voltage by stage: \n           Ch0                Ch1 \n");
     // The last stage is the inter-pulse gap, which is grounded and not sampled

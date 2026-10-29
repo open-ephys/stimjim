@@ -38,6 +38,7 @@ add_executable(main
 
 pico_enable_stdio_usb(main 1)
 target_compile_definitions(main PRIVATE PICO_STDIO_USB_CONNECTION_WITHOUT_DTR=1)
+target_compile_options(main PRIVATE -Wall -Wextra)
 
 target_link_libraries(main pico_stdlib pico_multicore pico_bootsel_via_double_reset hardware_pio pico_divider)
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
