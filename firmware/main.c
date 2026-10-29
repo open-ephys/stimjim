@@ -617,17 +617,18 @@ int main(void) {
     if (multicore_fifo_pop_blocking() != CORE_HANDSHAKE_MESSAGE)
         return EXIT_FAILURE;
 
-    stimjim_context_t *stimjim_ctx = stimjim_ctx_init(&q_core1_cmd, &q_offsets_rx);
+    static stimjim_context_t stimjim_ctx;
+    stimjim_ctx_init(&stimjim_ctx, &q_core1_cmd, &q_offsets_rx);
 
     sleep_ms(3000);
     printf("Booting StimJim %s\n", FIRMWARE_VERSION);
     puts("Initializing triggers inputs...");
-    print_offsets(stimjim_ctx);
+    print_offsets(&stimjim_ctx);
     puts("Ready to go!\n\n");
 
     while (true) {
-        handle_user_input(stimjim_ctx, false);
-        handle_triggered_stimuli(stimjim_ctx);
-        handle_stimulus_telemetry(stimjim_ctx);
+        handle_user_input(&stimjim_ctx, false);
+        handle_triggered_stimuli(&stimjim_ctx);
+        handle_stimulus_telemetry(&stimjim_ctx);
     }
 }

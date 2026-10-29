@@ -6,8 +6,6 @@
 #define MAX_PULSETRAINS  100
 #define MAX_STAGES 10
 
-typedef struct stimjim_ctx stimjim_context_t;
-
 typedef struct {
     float  adc;
     int8_t voltage;
@@ -48,9 +46,16 @@ typedef struct {
     uint32_t stage_duration[MAX_STAGES+1]; // us
 } pulsetrain_t;
 
+typedef struct {
+    channel_io_t channel_io_pins[2];
+    offsets_t offsets[2];
+    pulsetrain_t pulsetrains[MAX_PULSETRAINS];
+    queue_t *q_core1_cmd, *q_offsets_rx;
+} stimjim_context_t;
+
 void set_output_mode(uint8_t ch, output_mode_t mode);
 
-stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx);
+void stimjim_ctx_init(stimjim_context_t *ctx, queue_t *q_core1_cmd, queue_t *q_offsets_rx);
 
 channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *ctx, const uint8_t ch);
 pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *ctx, const int8_t pt_index);

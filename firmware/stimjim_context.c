@@ -1,24 +1,7 @@
-/*  
- *  Implements an opaque pointer in C. The benefits are:
- *  - Setters maintain parity between the context state and hardware state.
- *    The context's members cannot otherwise be accessed.
- *  - The context is locally scoped to main.(.. unless you call stimjim_ctx_init
- *    elsewhere as well.)
- */
-
 #include <math.h>
+#include <string.h>
 #include "stimjim_context.h"
 #include "core1.h"
-
-struct stimjim_ctx {
-    channel_io_t channel_io_pins[2];
-    offsets_t  offsets[2];
-    pulsetrain_t pulsetrains[MAX_PULSETRAINS];
-    queue_t *q_core1_cmd, *q_offsets_rx;
-};
-
-// single static instance
-static stimjim_context_t stimjim_ctx = { 0 };
 
 void __not_in_flash_func(set_output_mode)(uint8_t ch, output_mode_t mode) {
     static const uint8_t oe0_pin[2] = { OE0_A, OE0_B };
@@ -69,21 +52,20 @@ pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const int8_t p
 
 // init
 
-stimjim_context_t *stimjim_ctx_init(queue_t *q_core1_cmd, queue_t *q_offsets_rx) {
-    stimjim_ctx.q_core1_cmd = q_core1_cmd;
-    stimjim_ctx.q_offsets_rx = q_offsets_rx;
-    for (uint8_t ch = 0; ch < 2; ch++) 
-        stimjim_ctx_set_channel_io(&stimjim_ctx, ch, -1, GPIO_OUT);
+void stimjim_ctx_init(stimjim_context_t *ctx, queue_t *q_core1_cmd, queue_t *q_offsets_rx) {
+    memset(ctx, 0, sizeof(*ctx));
+    ctx->q_core1_cmd = q_core1_cmd;
+    ctx->q_offsets_rx = q_offsets_rx;
+    for (uint8_t ch = 0; ch < 2; ch++)
+        stimjim_ctx_set_channel_io(ctx, ch, -1, GPIO_OUT);
     offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT,
     };
-    while (!stimjim_ctx_try_request_offsets(&stimjim_ctx, &offsets_calibration));
-    while (!stimjim_ctx_try_receive_offsets(&stimjim_ctx));
+    while (!stimjim_ctx_try_request_offsets(ctx, &offsets_calibration));
+    while (!stimjim_ctx_try_receive_offsets(ctx));
 
     gpio_put(LED_A, false);
     gpio_put(LED_B, false);
-
-    return &stimjim_ctx;
 }
 
 // getters
