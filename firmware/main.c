@@ -128,11 +128,15 @@ static void print_channel_io(const stimjim_context_t *sc, const uint8_t ch) {
         printf("Attaching interrupt to IN%d to run PulseTrain[%d]\n", ch, io.idx);
 }
 
-static void print_output_mode(const uint8_t ch) {
+static int read_output_mode(const uint8_t ch) {
     static const uint8_t oe0_pin[2] = { OE0_A, OE0_B };
     static const uint8_t oe1_pin[2] = { OE1_A, OE1_B };
     const bool oe0 = gpio_get_out_level(oe0_pin[ch]), oe1 = gpio_get_out_level(oe1_pin[ch]);
-    printf("Set channel %d to mode %d\n", ch, oe0 ? (oe1 ? 3 : 1) : (oe1 ? 2 : 0));
+    return oe0 ? (oe1 ? 3 : 1) : (oe1 ? 2 : 0);
+}
+
+static void print_output_mode(const uint8_t ch) {
+    printf("Set channel %d to mode %d\n", ch, read_output_mode(ch));
 }
 
 static void set_trigger_pulsetrain(stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
@@ -403,7 +407,7 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
     printf("Set channel %" PRId32 " to amplitude %" PRId32 "\n", ch, code);
-    if ((abs(code) - INT8_MIN) * MILLIVOLTS_PER_DAC > MAX_MEASURABLE_MILLIVOLTS)
+    if (read_output_mode((uint8_t)ch) == 0 && (abs(code) - INT8_MIN) * MILLIVOLTS_PER_DAC > MAX_MEASURABLE_MILLIVOLTS)
         print_high_voltage_warning();
 }
 
