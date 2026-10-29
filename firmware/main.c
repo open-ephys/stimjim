@@ -105,6 +105,21 @@ static void print_offsets(const stimjim_context_t *sc) {
            off[0].voltage, off[1].voltage);
 }
 
+static void print_channel_io(const stimjim_context_t *sc, const uint8_t ch) {
+    const channel_io_t io = stimjim_ctx_get_channel_io(sc, ch);
+    if (io.dir == GPIO_OUT)
+        printf("Detaching interrupt to IN%d\nProgramming IN%d as output that indicates activity on output %d\n", ch, ch, ch);
+    else
+        printf("Attaching interrupt to IN%d to run PulseTrain[%d]\n", ch, io.idx);
+}
+
+static void print_output_mode(const uint8_t ch) {
+    static const uint8_t oe0_pin[2] = { OE0_A, OE0_B };
+    static const uint8_t oe1_pin[2] = { OE1_A, OE1_B };
+    const bool oe0 = gpio_get_out_level(oe0_pin[ch]), oe1 = gpio_get_out_level(oe1_pin[ch]);
+    printf("Set channel %d to mode %d\n", ch, oe0 ? (oe1 ? 3 : 1) : (oe1 ? 2 : 0));
+}
+
 static void set_trigger_pulsetrain(stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
     core1_cmd_t cmd = {
         .type = CORE1_CMD_TRIGGER_CONFIG,
@@ -293,22 +308,22 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
 static void cmd_R(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, idx = 0, dir = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)) {
+        print_channel_io(sc, 0);
         return;
-    if ((*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1)) || check_for_extra_arguments(p))
+    }
+    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1)
+     || (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
+     || check_for_extra_arguments(p)) {
+        print_channel_io(sc, (uint8_t)ch);
         return;
+    }
 
     const bool sync = dir || idx < 0;
     if (!sync)
         set_trigger_pulsetrain(sc, (uint8_t)ch, (int8_t)idx);
     stimjim_ctx_set_channel_io(sc, (uint8_t)ch, sync ? -1 : (int8_t)idx, sync ? GPIO_OUT : GPIO_IN);
-
-    if (sync)
-        printf("Detaching interrupt to IN%" PRId32 "\nProgramming IN%" PRId32 " as output that indicates activity on output %" PRId32 "\n",
-               ch, ch, ch);
-    else
-        printf("Attaching interrupt to IN%" PRId32 " to run PulseTrain[%" PRId32 "]\n", ch, idx);
+    print_channel_io(sc, (uint8_t)ch);
 }
 
 static bool is_train_running(void) {
@@ -387,10 +402,14 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
 static void cmd_M(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, mode = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3)
-     || check_for_extra_arguments(p))
+    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)) {
+        print_output_mode(0);
         return;
+    }
+    if (!try_parse_i32_in_range(&p, &mode, "output mode", 0, 3) || check_for_extra_arguments(p)) {
+        print_output_mode((uint8_t)ch);
+        return;
+    }
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
     if (verbose && is_train_running())
@@ -435,7 +454,7 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_D(const stimjim_context_t *sc, const char *args) {
-    if (check_for_extra_arguments(args)) return;
+    check_for_extra_arguments(args);
     print_offsets(sc);
 }
 
