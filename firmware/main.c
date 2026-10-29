@@ -92,6 +92,12 @@ static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *na
     return true;
 }
 
+static bool check_for_extra_arguments(const char *p) {
+    if (*p == '\0') return false;
+    if (verbose) printf("Error: Unexpected '%s' after the arguments\n", p);
+    return true;
+}
+
 static void print_offsets(const stimjim_context_t *sc) {
     const offsets_t off[2] = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) };
     printf("ADC offsets (+-2.5V): %f, %f\n", 0.0, 0.0);
@@ -147,28 +153,24 @@ static void print_high_voltage_warning(void) {
 }
 
 static void cmd_S(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] =
-        "S usage: S<idx> to print, or S<idx>,<mode0>,<mode1>,<period_us>,<total_dur_us>;"
-        " <amp0>,<amp1>,<stage_dur_us>; ...";
-
     int32_t n, mode0, mode1;
     uint32_t duration;
     pulsetrain_t pt = { 0 };
 
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1))
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+        return;
     if (*p == '\0') { print_pulsetrain(sc, (uint8_t)n); return; }
     if (!try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
      || !try_parse_i32_in_range(&p, &mode1, "mode1", 0, 3)
      || !try_parse_u32_in_range(&p, &pt.period, "period_us",  1, UINT32_MAX)
      || !try_parse_u32_in_range(&p, &duration,  "total_dur_us", 1, UINT32_MAX))
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+        return;
 
     pt.output_mode[0] = 1 << mode0;
     pt.output_mode[1] = 1 << mode1;
 
-    if (*p != ';' && *p != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (*p != ';' && check_for_extra_arguments(p)) return;
     int32_t amp_limit[2];
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = MAX_MILLIVOLTS;
@@ -194,7 +196,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
             if (!(pt.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK))
                 pt.stage_amplitude[ch][pt.n_stages] = 0;
         pt.n_stages++;
-        if (*p != ';' && *p != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }  // a 4th value in a stage
+        if (*p != ';' && check_for_extra_arguments(p)) return;  // a 4th value in a stage
     }
 
     uint64_t stage_sum = 0;
@@ -253,13 +255,11 @@ static void print_start_notice(const char cmd_char, const int idx) {
 }
 
 static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args) {
-    static const char cmd_usage[] = "T/U usage: T<idx> or U<idx>  (negative idx = stop)";
-
     int32_t idx = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1)
-     || *p != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return false; }
+     || check_for_extra_arguments(p))
+        return false;
     if (idx < 0) { stop_stimulus(cmd_char); return true; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
@@ -278,16 +278,13 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
 }
 
 static void cmd_R(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] =
-        "R usage: R<ch>,<pt_idx>[,<0=trigger|1=sync>]  (negative pt_idx = sync)";
-
     int32_t ch = 0, idx = 0, dir = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1))
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
-    if ((*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1)) || *p != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+        return;
+    if ((*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1)) || check_for_extra_arguments(p))
+        return;
 
     const bool sync = dir || idx < 0;
     if (!sync)
@@ -306,14 +303,12 @@ static bool is_train_running(void) {
 }
 
 static void cmd_V(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "V usage: V<ch>,<mV>";
-
     int32_t ch = 0, mv = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &mv, "mV", INT32_MIN, INT32_MAX)
-     || *p != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+     || check_for_extra_arguments(p))
+        return;
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
     long long code = llroundf(mv / MILLIVOLTS_PER_DAC) + off.voltage;
@@ -333,15 +328,13 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_A(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "A usage: A<ch>,<dac_code>";
-
     int32_t ch = 0;
     int32_t code = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX)
-     || *p != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+     || check_for_extra_arguments(p))
+        return;
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
@@ -354,14 +347,12 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_E(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "E usage: E<ch>,<line>";
-
     int32_t ch = 0, line = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &line, "line", 0, 1)
-     || *p != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+     || check_for_extra_arguments(p))
+        return;
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
@@ -381,15 +372,12 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_M(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] =
-        "M usage: M<ch>,<mode>  (mode: 0=voltage 1=current 2=float 3=gnd)";
-
     int32_t ch = 0, mode = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &mode, "output mode", 0, 3)
-     || *p != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+     || check_for_extra_arguments(p))
+        return;
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_SET_OUTPUT_MODE, .ch = (uint8_t)ch, .output_mode = 1 << mode } };
     if (verbose && is_train_running())
@@ -399,9 +387,7 @@ static void cmd_M(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_B(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "B usage: B";
-
-    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (check_for_extra_arguments(args)) return;
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     if (verbose) puts("Info: Updating ADC offsets...");
@@ -419,9 +405,7 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_C(stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "C usage: C";
-
-    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (check_for_extra_arguments(args)) return;
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
     if (verbose) puts("Info: Updating ADC, current and voltage offsets...");
@@ -438,24 +422,20 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
 }
 
 static void cmd_D(const stimjim_context_t *sc, const char *args) {
-    static const char cmd_usage[] = "D usage: D";
-
-    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (check_for_extra_arguments(args)) return;
     print_offsets(sc);
 }
 
 static void cmd_X(const char *args) {
-    static const char cmd_usage[] = "X usage: X";
-
-    if (*args != '\0') { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if (check_for_extra_arguments(args)) return;
     stop_stimulus('X');
 }
 
 static void cmd_W(const char *args) {
-    static const char cmd_usage[] = "W usage: W1 (verbose on), W0 (verbose off)";
-
-    if ((*args != '0' && *args != '1') || *skip_ws(args + 1) != '\0')
-    { if (verbose) printf("Info: %s\n", cmd_usage); return; }
+    if ((*args != '0' && *args != '1') || *skip_ws(args + 1) != '\0') {
+        if (verbose) printf("Error: Invalid verbose mode: '%s' (must be 0..1)\n", args);
+        return;
+    }
     verbose = *args == '1';
     if (verbose) puts("Info: Verbose mode on");
 }
