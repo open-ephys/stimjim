@@ -69,8 +69,7 @@ static bool try_parse_in_range(const char **p, long long *out, const char *name,
         while (*end && !is_delimiter(*end)) end++;
         printf("Error: Invalid %s: '%.*s' (must be %lld..%lld)\n", name, (int)(end - *p), *p, min, max);
     } else if (ep != *p && (*next == '\0' || is_delimiter(*next))) {
-        if ((!strcmp(name, "idx") && (val < 0 || val >= MAX_PULSETRAINS))
-         || (!strcmp(name, "pulse train index") && val >= MAX_PULSETRAINS))
+        if (!strcmp(name, "pulse train index") && val >= MAX_PULSETRAINS)
             puts("Invalid PulseTrain index.");
         else if (!strcmp(name, "dac_code"))
             printf("%lld is out of range.\n", val);
@@ -152,25 +151,21 @@ static void print_high_voltage_warning(void) {
            MAX_MEASURABLE_MILLIVOLTS / 1000, MAX_MEASURABLE_MILLIVOLTS / 1000);
 }
 
-static void cmd_S(stimjim_context_t *sc, const char *args) {
-    int32_t n, mode0, mode1;
+static bool parse_pulsetrain(const char *p, pulsetrain_t *out) {
+    int32_t mode0, mode1;
     uint32_t duration;
     pulsetrain_t pt = { 0 };
 
-    const char *p = args;
-    if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1))
-        return;
-    if (*p == '\0') { print_pulsetrain(sc, (uint8_t)n); return; }
     if (!try_parse_i32_in_range(&p, &mode0, "mode0", 0, 3)
      || !try_parse_i32_in_range(&p, &mode1, "mode1", 0, 3)
      || !try_parse_u32_in_range(&p, &pt.period, "period_us",  1, UINT32_MAX)
      || !try_parse_u32_in_range(&p, &duration,  "total_dur_us", 1, UINT32_MAX))
-        return;
+        return false;
 
     pt.output_mode[0] = 1 << mode0;
     pt.output_mode[1] = 1 << mode1;
 
-    if (*p != ';' && check_for_extra_arguments(p)) return;
+    if (*p != ';' && check_for_extra_arguments(p)) return false;
     int32_t amp_limit[2];
     for (uint8_t ch = 0; ch < 2; ch++) {
         if (pt.output_mode[ch] & OUTPUT_MODE_VOLTAGE)      amp_limit[ch] = MAX_MILLIVOLTS;
@@ -183,20 +178,20 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         if (!*p) break;
         if (pt.n_stages >= MAX_STAGES) {
             if (verbose) printf("Error: Invalid pulse train: more than %d stages.\n", MAX_STAGES);
-            return;
+            return false;
         }
         char field_name[32];
         snprintf(field_name, sizeof(field_name), "amp0 stage[%d]", pt.n_stages);
-        if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -amp_limit[0], amp_limit[0])) return;
+        if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[0][pt.n_stages], field_name, -amp_limit[0], amp_limit[0])) return false;
         snprintf(field_name, sizeof(field_name), "amp1 stage[%d]", pt.n_stages);
-        if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return;
+        if (!try_parse_i32_in_range(&p, &pt.stage_amplitude[1][pt.n_stages], field_name, -amp_limit[1], amp_limit[1])) return false;
         snprintf(field_name, sizeof(field_name), "stage_dur_us stage[%d]", pt.n_stages);
-        if (!try_parse_u32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 0, UINT32_MAX)) return;
+        if (!try_parse_u32_in_range(&p, &pt.stage_duration[pt.n_stages], field_name, 0, UINT32_MAX)) return false;
         for (uint8_t ch = 0; ch < 2; ch++)
             if (!(pt.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK))
                 pt.stage_amplitude[ch][pt.n_stages] = 0;
         pt.n_stages++;
-        if (*p != ';' && check_for_extra_arguments(p)) return;  // a 4th value in a stage
+        if (*p != ';' && check_for_extra_arguments(p)) return false;  // a 4th value in a stage
     }
 
     uint64_t stage_sum = 0;
@@ -204,10 +199,28 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
         stage_sum += pt.stage_duration[i];
     if (stage_sum > pt.period) {
         if (verbose) puts("Error: Invalid pulse train: summed stage durations exceed period.");
-        return;
+        return false;
     }
 
     pt.n_pulses = (uint32_t)(((uint64_t)duration + pt.period - 1) / pt.period);
+    *out = pt;
+    return true;
+}
+
+static void cmd_S(stimjim_context_t *sc, const char *args) {
+    int32_t n;
+    pulsetrain_t pt;
+
+    const char *p = args;
+    if (!try_parse_i32_in_range(&p, &n, "idx", 0, MAX_PULSETRAINS - 1)) {
+        const long leading_idx = strtol(args, NULL, 10);
+        if (leading_idx >= 0 && leading_idx < MAX_PULSETRAINS)
+            print_pulsetrain(sc, (uint8_t)leading_idx);
+        else if (!verbose)
+            puts("Invalid PulseTrain index.");
+        return;
+    }
+    if (*p == '\0' || !parse_pulsetrain(p, &pt)) { print_pulsetrain(sc, (uint8_t)n); return; }
 
     bool short_stage = false, has_stages = false, zero_duration_stage = false;
     for (uint8_t i = 0; i < pt.n_stages; i++) {
