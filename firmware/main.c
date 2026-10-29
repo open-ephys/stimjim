@@ -57,8 +57,7 @@ static bool try_parse_in_range(const char **p, long long *out, const char *name,
     char *ep;
     long long val = strtoll(*p, &ep, 10);
     const char *next = skip_ws(ep);
-    bool ok = (ep != *p) && (*next == '\0' || is_delimiter(*next)) && (val >= min) && (val <= max);
-    if (ok) {
+    if (ep != *p && (*next == '\0' || is_delimiter(*next)) && val >= min && val <= max) {
         *out = val;
         *p = next;
         return true;
@@ -68,11 +67,6 @@ static bool try_parse_in_range(const char **p, long long *out, const char *name,
         const char *end = *p;
         while (*end && !is_delimiter(*end)) end++;
         printf("Error: Invalid %s: '%.*s' (must be %lld..%lld)\n", name, (int)(end - *p), *p, min, max);
-    } else if (ep != *p && (*next == '\0' || is_delimiter(*next))) {
-        if (!strcmp(name, "pulse train index") && val >= MAX_PULSETRAINS)
-            puts("Invalid PulseTrain index.");
-        else if (!strcmp(name, "dac_code"))
-            printf("%lld is out of range.\n", val);
     }
     return false;
 }
@@ -89,6 +83,27 @@ static bool try_parse_u32_in_range(const char **p, uint32_t *out, const char *na
     if (!try_parse_in_range(p, &val, name, min, max)) return false;
     *out = (uint32_t)val;
     return true;
+}
+
+static const char *teensy_second_arg(const char *args) {
+    char *end;
+    strtoll(args, &end, 10);
+    return (end != args && *end == ',') ? end + 1 : "";
+}
+
+static void print_invalid_index(void) {
+    if (!verbose) puts("Invalid PulseTrain index.");
+}
+
+static void print_out_of_range(const char *num) {
+    if (verbose) return;
+    num = skip_ws(num);
+    const bool negative = *num == '-';
+    if (*num == '-' || *num == '+') num++;
+    while (num[0] == '0' && num[1] >= '0' && num[1] <= '9') num++;
+    const int digits = (int)strspn(num, "0123456789");
+    if (!digits || (digits == 1 && num[0] == '0')) puts("0 is out of range.");
+    else printf("%s%.*s is out of range.\n", negative ? "-" : "", digits, num);
 }
 
 static bool check_for_extra_arguments(const char *p) {
@@ -286,8 +301,10 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
     int32_t idx = 0;
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1)
-     || check_for_extra_arguments(p))
+     || check_for_extra_arguments(p)) {
+        print_invalid_index();
         return false;
+    }
     if (idx < 0) { stop_stimulus(cmd_char); return true; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
@@ -312,9 +329,11 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
         print_channel_io(sc, 0);
         return;
     }
-    if (!try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1)
+    const bool idx_ok = try_parse_i32_in_range(&p, &idx, "pulse train index", INT32_MIN, MAX_PULSETRAINS - 1);
+    if (!idx_ok
      || (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
      || check_for_extra_arguments(p)) {
+        if (!idx_ok) print_invalid_index();
         print_channel_io(sc, (uint8_t)ch);
         return;
     }
@@ -335,8 +354,16 @@ static void cmd_V(stimjim_context_t *sc, const char *args) {
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &mv, "mV", INT32_MIN, INT32_MAX)
-     || check_for_extra_arguments(p))
+     || check_for_extra_arguments(p)) {
+        if (!verbose) {
+            long long teensy_mv = strtoll(teensy_second_arg(args), NULL, 10);
+            if (teensy_mv < INT32_MIN) teensy_mv = INT32_MIN;
+            if (teensy_mv > INT32_MAX) teensy_mv = INT32_MAX;
+            printf("%lld is out of range.\n",
+                   llroundf((int32_t)teensy_mv / MILLIVOLTS_PER_DAC) + stimjim_ctx_get_offsets(sc, ch).voltage);
+        }
         return;
+    }
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
     long long code = llroundf(mv / MILLIVOLTS_PER_DAC) + off.voltage;
@@ -361,8 +388,10 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
     const char *p = args;
     if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
      || !try_parse_i32_in_range(&p, &code, "dac_code", INT16_MIN, INT16_MAX)
-     || check_for_extra_arguments(p))
+     || check_for_extra_arguments(p)) {
+        print_out_of_range(teensy_second_arg(args));
         return;
+    }
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_DAC_SET, .ch = (uint8_t)ch, .dac_code = code } };
@@ -377,10 +406,8 @@ static void cmd_A(stimjim_context_t *sc, const char *args) {
 static void cmd_E(stimjim_context_t *sc, const char *args) {
     int32_t ch = 0, line = 0;
     const char *p = args;
-    if (!try_parse_i32_in_range(&p, &ch, "channel", 0, 1)
-     || !try_parse_i32_in_range(&p, &line, "line", 0, 1)
-     || check_for_extra_arguments(p))
-        return;
+    if (try_parse_i32_in_range(&p, &ch, "channel", 0, 1) && try_parse_i32_in_range(&p, &line, "line", 0, 1))
+        check_for_extra_arguments(p);
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
