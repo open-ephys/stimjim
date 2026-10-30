@@ -36,6 +36,7 @@ add_executable(main
     dac.c
     )
 
+pico_set_binary_type(main copy_to_ram)
 pico_enable_stdio_usb(main 1)
 target_compile_definitions(main PRIVATE PICO_STDIO_USB_CONNECTION_WITHOUT_DTR=1)
 target_compile_options(main PRIVATE -Wall -Wextra)
