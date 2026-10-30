@@ -715,6 +715,9 @@ int main(void) {
     queue_init(&q_adc_result, sizeof(int16_t), 5);
     queue_init(&q_deferred_commands, BUF_LEN, 8);
 
+    multicore_doorbell_claim(DOORBELL_STOP_NUM, 0b11);
+    multicore_doorbell_claim(DOORBELL_TRAIN_RUNNING_NUM, 0b11);
+
     bus_ctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
     multicore_launch_core1(main_core1);
     if (multicore_fifo_pop_blocking() != CORE_HANDSHAKE_MESSAGE)

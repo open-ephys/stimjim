@@ -16,6 +16,8 @@ void pio_spi_init(uint8_t ch)
     const pio_spi_cfg_t *cfg = &pio_spi_cfg[ch];
     pio_spi_state_t *state = &pio_spi_state[ch];
     pio_set_gpio_base(cfg->pio, cfg->base);
+    pio_sm_claim(cfg->pio, SM_DAC);
+    pio_sm_claim(cfg->pio, SM_ADC);
 
     state->offset_dac = pio_add_program(cfg->pio, &pio_spi_mode1_program);
     state->offset_adc = pio_add_program(cfg->pio, &pio_spi_mode2_program);
