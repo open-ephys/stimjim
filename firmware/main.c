@@ -341,8 +341,10 @@ static void cmd_R(stimjim_context_t *sc, const char *args) {
     if (!idx_ok
      || (*p == ',' && !try_parse_i32_in_range(&p, &dir, "trigger/sync", 0, 1))
      || check_for_extra_arguments(p)) {
-        if (!idx_ok) print_invalid_index();
-        print_channel_io(sc, (uint8_t)ch);
+        if (!idx_ok && !verbose)
+            print_invalid_index();
+        else
+            print_channel_io(sc, (uint8_t)ch);
         return;
     }
 
