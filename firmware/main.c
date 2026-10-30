@@ -630,11 +630,10 @@ static void print_stimulus_telemetry(const stimjim_context_t *sc, const core1_st
 
     if (sr.n_pulses == 0) {
         if (verbose) puts("Warning: No pulses delivered (uninitialized pulse train).\n");
-        return;
     }
     // Because of the inter-pulse stage, there is always at least one stage.
     // This checks if there are any user-defined stages.
-    if (sr.n_stages == 1 && verbose) {
+    else if (sr.n_stages == 1 && verbose) {
         printf("Info: No pulses delivered (pulse train has no stages).\n\n");
         return;
     }
