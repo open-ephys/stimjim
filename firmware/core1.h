@@ -17,8 +17,13 @@ typedef struct {
     output_mode_t output_mode[2];
     bool cancelled;
     uint8_t stop_stage;
-    uint32_t dropped_summaries, dropped_trigger_notices;
+    uint32_t dropped_summaries;
+    uint32_t notice;
+    bool triggered;
 } core1_stim_telemetry_t;
+
+// A trigger notice is (train number << 8) | (pulse train index << 1) | channel
+#define TRAIN_NUMBER(notice) ((notice) >> 8)
 
 typedef enum {
     MANUAL_CMD_DAC_SET,
@@ -45,7 +50,7 @@ typedef struct {
     core1_cmd_type_t type;
     union {
         struct { uint32_t seq; pulsetrain_t pt; } stimulus;
-        struct { uint8_t ch; pulsetrain_t pt; } trigger_config;
+        struct { uint8_t ch; int8_t idx; pulsetrain_t pt; } trigger_config;
         offsets_tx_t offsets;
         manual_cmd_t manual;
     };

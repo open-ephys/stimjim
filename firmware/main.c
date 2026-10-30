@@ -26,13 +26,13 @@ volatile uint32_t stimulus_request_seq;
 static queue_t q_deferred_commands;
 static bool verbose;
 
-static void handle_user_input(stimjim_context_t *sc, bool waiting);
+static void keep_serving_while_waiting(stimjim_context_t *sc);
 
 // Queue a command for core1. While the queue is full (core1 is busy with a
 // stimulus), keep handling stop commands so they can still cancel it.
 static void send_core1_cmd(stimjim_context_t *sc, const core1_cmd_t *cmd) {
     while (!queue_try_add(&q_core1_cmd, cmd))
-        handle_user_input(sc, true);
+        keep_serving_while_waiting(sc);
 }
 
 static bool is_delimiter(const char c) {
@@ -142,7 +142,7 @@ static void print_output_mode(const uint8_t ch) {
 static void set_trigger_pulsetrain(stimjim_context_t *sc, const uint8_t ch, const int8_t idx) {
     core1_cmd_t cmd = {
         .type = CORE1_CMD_TRIGGER_CONFIG,
-        .trigger_config = { .ch = ch, .pt = stimjim_ctx_convert_pt(sc, idx) },
+        .trigger_config = { .ch = ch, .idx = idx, .pt = stimjim_ctx_convert_pt(sc, idx) },
     };
     send_core1_cmd(sc, &cmd);
 }
@@ -425,7 +425,7 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
 
     int16_t val;
     while (!queue_try_remove(&q_adc_result, &val))
-        handle_user_input(sc, true);
+        keep_serving_while_waiting(sc);
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
     static const char  units[2][3] = { "mV", "uA" };
@@ -463,9 +463,9 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
         .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
     };
     while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration))
-        handle_user_input(sc, true);
+        keep_serving_while_waiting(sc);
     while (!stimjim_ctx_try_receive_offsets(sc))
-        handle_user_input(sc, true);
+        keep_serving_while_waiting(sc);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
     if (verbose) puts("Info: Offsets updated");
@@ -480,9 +480,9 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
     };
     while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration))
-        handle_user_input(sc, true);
+        keep_serving_while_waiting(sc);
     while (!stimjim_ctx_try_receive_offsets(sc))
-        handle_user_input(sc, true);
+        keep_serving_while_waiting(sc);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
     if (verbose) puts("Info: Offsets updated");
@@ -612,14 +612,9 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     stop_already_requested = false;
 }
 
-static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
-    core1_stim_telemetry_t sr;
-    if (!queue_try_remove(&q_stimulus_telemetry, &sr)) return;
-
+static void print_stimulus_telemetry(const stimjim_context_t *sc, const core1_stim_telemetry_t sr) {
     if (verbose && sr.dropped_summaries)
         printf("Warning: %" PRIu32 " train summaries were dropped (queue full).\n\n", sr.dropped_summaries);
-    if (verbose && sr.dropped_trigger_notices)
-        printf("Warning: %" PRIu32 " stimulus start messages were dropped (queue full).\n\n", sr.dropped_trigger_notices);
 
     if (sr.n_pulses == 0) {
         if (verbose) puts("Warning: No pulses delivered (uninitialized pulse train).\n");
@@ -661,10 +656,41 @@ static void handle_stimulus_telemetry(const stimjim_context_t *sc) {
     }
 }
 
-static void handle_triggered_stimuli(const stimjim_context_t *sc) {
-    if (!multicore_fifo_rvalid()) return;
-    const uint32_t ch = multicore_fifo_pop_blocking();
-    print_start_notice(ch ? 'U' : 'T', stimjim_ctx_get_channel_io(sc, ch).idx);
+static uint32_t last_notice_train;
+
+static void print_trigger_notice(const uint32_t notice) {
+    print_start_notice(notice & 1 ? 'U' : 'T', (int)((notice >> 1) & 0x7Fu));
+    last_notice_train = TRAIN_NUMBER(notice);
+}
+
+static bool train_precedes(const uint32_t a, const uint32_t b) {
+    return ((a - b) & 0xFFFFFFu) >= 0x800000u;
+}
+
+static void handle_core1_messages(const stimjim_context_t *sc) {
+    static bool have_notice;
+    static uint32_t notice;
+    if (!have_notice && multicore_fifo_rvalid()) {
+        notice = multicore_fifo_pop_blocking();
+        have_notice = true;
+    }
+    core1_stim_telemetry_t sr;
+    const bool have_summary = queue_try_peek(&q_stimulus_telemetry, &sr);
+    if (have_notice && !(have_summary && train_precedes(TRAIN_NUMBER(sr.notice), TRAIN_NUMBER(notice)))) {
+        print_trigger_notice(notice);
+        have_notice = false;
+        return;
+    }
+    if (!have_summary) return;
+    queue_try_remove(&q_stimulus_telemetry, &sr);
+    if (sr.triggered && last_notice_train != TRAIN_NUMBER(sr.notice))
+        print_trigger_notice(sr.notice);
+    print_stimulus_telemetry(sc, sr);
+}
+
+static void keep_serving_while_waiting(stimjim_context_t *sc) {
+    handle_user_input(sc, true);
+    handle_core1_messages(sc);
 }
 
 int main(void) {
@@ -705,7 +731,6 @@ int main(void) {
 
     while (true) {
         handle_user_input(&stimjim_ctx, false);
-        handle_triggered_stimuli(&stimjim_ctx);
-        handle_stimulus_telemetry(&stimjim_ctx);
+        handle_core1_messages(&stimjim_ctx);
     }
 }

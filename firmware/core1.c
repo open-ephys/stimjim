@@ -33,8 +33,10 @@ static uint32_t cycles_per_us;
 // The duration of an ADC read measured at startup, plus ADC_LEAD_MARGIN_US
 static uint32_t adc_lead_cyc;
 
-static uint32_t dropped_summaries, dropped_trigger_notices;
+static uint32_t dropped_summaries;
+static uint32_t train_number;
 static uint32_t handled_request_seq;
+static uint32_t trigger_notice[2];
 
 // Pico SDK function inlined to avoid jitter related to XIP cache-miss
 __always_inline static inline bool inline_queue_try_remove(queue_t *q, void *data) {
@@ -319,11 +321,12 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
     init_stim_telemetry(pt, &st);
 
     // Tell core0 which trigger input started this stimulus, if any
-    if (trigger_ch >= 0) {
+    st.notice = ++train_number << 8;
+    st.triggered = trigger_ch >= 0;
+    if (st.triggered) {
+        st.notice |= trigger_notice[trigger_ch];
         if (multicore_fifo_wready())
-            sio_hw->fifo_wr = (uint32_t)trigger_ch;
-        else
-            dropped_trigger_notices++;
+            sio_hw->fifo_wr = st.notice;
     }
 
     // Wait for the ADC config to complete, then deselect
@@ -348,9 +351,8 @@ __always_inline static inline void run_pulsetrain(const pulsetrain_t *pt, const 
 
     // Send telemetry about the delivered pulsetrain to core0
     st.dropped_summaries = dropped_summaries;
-    st.dropped_trigger_notices = dropped_trigger_notices;
     if (inline_queue_try_add(&q_stimulus_telemetry, &st))
-        dropped_summaries = dropped_trigger_notices = 0;
+        dropped_summaries = 0;
     else
         dropped_summaries++;
     memset(&st, 0, sizeof(st));
@@ -374,6 +376,7 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
                 return &stimulus;
             case CORE1_CMD_TRIGGER_CONFIG:
                 pt_trigger[cmd.trigger_config.ch] = cmd.trigger_config.pt;
+                trigger_notice[cmd.trigger_config.ch] = (uint32_t)(cmd.trigger_config.idx & 0x7F) << 1 | cmd.trigger_config.ch;
                 break;
             case CORE1_CMD_OFFSETS: {
                 offsets_t offsets[2];
