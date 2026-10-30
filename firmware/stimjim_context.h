@@ -47,7 +47,7 @@ typedef struct {
 } pulsetrain_t;
 
 typedef struct {
-    channel_io_t channel_io_pins[2];
+    channel_io_t channel_io[2];
     offsets_t offsets[2];
     pulsetrain_t pulsetrains[MAX_PULSETRAINS];
     queue_t *q_core1_cmd, *q_offsets_rx;
@@ -55,15 +55,15 @@ typedef struct {
 
 void set_output_mode(uint8_t ch, output_mode_t mode);
 
-void stimjim_ctx_init(stimjim_context_t *ctx, queue_t *q_core1_cmd, queue_t *q_offsets_rx);
+void stimjim_ctx_init(stimjim_context_t *sc, queue_t *q_core1_cmd, queue_t *q_offsets_rx);
 
-channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *ctx, const uint8_t ch);
-pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *ctx, const int8_t pt_index);
-offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *ctx, const uint8_t ch);
+channel_io_t stimjim_ctx_get_channel_io(const stimjim_context_t *sc, const uint8_t ch);
+pulsetrain_t stimjim_ctx_get_pulsetrain(const stimjim_context_t *sc, const int8_t pt_index);
+offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *sc, const uint8_t ch);
 
-void stimjim_ctx_set_channel_io(stimjim_context_t *ctx, const uint8_t ch, const int8_t target, const bool dir);
-void stimjim_ctx_set_pulsetrain(stimjim_context_t *ctx, const uint8_t pt_index, const pulsetrain_t *pt);
-bool stimjim_ctx_try_request_offsets(stimjim_context_t *stimjim_ctx, const offsets_tx_t *offsets_calibration);
-bool stimjim_ctx_try_receive_offsets(stimjim_context_t *stimjim_ctx);
+void stimjim_ctx_set_channel_io(stimjim_context_t *sc, const uint8_t ch, const int8_t target, const bool dir);
+void stimjim_ctx_set_pulsetrain(stimjim_context_t *sc, const uint8_t pt_index, const pulsetrain_t *pt);
+bool stimjim_ctx_try_request_offsets(stimjim_context_t *sc, const offsets_tx_t *offsets_calibration);
+bool stimjim_ctx_try_receive_offsets(stimjim_context_t *sc);
 
-pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *ctx, const int8_t pt_idx);
+pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *sc, const int8_t pt_idx);

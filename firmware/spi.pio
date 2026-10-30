@@ -1,18 +1,18 @@
 ;
 ; pio_spi.pio
 ;
-; Two SPI programs, one SM per channel.  The SM is stopped and reconfigured
-; between DAC and ADC transactions so they never contend on SCK / MOSI.
+; Two SPI programs on each channel's PIO, one SM each (SM_DAC, SM_ADC).  Only
+; one of them runs at a time, so they never contend on SCK / MOSI.
 ;
 ; ── pio_spi_mode1  ──────────────────────────────────────────────────────────
-;   CPOL=0, CPHA=1  (SPI Mode 1)  –  DAC, 8-bit TX only
+;   CPOL=0, CPHA=1  (SPI Mode 1)  –  DAC, 24-bit TX only
 ;   SCK idles LOW.
 ;   MOSI is output on the rising (leading) edge; slave latches on falling edge.
 ;
 ;   Timing (2 PIO cycles per SCK period):
 ;     out  side 1 → SCK rises   (1 cycle)
 ;     jmp  side 0 → SCK falls   (1 cycle)
-;   ⟹  PIO clock = 2 × 10 MHz = 20 MHz,  clkdiv = F_sys / 20 000 000
+;   ⟹  PIO clock = 2 × PIO_SPI_DAC_BAUD_HZ = 60 MHz
 ;
 ; ── pio_spi_mode2  ──────────────────────────────────────────────────────────
 ;   CPOL=1, CPHA=0  (SPI Mode 2)  –  ADC, 16-bit simultaneous TX+RX
@@ -27,10 +27,11 @@
 ;     ──────────────────────────────────────
 ;     total:    16 in, 16 out  ✓
 ;
-;   Both programs run at the same 20 MHz PIO clock.
+;   PIO clock = 2 × PIO_SPI_ADC_BAUD_HZ = 20 MHz.  Each bit takes 3 PIO cycles
+;   (SCK 1 low, 2 high), so SCK runs at 6.67 MHz with a 33 % duty cycle.
 
 ; ════════════════════════════════════════════════════════════════════════════
-;  Mode 1 – CPOL=0, CPHA=1  (DAC, 8-bit TX)
+;  Mode 1 – CPOL=0, CPHA=1  (DAC, 24-bit TX)
 ; ════════════════════════════════════════════════════════════════════════════
 .program pio_spi_mode1
 .side_set 1             ; SCK, idle = 0

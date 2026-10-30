@@ -16,13 +16,13 @@
 
 #define SAMPLES 100
 
-static const uint64_t nldac_mask = (1LL << NLDAC_A) | (1LL << NLDAC_B);
-static const uint64_t nldac_ch_mask[2] = { 1LL << NLDAC_A, 1LL << NLDAC_B };
-static const uint64_t oe0_mask[2] = { 1LL << OE0_A, 1LL << OE0_B };
-static const uint64_t oe1_mask[2] = { 1LL << OE1_A, 1LL << OE1_B };
+static const uint64_t nldac_mask = (1ull << NLDAC_A) | (1ull << NLDAC_B);
+static const uint64_t nldac_ch_mask[2] = { 1ull << NLDAC_A, 1ull << NLDAC_B };
+static const uint64_t oe0_mask[2] = { 1ull << OE0_A, 1ull << OE0_B };
+static const uint64_t oe1_mask[2] = { 1ull << OE1_A, 1ull << OE1_B };
 static const uint64_t gpio_mask[2] = {
-    (1LL << LED_A) | (1LL << CHANNEL_IO_A) | (1LL << SYNC_A),
-    (1LL << LED_B) | (1LL << CHANNEL_IO_B) | (1LL << SYNC_B),};
+    (1ull << LED_A) | (1ull << CHANNEL_IO_A) | (1ull << SYNC_A),
+    (1ull << LED_B) | (1ull << CHANNEL_IO_B) | (1ull << SYNC_B),};
 
 // clk_sys isn't defined as constant but is initialized only once at runtime
 // using clock_get_hz(). Although this variable could easily be scoped to the
@@ -238,7 +238,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             }
 
             if (stage != gap) {
-                // Check for cancel ('X') commands while waiting to read the ADCs
+                // Check for a stop request (X, T-1, a newer T/U or a trigger) while waiting to read the ADCs
                 // just ahead of the next latch
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
                     if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
@@ -251,7 +251,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 sr->delivered_stages[stage]++;
             }
 
-            // Check for cancel ('X') commands while waiting for stage to end, then
+            // Check for a stop request (X, T-1, a newer T/U or a trigger) while waiting for stage to end, then
             // spin out its last microsecond without them so the stage ends exactly
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + cycles_per_us < (uint32_t)stage_dur_cyc)
                 if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }

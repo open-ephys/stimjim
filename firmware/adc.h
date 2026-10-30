@@ -4,8 +4,12 @@
 #include <pico/time.h>
 #include <stdint.h>
 
-#define ADC_BASE_CONFIG  0x8010u
-#define ADC_CURRENT_LINE 0x0400u
+#define AD7321_CTRL_WRITE (1u << 15)
+#define AD7321_CTRL_ADD0  (1u << 10)
+#define AD7321_CTRL_REF   (1u << 4)
+
+#define ADC_BASE_CONFIG  (AD7321_CTRL_WRITE | AD7321_CTRL_REF)
+#define ADC_CURRENT_LINE AD7321_CTRL_ADD0
 
 __always_inline static inline bool adc_get_value(uint8_t ch, int16_t *dst) {
     PIO pio = pio_spi_cfg[ch].pio;

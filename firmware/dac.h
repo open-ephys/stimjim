@@ -4,11 +4,11 @@
 #include <hardware/gpio.h>
 #include <stdint.h>
 
-#define DAC_REG_RANGE     0x08u
+#define DAC_REG_RANGE     (1u << 3)
 #define DAC_RANGE_PM5V    3u
-#define DAC_REG_POWER     0x10u
+#define DAC_REG_POWER     (2u << 3)
 #define DAC_POWER_ON      1u
-#define DAC_REG_CTRL       0x18u
+#define DAC_REG_CTRL      (3u << 3)
 #define DAC_CFG(reg, val) (((uint32_t)(reg) << 16) | (uint32_t)(val))
 
 __always_inline static inline void dacs_latch(const uint64_t nldac_mask) {

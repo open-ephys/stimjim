@@ -698,9 +698,9 @@ int main(void) {
         return EXIT_FAILURE;
 
     const uint64_t out_pins_mask =
-        1LL << NLDAC_A | 1LL << OE0_A | 1LL << OE1_A | 1LL << LED_A | 1LL << CSA_A | 1LL << CSB_A |
-        1LL << NLDAC_B | 1LL << OE0_B | 1LL << OE1_B | 1LL << LED_B | 1LL << CSA_B | 1LL << CSB_B;
-    const uint64_t sync_pins_mask = 1LL << SYNC_A | 1LL << SYNC_B;
+        1ull << NLDAC_A | 1ull << OE0_A | 1ull << OE1_A | 1ull << LED_A | 1ull << CS_DAC_A | 1ull << CS_ADC_A |
+        1ull << NLDAC_B | 1ull << OE0_B | 1ull << OE1_B | 1ull << LED_B | 1ull << CS_DAC_B | 1ull << CS_ADC_B;
+    const uint64_t sync_pins_mask = 1ull << SYNC_A | 1ull << SYNC_B;
 
     gpio_set_dir_out_masked64(out_pins_mask | sync_pins_mask);
     gpio_set_mask64(out_pins_mask);

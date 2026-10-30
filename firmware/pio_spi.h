@@ -28,7 +28,6 @@ __always_inline static inline bool pio_spi_is_done(uint8_t ch) {
     return (pio_spi_cfg[ch].pio->fdebug >> (PIO_FDEBUG_TXSTALL_LSB + pio_spi_state[ch].sm_active)) & 1u;
 }
 
-void pio_spi_wait_done(uint8_t ch);
 
 __always_inline static inline void pio_spi_select_dac(uint8_t ch) {
     const pio_spi_cfg_t *cfg = &pio_spi_cfg[ch];
