@@ -7,15 +7,14 @@ void __not_in_flash_func(adc_write_blocking)(uint8_t ch, const uint16_t config) 
     pio_spi_deselect_adc(ch);
 }
 
-int16_t __not_in_flash_func(adc_read_blocking)(uint8_t ch) {
-    int16_t val = 0;
+bool __not_in_flash_func(adc_read_blocking)(uint8_t ch, int16_t *val) {
     pio_spi_select_adc(ch);
     adc_read(ch);
     while (!pio_spi_is_done(ch));
-    adc_get_value(ch, &val);
+    const bool ok = adc_get_value(ch, val);
     pio_spi_deselect_adc(ch);
     sleep_us(2);
-    return val;
+    return ok;
 }
 
 void __not_in_flash_func(adcs_write_blocking)(const uint16_t cfg0, const uint16_t cfg1) {

@@ -38,6 +38,11 @@ typedef struct {
 } offsets_tx_t;
 
 typedef struct {
+    offsets_t offsets[2];
+    bool adc_read_failed;
+} offsets_rx_t;
+
+typedef struct {
     output_mode_t output_mode[2];
     uint8_t n_stages;
     int32_t stage_amplitude[2][MAX_STAGES+1]; // mV or uA
@@ -64,6 +69,6 @@ offsets_t stimjim_ctx_get_offsets(const stimjim_context_t *sc, const uint8_t ch)
 void stimjim_ctx_set_channel_io(stimjim_context_t *sc, const uint8_t ch, const int8_t target, const bool dir);
 void stimjim_ctx_set_pulsetrain(stimjim_context_t *sc, const uint8_t pt_index, const pulsetrain_t *pt);
 bool stimjim_ctx_try_request_offsets(stimjim_context_t *sc, const offsets_tx_t *offsets_calibration);
-bool stimjim_ctx_try_receive_offsets(stimjim_context_t *sc);
+bool stimjim_ctx_try_receive_offsets(stimjim_context_t *sc, bool *adc_read_failed);
 
 pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *sc, const int8_t pt_idx);

@@ -423,9 +423,14 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
         puts(RUNS_AFTER_TRAIN);
     send_core1_cmd(sc, &cmd);
 
-    int16_t val;
-    while (!queue_try_remove(&q_adc_result, &val))
+    adc_result_t result;
+    while (!queue_try_remove(&q_adc_result, &result))
         keep_serving_while_waiting(sc);
+    if (!result.ok) {
+        if (verbose) puts("Error: ADC read failed.");
+        return;
+    }
+    const int16_t val = result.value;
 
     offsets_t off = stimjim_ctx_get_offsets(sc, ch);
     static const char  units[2][3] = { "mV", "uA" };
@@ -464,10 +469,12 @@ static void cmd_B(stimjim_context_t *sc, const char *args) {
     };
     while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration))
         keep_serving_while_waiting(sc);
-    while (!stimjim_ctx_try_receive_offsets(sc))
+    bool adc_read_failed;
+    while (!stimjim_ctx_try_receive_offsets(sc, &adc_read_failed))
         keep_serving_while_waiting(sc);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
+    if (verbose && adc_read_failed) puts("Error: ADC reads failed during calibration; offsets that couldn't be measured were kept.");
     if (verbose) puts("Info: Offsets updated");
 }
 
@@ -478,13 +485,16 @@ static void cmd_C(stimjim_context_t *sc, const char *args) {
     if (verbose) puts("Info: Updating ADC, current and voltage offsets...");
     const offsets_tx_t offsets_calibration = {
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE,
+        .prev = { stimjim_ctx_get_offsets(sc, 0), stimjim_ctx_get_offsets(sc, 1) },
     };
     while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration))
         keep_serving_while_waiting(sc);
-    while (!stimjim_ctx_try_receive_offsets(sc))
+    bool adc_read_failed;
+    while (!stimjim_ctx_try_receive_offsets(sc, &adc_read_failed))
         keep_serving_while_waiting(sc);
 
     set_trigger_pulsetrains_w_new_offsets(sc);
+    if (verbose && adc_read_failed) puts("Error: ADC reads failed during calibration; offsets that couldn't be measured were kept.");
     if (verbose) puts("Info: Offsets updated");
 }
 
@@ -710,9 +720,9 @@ int main(void) {
     gpio_init(CHANNEL_IO_B);
 
     queue_init(&q_core1_cmd, sizeof(core1_cmd_t), 8);
-    queue_init(&q_offsets_rx, sizeof(offsets_t) * 2, 1);
+    queue_init(&q_offsets_rx, sizeof(offsets_rx_t), 1);
     queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 128);
-    queue_init(&q_adc_result, sizeof(int16_t), 5);
+    queue_init(&q_adc_result, sizeof(adc_result_t), 5);
     queue_init(&q_deferred_commands, BUF_LEN, 8);
 
     multicore_doorbell_claim(DOORBELL_STOP_NUM, 0b11);

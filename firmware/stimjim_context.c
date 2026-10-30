@@ -62,7 +62,7 @@ void stimjim_ctx_init(stimjim_context_t *sc, queue_t *q_core1_cmd, queue_t *q_of
         .offset_tx_type = OFFSETS_TX_CALIBRATE_ADC | OFFSETS_TX_CALIBRATE_CURRENT,
     };
     while (!stimjim_ctx_try_request_offsets(sc, &offsets_calibration));
-    while (!stimjim_ctx_try_receive_offsets(sc));
+    while (!stimjim_ctx_try_receive_offsets(sc, NULL));
 
     gpio_put(LED_A, false);
     gpio_put(LED_B, false);
@@ -111,6 +111,11 @@ bool stimjim_ctx_try_request_offsets(stimjim_context_t *sc, const offsets_tx_t *
     return queue_try_add(sc->q_core1_cmd, &cmd);
 }
 
-bool stimjim_ctx_try_receive_offsets(stimjim_context_t *sc) {
-    return queue_try_remove(sc->q_offsets_rx, &sc->offsets);
+bool stimjim_ctx_try_receive_offsets(stimjim_context_t *sc, bool *adc_read_failed) {
+    offsets_rx_t rx;
+    if (!queue_try_remove(sc->q_offsets_rx, &rx)) return false;
+    sc->offsets[0] = rx.offsets[0];
+    sc->offsets[1] = rx.offsets[1];
+    if (adc_read_failed) *adc_read_failed = rx.adc_read_failed;
+    return true;
 }

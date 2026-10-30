@@ -78,23 +78,28 @@ __always_inline static inline bool inline_queue_try_add(queue_t *q, const void *
     return false;
 }
 
-static void __not_in_flash_func(measure_offsets)(offsets_t *offsets, const offsets_tx_t offsets_calibration) {
+static bool __not_in_flash_func(measure_offsets)(offsets_t *offsets, const offsets_tx_t offsets_calibration) {
     offsets[0] = offsets_calibration.prev[0];
     offsets[1] = offsets_calibration.prev[1];
+    bool all_read = true;
 
     if (offsets_calibration.offset_tx_type & OFFSETS_TX_CALIBRATE_ADC) {
         for (uint8_t ch = 0; ch < 2; ch++) {
             set_output_mode(ch, OUTPUT_MODE_GND);
             adc_write_blocking(ch, ADC_BASE_CONFIG);
             float acc = 0.0f;
-            for (uint8_t i = 0; i < SAMPLES; i++)
-                acc += (float)adc_read_blocking(ch);
-            offsets[ch].adc = acc / (float)SAMPLES;
+            uint8_t n = 0;
+            for (uint8_t i = 0; i < SAMPLES; i++) {
+                int16_t val;
+                if (adc_read_blocking(ch, &val)) { acc += (float)val; n++; }
+            }
+            if (n) offsets[ch].adc = acc / (float)n;
+            all_read &= n == SAMPLES;
         }
     }
 
     if (!(offsets_calibration.offset_tx_type & (OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE)))
-        return;
+        return all_read;
 
     const int8_t sweep_range = 50;
     dacs_write_blocking(0, 0);
@@ -110,14 +115,18 @@ static void __not_in_flash_func(measure_offsets)(offsets_t *offsets, const offse
         for (uint8_t ch = 0; ch < 2; ch++) {
             adc_write_blocking(ch, adc_cfg);
             set_output_mode(ch, line ? OUTPUT_MODE_GND : OUTPUT_MODE_VOLTAGE);
-            int8_t min_i = -sweep_range;
+            int8_t min_i = line ? offsets[ch].current : offsets[ch].voltage;
             float min = FLT_MAX;
             for (int8_t i = -sweep_range; i <= sweep_range; i++) {
                 dac_write_blocking(ch, (uint16_t)(int16_t)i);
                 sleep_us(10);
                 float acc = 0.0f;
-                for (uint8_t j = 0; j < SAMPLES; j++)
-                    acc += (float)adc_read_blocking(ch);
+                uint8_t n = 0;
+                for (uint8_t j = 0; j < SAMPLES; j++) {
+                    int16_t val;
+                    if (adc_read_blocking(ch, &val)) { acc += (float)val; n++; }
+                }
+                if (n != SAMPLES) { all_read = false; continue; }
                 acc -= offsets[ch].adc * (float)SAMPLES;
                 if (fabsf(acc) < min) { min = fabsf(acc); min_i = i; }
             }
@@ -135,6 +144,7 @@ static void __not_in_flash_func(measure_offsets)(offsets_t *offsets, const offse
 
     set_output_mode(0, OUTPUT_MODE_GND);
     set_output_mode(1, OUTPUT_MODE_GND);
+    return all_read;
 }
 
 // masks to clear/set gpio atomically during a stimulus
@@ -244,11 +254,12 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                     if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
 
                 // Read ADCs (blocking) and accumulate into the telemetry
-                int16_t vals[2] = { 0 };
-                adcs_read_get_value_blocking(vals);
-                sr->measured_amplitudes[0][stage] += vals[0];
-                sr->measured_amplitudes[1][stage] += vals[1];
-                sr->delivered_stages[stage]++;
+                int16_t vals[2];
+                if (adcs_read_get_value_blocking(vals)) {
+                    sr->measured_amplitudes[0][stage] += vals[0];
+                    sr->measured_amplitudes[1][stage] += vals[1];
+                    sr->delivered_stages[stage]++;
+                }
             }
 
             // Check for a stop request (X, T-1, a newer T/U or a trigger) while waiting for stage to end, then
@@ -379,9 +390,9 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
                 trigger_notice[cmd.trigger_config.ch] = (uint32_t)(cmd.trigger_config.idx & 0x7F) << 1 | cmd.trigger_config.ch;
                 break;
             case CORE1_CMD_OFFSETS: {
-                offsets_t offsets[2];
-                measure_offsets(offsets, cmd.offsets);
-                queue_add_blocking(&q_offsets_rx, offsets);
+                offsets_rx_t rx;
+                rx.adc_read_failed = !measure_offsets(rx.offsets, cmd.offsets);
+                queue_add_blocking(&q_offsets_rx, &rx);
                 break;
             }
             case CORE1_CMD_MANUAL: {
@@ -389,8 +400,9 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
                 if (m->type == MANUAL_CMD_ADC_READ) {
                     const uint16_t adc_cfg = ADC_BASE_CONFIG | (m->line ? ADC_CURRENT_LINE : 0);
                     adc_write_blocking(m->ch, adc_cfg);
-                    int16_t val = adc_read_blocking(m->ch);
-                    queue_add_blocking(&q_adc_result, &val);
+                    adc_result_t result;
+                    result.ok = adc_read_blocking(m->ch, &result.value);
+                    queue_add_blocking(&q_adc_result, &result);
                 } 
                 else {
                     if (m->type == MANUAL_CMD_DAC_SET) {
@@ -430,9 +442,9 @@ void __time_critical_func(main_core1)(void) {
     for (uint8_t i = 0; i < 8; i++) {
         int16_t vals[2];
         const uint32_t start_cyc = m33_hw->dwt_cyccnt;
-        adcs_read_get_value_blocking(vals);
+        const bool ok = adcs_read_get_value_blocking(vals);
         const uint32_t cyc = m33_hw->dwt_cyccnt - start_cyc;
-        if (cyc > adc_read_cyc) adc_read_cyc = cyc;
+        if (ok && cyc > adc_read_cyc) adc_read_cyc = cyc;
     }
     adc_lead_cyc = adc_read_cyc + ADC_LEAD_MARGIN_US * cycles_per_us;
 

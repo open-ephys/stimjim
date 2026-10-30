@@ -34,6 +34,11 @@ typedef enum {
 } manual_cmd_type_t;
 
 typedef struct {
+    int16_t value;
+    bool ok;
+} adc_result_t;
+
+typedef struct {
     uint8_t ch;
     bool line;
     manual_cmd_type_t type;

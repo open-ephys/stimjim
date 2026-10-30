@@ -18,13 +18,12 @@ __always_inline static inline void dacs_latch(const uint64_t nldac_mask) {
     gpio_set_mask64(nldac_mask);
 }
 
-__always_inline static inline bool dac_write(uint8_t ch, const uint32_t src) {
+__always_inline static inline void dac_write(uint8_t ch, const uint32_t src) {
     PIO pio = pio_spi_cfg[ch].pio;
     uint8_t sm = pio_spi_state[ch].sm_active;
-    if (pio_sm_is_tx_fifo_full(pio, sm)) return false;
+    while (pio_sm_is_tx_fifo_full(pio, sm));
     pio_sm_put(pio, sm, src << 8);
     pio_sm_set_enabled(pio, sm, true);
-    return true;
 }
 
 __always_inline static inline void dacs_write_blocking(const uint32_t val0, const uint32_t val1) {
