@@ -23,6 +23,7 @@
 
 #define BUF_LEN 1024
 #define RUNS_AFTER_TRAIN "Info: Will run after the running train finishes."
+#define OE_PINS_MASK (1ull << OE0_A | 1ull << OE1_A | 1ull << OE0_B | 1ull << OE1_B)
 
 queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 volatile uint32_t stimulus_request_seq;
@@ -546,17 +547,20 @@ static void cmd_W(const char *args) {
     if (verbose) puts("Info: Verbose mode on");
 }
 
+// Through SIO, because a fault or reset can come before the GPIO coprocessor is enabled
+static inline void ground_outputs(void) {
+    sio_hw->gpio_set = (uint32_t)OE_PINS_MASK;
+    sio_hw->gpio_hi_set = (uint32_t)(OE_PINS_MASK >> 32);
+}
+
 // Runs when either core crashes, e.g. on an invalid memory access or instruction:
 // grounds both outputs, powers core1 off if core0 crashed, turns the LEDs and sync off, and halts.
 void __attribute__((noreturn)) isr_hardfault(void) {
-    const uint64_t oe_mask = 1ull << OE0_A | 1ull << OE1_A | 1ull << OE0_B | 1ull << OE1_B;
-    sio_hw->gpio_set = (uint32_t)oe_mask;
-    sio_hw->gpio_hi_set = (uint32_t)(oe_mask >> 32);
+    ground_outputs();
     if (sio_hw->cpuid == 0) {
         hw_set_bits(&psm_hw->frce_off, PSM_FRCE_OFF_PROC1_BITS);
         while (!(psm_hw->frce_off & PSM_FRCE_OFF_PROC1_BITS));  // the read-back also flushes the write
-        sio_hw->gpio_set = (uint32_t)oe_mask;
-        sio_hw->gpio_hi_set = (uint32_t)(oe_mask >> 32);
+        ground_outputs();
     }
     const uint64_t active_mask = 1ull << LED_A | 1ull << LED_B | 1ull << SYNC_A | 1ull << SYNC_B;
     sio_hw->gpio_clr = (uint32_t)active_mask;
@@ -626,21 +630,21 @@ static bool is_stop_command(const char *line) {
     return ep != p && idx < 0 && *skip_ws(ep) == '\0';
 }
 
+static deferred_command_t deferred_command;
+
 static bool defer_command(const deferred_state_t state, const char *line) {
-    static deferred_command_t deferred;
-    deferred.state = state;
-    strcpy(deferred.line, line);
-    return queue_try_add(&q_deferred_commands, &deferred);
+    deferred_command.state = state;
+    strcpy(deferred_command.line, line);
+    return queue_try_add(&q_deferred_commands, &deferred_command);
 }
 
 static void cancel_deferred_stimuli(void) {
-    static deferred_command_t deferred;
     for (uint n = queue_get_level(&q_deferred_commands); n > 0; n--) {
-        queue_try_remove(&q_deferred_commands, &deferred);
-        const char cmd = *skip_ws(deferred.line);
-        if (deferred.state == DEFERRED_NORMAL && (cmd == 'T' || cmd == 'U'))
-            deferred.state = DEFERRED_START_CANCELLED;
-        queue_try_add(&q_deferred_commands, &deferred);
+        queue_try_remove(&q_deferred_commands, &deferred_command);
+        const char cmd = *skip_ws(deferred_command.line);
+        if (deferred_command.state == DEFERRED_NORMAL && (cmd == 'T' || cmd == 'U'))
+            deferred_command.state = DEFERRED_START_CANCELLED;
+        queue_try_add(&q_deferred_commands, &deferred_command);
     }
 }
 
@@ -774,12 +778,10 @@ static void keep_serving_while_waiting(stimjim_context_t *sc) {
 // Runs right after reset, before main(): the pads' reset state would otherwise
 // leave the outputs in voltage mode with the DACs holding their last code.
 static void ground_outputs_on_reset(void) {
-    const uint64_t oe_mask = 1ull << OE0_A | 1ull << OE1_A | 1ull << OE0_B | 1ull << OE1_B;
-    sio_hw->gpio_set = (uint32_t)oe_mask;
-    sio_hw->gpio_hi_set = (uint32_t)(oe_mask >> 32);
-    sio_hw->gpio_oe_set = (uint32_t)oe_mask;
-    sio_hw->gpio_hi_oe_set = (uint32_t)(oe_mask >> 32);
-    gpio_set_function_masked64(oe_mask, GPIO_FUNC_SIO);
+    ground_outputs();
+    sio_hw->gpio_oe_set = (uint32_t)OE_PINS_MASK;
+    sio_hw->gpio_hi_oe_set = (uint32_t)(OE_PINS_MASK >> 32);
+    gpio_set_function_masked64(OE_PINS_MASK, GPIO_FUNC_SIO);
 }
 PICO_RUNTIME_INIT_FUNC_HW(ground_outputs_on_reset, "00101");  // right after PICO_RUNTIME_INIT_EARLY_RESETS
 
@@ -788,8 +790,9 @@ int main(void) {
         return EXIT_FAILURE;
 
     const uint64_t out_pins_mask =
-        1ull << NLDAC_A | 1ull << OE0_A | 1ull << OE1_A | 1ull << LED_A | 1ull << CS_DAC_A | 1ull << CS_ADC_A |
-        1ull << NLDAC_B | 1ull << OE0_B | 1ull << OE1_B | 1ull << LED_B | 1ull << CS_DAC_B | 1ull << CS_ADC_B;
+        OE_PINS_MASK |
+        1ull << NLDAC_A | 1ull << LED_A | 1ull << CS_DAC_A | 1ull << CS_ADC_A |
+        1ull << NLDAC_B | 1ull << LED_B | 1ull << CS_DAC_B | 1ull << CS_ADC_B;
     const uint64_t sync_pins_mask = 1ull << SYNC_A | 1ull << SYNC_B;
 
     gpio_set_dir_out_masked64(out_pins_mask | sync_pins_mask);
