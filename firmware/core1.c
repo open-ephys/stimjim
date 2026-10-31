@@ -101,7 +101,7 @@ static bool __not_in_flash_func(measure_offsets)(offsets_t *offsets, const offse
     if (!(offsets_calibration.offset_tx_type & (OFFSETS_TX_CALIBRATE_CURRENT | OFFSETS_TX_CALIBRATE_VOLTAGE)))
         return all_read;
 
-    const int8_t sweep_range = 50;
+    const int8_t sweep_range = 100;
     dacs_write_blocking(0, 0);
     dacs_latch(nldac_mask);
     gpio_clr_mask64(nldac_mask);
