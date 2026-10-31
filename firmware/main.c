@@ -30,6 +30,8 @@ static queue_t q_deferred_commands;
 static bool verbose;
 
 static void keep_serving_while_waiting(stimjim_context_t *sc);
+static bool handle_core1_messages(const stimjim_context_t *sc);
+static void handle_user_input(stimjim_context_t *sc, bool waiting);
 
 // Queue a command for core1. While the queue is full (core1 is busy with a
 // stimulus), keep handling stop commands so they can still cancel it.
@@ -424,13 +426,15 @@ static void cmd_E(stimjim_context_t *sc, const char *args) {
 
     core1_cmd_t cmd = { .type = CORE1_CMD_MANUAL,
         .manual = { .type = MANUAL_CMD_ADC_READ, .ch = (uint8_t)ch, .line = (bool)line } };
+    for (uint n = 0; n < 256 && handle_core1_messages(sc); n++);
     if (verbose && is_train_running())
         puts(RUNS_AFTER_TRAIN);
-    send_core1_cmd(sc, &cmd);
+    while (!queue_try_add(&q_core1_cmd, &cmd))
+        handle_user_input(sc, true);
 
     adc_result_t result;
     while (!queue_try_remove(&q_adc_result, &result))
-        keep_serving_while_waiting(sc);
+        handle_user_input(sc, true);
     if (!result.ok) {
         if (verbose) puts("Error: ADC read failed.");
         return;
@@ -713,7 +717,7 @@ static bool train_precedes(const uint32_t a, const uint32_t b) {
     return ((a - b) & 0xFFFFFFu) >= 0x800000u;
 }
 
-static void handle_core1_messages(const stimjim_context_t *sc) {
+static bool handle_core1_messages(const stimjim_context_t *sc) {
     static bool have_notice;
     static uint32_t notice;
     if (!have_notice && multicore_fifo_rvalid()) {
@@ -725,13 +729,14 @@ static void handle_core1_messages(const stimjim_context_t *sc) {
     if (have_notice && !(have_summary && train_precedes(TRAIN_NUMBER(sr.notice), TRAIN_NUMBER(notice)))) {
         print_trigger_notice(notice);
         have_notice = false;
-        return;
+        return true;
     }
-    if (!have_summary) return;
+    if (!have_summary) return false;
     queue_try_remove(&q_stimulus_telemetry, &sr);
     if (sr.triggered && last_notice_train != TRAIN_NUMBER(sr.notice))
         print_trigger_notice(sr.notice);
     print_stimulus_telemetry(sc, sr);
+    return true;
 }
 
 static void keep_serving_while_waiting(stimjim_context_t *sc) {
