@@ -11,6 +11,7 @@
 #include <string.h>
 #include <hardware/structs/bus_ctrl.h>
 #include <hardware/gpio.h>
+#include <hardware/structs/psm.h>
 #include <pico/multicore.h>
 #include <pico/runtime.h>
 #include <pico/runtime_init.h>
@@ -519,6 +520,25 @@ static void cmd_W(const char *args) {
     }
     verbose = *args == '1';
     if (verbose) puts("Info: Verbose mode on");
+}
+
+// Runs when either core crashes, e.g. on an invalid memory access or instruction:
+// grounds both outputs, powers core1 off if core0 crashed, turns the LEDs and sync off, and halts.
+void __attribute__((noreturn)) isr_hardfault(void) {
+    const uint64_t oe_mask = 1ull << OE0_A | 1ull << OE1_A | 1ull << OE0_B | 1ull << OE1_B;
+    sio_hw->gpio_set = (uint32_t)oe_mask;
+    sio_hw->gpio_hi_set = (uint32_t)(oe_mask >> 32);
+    if (sio_hw->cpuid == 0) {
+        hw_set_bits(&psm_hw->frce_off, PSM_FRCE_OFF_PROC1_BITS);
+        while (!(psm_hw->frce_off & PSM_FRCE_OFF_PROC1_BITS));  // the read-back also flushes the write
+        sio_hw->gpio_set = (uint32_t)oe_mask;
+        sio_hw->gpio_hi_set = (uint32_t)(oe_mask >> 32);
+    }
+    const uint64_t active_mask = 1ull << LED_A | 1ull << LED_B | 1ull << SYNC_A | 1ull << SYNC_B;
+    sio_hw->gpio_clr = (uint32_t)active_mask;
+    sio_hw->gpio_hi_clr = (uint32_t)(active_mask >> 32);
+    while (true)
+        __breakpoint();
 }
 
 static char *read_serial_line(void) {
