@@ -12,6 +12,8 @@
 #include <hardware/structs/bus_ctrl.h>
 #include <hardware/gpio.h>
 #include <pico/multicore.h>
+#include <pico/runtime.h>
+#include <pico/runtime_init.h>
 #include <pico/stdlib.h>
 #include <pico/util/queue.h>
 
@@ -703,6 +705,18 @@ static void keep_serving_while_waiting(stimjim_context_t *sc) {
     handle_user_input(sc, true);
     handle_core1_messages(sc);
 }
+
+// Runs right after reset, before main(): the pads' reset state would otherwise
+// leave the outputs in voltage mode with the DACs holding their last code.
+static void ground_outputs_on_reset(void) {
+    const uint64_t oe_mask = 1ull << OE0_A | 1ull << OE1_A | 1ull << OE0_B | 1ull << OE1_B;
+    sio_hw->gpio_set = (uint32_t)oe_mask;
+    sio_hw->gpio_hi_set = (uint32_t)(oe_mask >> 32);
+    sio_hw->gpio_oe_set = (uint32_t)oe_mask;
+    sio_hw->gpio_hi_oe_set = (uint32_t)(oe_mask >> 32);
+    gpio_set_function_masked64(oe_mask, GPIO_FUNC_SIO);
+}
+PICO_RUNTIME_INIT_FUNC_HW(ground_outputs_on_reset, "00101");  // right after PICO_RUNTIME_INIT_EARLY_RESETS
 
 int main(void) {
     if (!stdio_init_all())
