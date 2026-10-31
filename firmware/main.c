@@ -650,6 +650,7 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     char *line = read_serial_line();
     if (!line) return;
     if (waiting) {
+        if (!*skip_ws(line)) return;
         if (is_stop_command(line)) {
             sio_hw->doorbell_out_set = DOORBELL_STOP;
             cancel_deferred_stimuli();
