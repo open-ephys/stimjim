@@ -209,9 +209,10 @@ static void __not_in_flash_func(trigger_isr)(void) {
     latest_trigger = ((latest_trigger + 2) & ~1u) | ch;
 }
 
-// True if X cancelled the stimulus, or a newer T/U request or a trigger preempts it
-__always_inline static inline bool stop_requested(const uint32_t seq, const uint32_t trigger) {
-    return (sio_hw->doorbell_in_set & DOORBELL_STOP) || stimulus_request_seq != seq || latest_trigger != trigger;
+// True if X cancelled the stimulus or, between pulses, a newer T/U request or a trigger preempts it
+__always_inline static inline bool stop_requested(const uint32_t seq, const uint32_t trigger, const bool in_pulse) {
+    return (sio_hw->doorbell_in_set & DOORBELL_STOP)
+        || (!in_pulse && (stimulus_request_seq != seq || latest_trigger != trigger));
 }
 
 __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const stim_gpio_masks_t *masks,
@@ -227,6 +228,7 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
 
             // Preload DAC (blocking)
             uint8_t next_stage = (stage + 1 < n_stages) ? stage + 1 : 0;
+            const bool in_pulse = stage != gap;
             dacs_write_blocking(
                 (uint16_t)pt->stage_amplitude[0][next_stage],
                 (uint16_t)pt->stage_amplitude[1][next_stage]);
@@ -243,16 +245,15 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
             // cycle counter can measure
             while (stage_dur_cyc > INT32_MAX) {
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < INT32_MAX / 2)
-                    if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
+                    if (stop_requested(seq, trigger, in_pulse)) { sr->stop_stage = stage; return true; }
                 stage_start_cyc += INT32_MAX / 2;
                 stage_dur_cyc   -= INT32_MAX / 2;
             }
 
-            if (stage != gap) {
-                // Check for a stop request (X, T-1, a newer T/U or a trigger) while waiting to read the ADCs
-                // just ahead of the next latch
+            if (in_pulse) {
+                // Check for a stop request (X, T-1) while waiting to read the ADCs just ahead of the next latch
                 while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + adc_lead_cyc < (uint32_t)stage_dur_cyc)
-                    if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
+                    if (stop_requested(seq, trigger, in_pulse)) { sr->stop_stage = stage; return true; }
 
                 // Read ADCs (blocking) and accumulate into the telemetry
                 int16_t vals[2];
@@ -263,10 +264,16 @@ __always_inline static inline bool pulsetrain_loop(const pulsetrain_t *pt, const
                 }
             }
 
-            // Check for a stop request (X, T-1, a newer T/U or a trigger) while waiting for stage to end, then
+            // Check for a stop request (X, T-1, and between pulses a newer T/U or a trigger) while waiting for stage to end, then
             // spin out its last microsecond without them so the stage ends exactly
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) + cycles_per_us < (uint32_t)stage_dur_cyc)
-                if (stop_requested(seq, trigger)) { sr->stop_stage = stage; return true; }
+                if (stop_requested(seq, trigger, in_pulse)) { sr->stop_stage = stage; return true; }
+            // The end of a pulse is the only place to preempt a train with no gap, or one too short to poll
+            if (stage == n_stages - 1 && pulse + 1 < pt->n_pulses && stop_requested(seq, trigger, false)) {
+                while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc);
+                sr->stop_stage = gap;
+                return true;
+            }
             while ((uint32_t)(m33_hw->dwt_cyccnt - stage_start_cyc) < (uint32_t)stage_dur_cyc);
 
             // Don't latch on the last stage of the last pulse
@@ -472,7 +479,11 @@ void __time_critical_func(main_core1)(void) {
             pt = &pt_trigger[trigger_ch];
         }
         handled_trigger = trigger;
-        if (pt)
+        if (pt) {
             run_pulsetrain(pt, trigger_ch, seq, trigger);
+            // A stop also cancels a trigger waiting for the end of the pulse
+            if (sio_hw->doorbell_in_set & DOORBELL_STOP)
+                handled_trigger = latest_trigger;
+        }
     }
 }
