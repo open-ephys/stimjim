@@ -27,6 +27,14 @@
 queue_t q_core1_cmd, q_offsets_rx, q_stimulus_telemetry, q_adc_result;
 volatile uint32_t stimulus_request_seq;
 static queue_t q_deferred_commands;
+
+typedef enum { DEFERRED_NORMAL, DEFERRED_STOP_REQUESTED, DEFERRED_START_CANCELLED } deferred_state_t;
+
+typedef struct {
+    deferred_state_t state;
+    char line[BUF_LEN];
+} deferred_command_t;
+
 static bool verbose;
 
 static void keep_serving_while_waiting(stimjim_context_t *sc);
@@ -294,6 +302,7 @@ static void cmd_S(stimjim_context_t *sc, const char *args) {
 }
 
 static bool stop_already_requested;
+static bool start_cancelled;
 
 static void stop_stimulus(const char cmd_char) {
     if (!stop_already_requested)
@@ -318,6 +327,7 @@ static bool cmd_TU(stimjim_context_t *sc, const char cmd_char, const char *args)
         return false;
     }
     if (idx < 0) { stop_stimulus(cmd_char); return true; }
+    if (start_cancelled) { print_start_notice(cmd_char, (int)idx); return true; }
     const uint32_t seq = stimulus_request_seq + 1;
     core1_cmd_t cmd = {
         .type = CORE1_CMD_STIMULUS,
@@ -606,26 +616,35 @@ static bool is_stop_command(const char *line) {
     return ep != p && idx < 0 && *skip_ws(ep) == '\0';
 }
 
+static bool defer_command(const deferred_state_t state, const char *line) {
+    static deferred_command_t deferred;
+    deferred.state = state;
+    strcpy(deferred.line, line);
+    return queue_try_add(&q_deferred_commands, &deferred);
+}
+
 static void cancel_deferred_stimuli(void) {
-    static char line[BUF_LEN];
+    static deferred_command_t deferred;
     for (uint n = queue_get_level(&q_deferred_commands); n > 0; n--) {
-        queue_try_remove(&q_deferred_commands, line);
-        const char cmd = *skip_ws(line);
-        if (cmd != 'T' && cmd != 'U')
-            queue_try_add(&q_deferred_commands, line);
+        queue_try_remove(&q_deferred_commands, &deferred);
+        const char cmd = *skip_ws(deferred.line);
+        if (deferred.state == DEFERRED_NORMAL && (cmd == 'T' || cmd == 'U'))
+            deferred.state = DEFERRED_START_CANCELLED;
+        queue_try_add(&q_deferred_commands, &deferred);
     }
 }
 
 // While E/B/C wait on core1, which runs them only after a stimulus, a stop command
 // takes effect right away so it can cancel the stimulus, but its reply is deferred
-// with every other command. Input lines never contain '\n', so a deferred entry
-// starting with one is a stop that has already been requested.
+// with every other command. T/U commands deferred before it don't run, but still
+// reply in order.
 static void handle_user_input(stimjim_context_t *sc, bool waiting) {
-    static char deferred_command[BUF_LEN];
-    if (!waiting && queue_try_remove(&q_deferred_commands, deferred_command)) {
-        stop_already_requested = deferred_command[0] == '\n';
-        handle_serial_line(sc, deferred_command + stop_already_requested);
-        stop_already_requested = false;
+    static deferred_command_t deferred;
+    if (!waiting && queue_try_remove(&q_deferred_commands, &deferred)) {
+        stop_already_requested = deferred.state == DEFERRED_STOP_REQUESTED;
+        start_cancelled = deferred.state == DEFERRED_START_CANCELLED;
+        handle_serial_line(sc, deferred.line);
+        stop_already_requested = start_cancelled = false;
         return;
     }
     char *line = read_serial_line();
@@ -634,14 +653,11 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
         if (is_stop_command(line)) {
             sio_hw->doorbell_out_set = DOORBELL_STOP;
             cancel_deferred_stimuli();
-            static char reply[BUF_LEN];
-            const char cmd = *skip_ws(line);
-            strcpy(reply, cmd == 'X' ? "\nX" : cmd == 'T' ? "\nT-1" : "\nU-1");
-            if (queue_try_add(&q_deferred_commands, reply))
+            if (defer_command(DEFERRED_STOP_REQUESTED, line))
                 return;
             stop_already_requested = true;
         } else {
-            if (!queue_try_add(&q_deferred_commands, line))
+            if (!defer_command(DEFERRED_NORMAL, line))
                 if (verbose) puts("Error: Too many commands waiting; command ignored.\n");
             return;
         }
@@ -776,7 +792,7 @@ int main(void) {
     queue_init(&q_offsets_rx, sizeof(offsets_rx_t), 1);
     queue_init(&q_stimulus_telemetry, sizeof(core1_stim_telemetry_t), 128);
     queue_init(&q_adc_result, sizeof(adc_result_t), 5);
-    queue_init(&q_deferred_commands, BUF_LEN, 8);
+    queue_init(&q_deferred_commands, sizeof(deferred_command_t), 8);
 
     multicore_doorbell_claim(DOORBELL_STOP_NUM, 0b11);
     multicore_doorbell_claim(DOORBELL_TRAIN_RUNNING_NUM, 0b11);
