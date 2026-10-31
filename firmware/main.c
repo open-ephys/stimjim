@@ -167,6 +167,14 @@ static void set_trigger_pulsetrains_w_new_offsets(stimjim_context_t *sc) {
     }
 }
 
+// "%0.3f" as the Teensy fw printed it. SDK 2.2.0's printf rounds ties differently,
+// and prints a string of zeros for a tie that carries, e.g. 0.9995.
+static const char *format_f3(char buf[16], const float f) {
+    const long thousandths = lrint((double)f * 1000.0);  // the product is exact
+    snprintf(buf, 16, "%ld.%03ld", thousandths / 1000, thousandths % 1000);
+    return buf;
+}
+
 static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     static const char *const mode_names[4] = {
         "Voltage output", "Current output", "No output (high-Z)", "No output (grounded)" };
@@ -180,9 +188,11 @@ static void print_pulsetrain(const stimjim_context_t *sc, const uint8_t n) {
     puts("----------------------------------");
     printf("Parameters for PulseTrain[%d]\n  mode[ch0]: %d (%s)\n  mode[ch1]: %d (%s)\n",
            n, mode[0], mode_names[mode[0]], mode[1], mode_names[mode[1]]);
-    printf("  period:    %" PRIu32 " usec (%0.3f sec, %0.3f Hz)\n  duration:  %llu usec (%0.3f sec)\n",
-           pt.period, 0.000001 * pt.period, pt.period ? 1000000.0 / pt.period : 0.0,
-           (unsigned long long)duration, 0.000001 * (double)duration);
+    char sec[16], hz[16], dur_sec[16];
+    printf("  period:    %" PRIu32 " usec (%s sec, %s Hz)\n  duration:  %llu usec (%s sec)\n",
+           pt.period, format_f3(sec, 0.000001f * (float)pt.period),
+           format_f3(hz, pt.period ? 1000000.0f / (float)pt.period : 0.0f),
+           (unsigned long long)duration, format_f3(dur_sec, 0.000001f * (float)duration));
     puts("\n  stage    duration     output0   output1");
     for (uint8_t i = 0; i < pt.n_stages; i++)
         printf("   %2d  %7" PRIu32 " usec %8" PRId32 "%s %8" PRId32 "%s\n", i, pt.stage_duration[i],
