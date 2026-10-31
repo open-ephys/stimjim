@@ -402,7 +402,9 @@ __always_inline static inline const pulsetrain_t *handle_cmd_queue(pulsetrain_t 
                     const uint16_t adc_cfg = ADC_BASE_CONFIG | (m->line ? ADC_CURRENT_LINE : 0);
                     adc_write_blocking(m->ch, adc_cfg);
                     adc_result_t result;
-                    result.ok = adc_read_blocking(m->ch, &result.value);
+                    result.ok = false;
+                    for (uint8_t attempt = 0; attempt < 3 && !result.ok; attempt++)
+                        result.ok = adc_read_blocking(m->ch, &result.value);
                     queue_add_blocking(&q_adc_result, &result);
                 } 
                 else {
