@@ -49,6 +49,7 @@ typedef struct {
     uint32_t period; // us
     uint32_t n_pulses;
     uint32_t stage_duration[MAX_STAGES+1]; // us
+    uint16_t omitted_stages; // converted trains: bit i set if the user's stage i was 0 us and was dropped
 } pulsetrain_t;
 
 typedef struct {

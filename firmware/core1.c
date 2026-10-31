@@ -186,6 +186,7 @@ __always_inline static inline stim_gpio_masks_t compute_stim_gpio_masks(const pu
 
 __always_inline static inline void init_stim_telemetry(const pulsetrain_t *pt, core1_stim_telemetry_t *st) {
     st->n_stages = pt->n_stages;
+    st->omitted_stages = pt->omitted_stages;
     st->n_pulses = 0;
     st->output_mode[0] = pt->output_mode[0];
     st->output_mode[1] = pt->output_mode[1];

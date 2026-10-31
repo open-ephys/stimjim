@@ -646,6 +646,14 @@ static void handle_user_input(stimjim_context_t *sc, bool waiting) {
     stop_already_requested = false;
 }
 
+// A delivered stage's number as sent, which counts the 0 us stages
+static uint8_t stage_as_sent(const uint16_t omitted_stages, const uint8_t delivered) {
+    uint8_t stage = delivered;
+    for (uint8_t i = 0; i <= stage; i++)
+        if (omitted_stages & (1u << i)) stage++;
+    return stage;
+}
+
 static void print_stimulus_telemetry(const stimjim_context_t *sc, const core1_stim_telemetry_t sr) {
     if (verbose && sr.dropped_summaries)
         printf("Warning: %" PRIu32 " train summaries were dropped (queue full).\n\n", sr.dropped_summaries);
@@ -669,16 +677,20 @@ static void print_stimulus_telemetry(const stimjim_context_t *sc, const core1_st
     else if (sr.stop_stage == sr.n_stages - 1)
         printf("Info: Train stopped after pulse %" PRIu32 ".", sr.n_pulses);
     else
-        printf("Info: Train stopped during stage %u of pulse %" PRIu32 ".", sr.stop_stage, sr.n_pulses);
+        printf("Info: Train stopped during stage %u of pulse %" PRIu32 ".",
+               stage_as_sent(sr.omitted_stages, sr.stop_stage), sr.n_pulses);
     stdio_putchar_raw('\n');
     printf("Current/Voltage by stage: \n           Ch0                Ch1 \n");
-    // The last stage is the inter-pulse gap, which is grounded and not sampled
-    for (uint8_t i = 0; i < sr.n_stages - 1; i++) {
-        printf("Stage %d", i);
+    // The last stage is the inter-pulse gap, which is grounded and not sampled.
+    // 0 us stages weren't delivered, so their lines are zeros.
+    const uint8_t n_lines = (uint8_t)(sr.n_stages - 1 + __builtin_popcount(sr.omitted_stages));
+    for (uint8_t line = 0, i = 0; line < n_lines; line++) {
+        const bool omitted = sr.omitted_stages & (1u << line);
+        printf("Stage %d", line);
         for (uint8_t ch = 0; ch < 2; ch++) {
             const bool is_current = sr.output_mode[ch] & OUTPUT_MODE_CURRENT;
             long amplitude = 0;
-            if ((sr.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK) && sr.delivered_stages[i]) {
+            if (!omitted && (sr.output_mode[ch] & OUTPUT_MODE_ACTIVE_MASK) && sr.delivered_stages[i]) {
                 float adc_val = ((float)sr.measured_amplitudes[ch][i] / (float)sr.delivered_stages[i])
                               - stimjim_ctx_get_offsets(sc, ch).adc;
                 amplitude = lroundf(adc_val * scale[is_current]);
@@ -686,6 +698,7 @@ static void print_stimulus_telemetry(const stimjim_context_t *sc, const core1_st
             printf("%6ld%s,          ", amplitude, (sr.output_mode[ch] & OUTPUT_MODE_VOLTAGE) ? "mV" : "uA");
         }
         putchar('\n');
+        if (!omitted) i++;
     }
 }
 

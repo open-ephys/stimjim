@@ -33,7 +33,7 @@ pulsetrain_t stimjim_ctx_convert_pt(const stimjim_context_t *sc, const int8_t pt
 
     uint8_t n = 0;
     for (uint8_t i = 0; i < pt.n_stages; i++) {
-        if (!pt.stage_duration[i]) continue;
+        if (!pt.stage_duration[i]) { pt_converted.omitted_stages |= 1u << i; continue; }
         stage_duration_sum += pt.stage_duration[i];
         pt_converted.stage_duration[n] = pt.stage_duration[i];
         pt_converted.stage_amplitude[0][n] = dac_code(offsets[0], pt.output_mode[0] & OUTPUT_MODE_CURRENT, pt.stage_amplitude[0][i]);
