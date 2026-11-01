@@ -1,0 +1,53 @@
+pico_board_cmake_set(PICO_PLATFORM, rp2350)
+
+#define PICO_RP2350A  0
+
+#define NLDAC_A       43u
+#define CS_DAC_A      45u
+#define CS_ADC_A      41u
+#define OE0_A         38u
+#define OE1_A         37u
+#define LED_A          2u
+#define CHANNEL_IO_A  33u
+#define SPI_SCK_A     46u
+#define SPI_MOSI_A    47u
+#define SPI_MISO_A    44u
+
+#define NLDAC_B       24u
+#define CS_DAC_B      21u
+#define CS_ADC_B      17u
+#define OE0_B         19u
+#define OE1_B         18u
+#define LED_B          3u
+#define CHANNEL_IO_B  34u
+#define SPI_SCK_B     22u
+#define SPI_MOSI_B    23u
+#define SPI_MISO_B    20u
+
+#define GPIO0         10u
+#define GPIO1          9u
+#define GPIO2          7u
+#define GPIO3          6u
+#define GPIO4          5u
+#define GPIO5          4u
+#define GPIO6         13u
+#define GPIO7         14u
+
+#define SYNC_A        GPIO6
+#define SYNC_B        GPIO7
+
+#define RISING_EDGE_INTERRUPT_BIT(gpio_number, value) ((value) << (4 * ((gpio_number) % 8) + 3))
+
+#define ADC_LEAD_MARGIN_US 2u
+
+#define MICROAMPS_PER_ADC   (20e6f / (1.0f + (49.4f / 1.8f)) / 100.0f / (float)(1 << 13))
+#define MILLIVOLTS_PER_ADC  (20e3f / (float)(1 << 13))
+
+#define DAC_FULL_SCALE_V    5.0f
+#define R_CURRENT_OHMS      1500.0f
+#define V_OUT_GAIN          (1.0f + (10.0f / 5.0f))
+#define MAX_MICROAMPS       3333
+#define MAX_MILLIVOLTS      15000
+#define MAX_MEASURABLE_MILLIVOLTS 10000
+#define MICROAMPS_PER_DAC   (2.0f * DAC_FULL_SCALE_V * 1e6f / R_CURRENT_OHMS / (float)(1 << 16))
+#define MILLIVOLTS_PER_DAC  (2.0f * DAC_FULL_SCALE_V * 1e3f * V_OUT_GAIN / (float)(1 << 16))

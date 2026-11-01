@@ -1,0 +1,6 @@
+# .NET build outputs
+bin/
+obj/
+
+# Visual Studio local state
+.vs/
